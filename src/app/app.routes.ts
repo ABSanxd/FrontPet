@@ -1,0 +1,41 @@
+import { Routes } from '@angular/router';
+import { Landing } from './features/landing/landing';
+import { Inicio } from './features/inicio/inicio';
+import { authGuard } from './core/guards/auth.guard';
+import { Adopciones } from './features/adopciones/adopciones';
+import { Servicios } from './features/servicios/servicios';
+import { Donaciones } from './features/donaciones/donaciones';
+import { Perfil } from './features/perfil/perfil';
+import { guestGuard } from './core/guards/guest.guard';
+
+
+export const routes: Routes = [
+    { path: '', component: Landing, canActivate: [guestGuard] },
+    {
+        path: 'inicio',
+        component: Inicio,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'adopciones',
+        component: Adopciones,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'servicios',
+        component: Servicios,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'donaciones',
+        component: Donaciones,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'perfil',
+        component: Perfil,
+        canActivate: [authGuard]
+    },
+    { path: '**', redirectTo: '' }
+
+];

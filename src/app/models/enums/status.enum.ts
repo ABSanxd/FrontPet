@@ -1,0 +1,7 @@
+export enum Status {
+  PENDIENTE = 'PENDIENTE',
+  ADOPTADO = 'ADOPTADO',
+  ACTIVO = 'ACTIVO',
+  INACTIVO = 'INACTIVO',
+  ELIMINADO = 'ELIMINADO'
+}

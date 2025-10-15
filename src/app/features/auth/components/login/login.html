@@ -1,0 +1,52 @@
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content shadow-lg rounded-2 border-orange" style="color: var(--color-brown-dark)">
+            <!-- Encabezado -->
+            <div class="modal-header border-0 pb-0 position-relative">
+                <button type="button" class="btn-close position-absolute end-0 top-0 me-3 mt-3" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+
+            <div class="text-center mb-3 mt-1">
+                <img src="/assets/logo-orange.svg" alt="Logo" style="height: 70px;">
+            </div>
+
+            <!-- Cuerpo del formulario -->
+            <div class="modal-body px-4 pb-4">
+                <form (ngSubmit)="onSubmit()">
+                    <div class="mb-3">
+                        <label for="email" class="form-label small">Correo electrónico</label>
+                        <input type="email" class="form-control rounded-3 form-control-sm border-orange" id="email"
+                            name="email" [(ngModel)]="email" placeholder="tucorreo@ejemplo.com" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label small">Contraseña</label>
+                        <input type="password" class="form-control rounded-3 form-control-sm border-orange"
+                            id="password" name="password" [(ngModel)]="password" placeholder="•••••••••••••••" required>
+                    </div>
+                    <!-- Mensaje de error -->
+                    @if (error) {
+                    <small class="text-danger d-block mb-2">* {{ error }}</small>
+                    }
+
+                    <div class="text-center mt-3">
+                        <small>
+                            ¿No tienes cuenta?
+                            <a href="#" class="text-decoration-none fw-semibold" style="color: var(--color-brown-dark);"
+                                data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                Regístrate aquí
+                            </a>
+                        </small>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-green w-100 py-2 fw-semibold rounded-3 btn-sm">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

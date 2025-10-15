@@ -1,0 +1,27 @@
+:root {
+  /* PALETA DE COLORES  */
+  --color-green: #A5B463;         /* Verde */
+  --color-green-dark: #94A452;    /* Verde (Hover/Active) */
+
+  --color-orange: #EE8E4F;        /* Naranja */
+  --color-orange-dark: #D87E3F;   /* Naranja (Hover/Active) */
+
+  --color-red: #EE4F4F;           /* Rojo */
+  --color-red-dark:#D43A3A;       /* Rojo (Hover/Active) */
+
+  --color-cyan: #1E8C88;          /* Celeste */
+
+  /* Neutros */
+  --color-brown-dark: #581611;    /* Marrón (Usado como texto por defecto) */
+  --color-brown: #A8644C;         /* Marrón Claro */
+  --color-grey: #CDCDCD;          /* Gris Claro */
+  --color-grey-dark: #959595;     /* Gris Medio */
+  --color-background: #faf9ed;    /* Fondo Global */
+  --color-white: #ffffff;         /* Blanco (Header/Footer) */
+
+  /* TIPOGRAFÍA */
+  --font-main: 'Inter', sans-serif;
+  --font-size-base: 16px;
+  --font-size-title: 1.75rem;
+  --font-size-subtitle: 1.25rem;
+}
