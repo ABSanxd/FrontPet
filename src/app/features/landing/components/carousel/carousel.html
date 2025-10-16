@@ -1,0 +1,47 @@
+<section class="hero-carousel mb-2 mt-2">
+    <div id="woofCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+
+        <!-- Indicadores -->
+        <div class="carousel-indicators">
+            @for (slide of slides; track slide; let i = $index) {
+            <button 
+                type="button" 
+                data-bs-target="#woofCarousel" 
+                [attr.data-bs-slide-to]="i"
+                [class.active]="slide.active" 
+                [attr.aria-current]="slide.active ? 'true' : null"
+                [attr.aria-label]="'Slide ' + (i + 1)">
+            </button>
+            }
+        </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner text-center">
+            @for (slide of slides; track slide) {
+            <div class="carousel-item" [class.active]="slide.active">
+                <div class="mx-auto" style="max-width: 800px;">
+                    <img 
+                        [src]="slide.img" 
+                        class="d-block img-fluid" 
+                        alt="Imagen del carrusel"
+                    >
+                </div>
+                <div class="carousel-caption d-block">
+                    <h2 class="fw-bold display-6" [innerHTML]="slide.title"></h2>
+                    <p class="lead" [innerHTML]="slide.text"></p>
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Controles -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#woofCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#woofCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
+    </div>
+</section>

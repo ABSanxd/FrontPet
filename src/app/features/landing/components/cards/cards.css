@@ -1,0 +1,26 @@
+.card-custom {
+  background-color: #faf8ec;
+}
+
+/* Imagen */
+.img-card {
+  width: auto;
+  height: 60px;     /* altura uniforme */
+  max-width: 100%;
+  display: block;
+}
+
+/* Ajuste del ancho del contenido para que haga wrap */
+.card-body-custom {
+  max-width: 240px;
+  margin: 0 auto;
+}
+
+/* Colores de título y texto */
+.card-body-custom .card-title {
+  color: var(--color-brown-dark);
+}
+
+.card-body-custom .card-text {
+  color: var(--color-green);
+}

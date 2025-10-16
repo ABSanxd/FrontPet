@@ -1,0 +1,19 @@
+.landing-cta {
+  background-color: var(--color-brown);
+  color: #fff;
+}
+
+.landing-cta-title {
+  color: #fff;
+  max-width: 600px; 
+  margin: 0 auto;   
+}
+
+.landing-cta p {
+  font-size: 1rem;
+}
+
+.landing-cta a {
+  color: #fff;
+  text-decoration: none; 
+}

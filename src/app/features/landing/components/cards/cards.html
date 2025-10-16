@@ -1,0 +1,22 @@
+<section class="landing-cards my-5">
+    <div class="container">
+        <div class="row justify-content-center g-4">
+
+            @for(card of cards; track card) {
+            <div class="col-md-4">
+                <div class="card h-100 text-center card-custom">
+                    <img 
+                        [src]="card.img" 
+                        class="card-img-top mx-auto mt-3 img-card" 
+                        [alt]="card.title"
+                    >
+                    <div class="card-body text-center card-body-custom">
+                        <h5 class="card-title fw-bold fs-4">{{ card.title }}</h5>
+                        <p class="card-text">{{ card.text }}</p>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>
