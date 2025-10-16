@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Login } from '../../../features/auth/components/login/login';
 import { Register } from '../../../features/auth/components/register/register';
 import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, Login, Register],
+  imports: [RouterLink, Login, Register, RouterLinkActive],
   templateUrl: './header.html',
   styleUrl: './header.css'
 })

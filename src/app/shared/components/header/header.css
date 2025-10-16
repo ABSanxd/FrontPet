@@ -20,3 +20,31 @@
   }
 }
 
+.menu-links .nav-link {
+  color: var(--color-brown-dark);
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+/* Línea inferior animada */
+.menu-links .nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 3px;
+  width: 0;
+  background-color: var(--color-orange);
+  transform: translateX(-50%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Hover o activo */
+.menu-links .nav-link:hover::after,
+.menu-links .nav-link.active::after {
+  width: 60%;
+}
+
+
