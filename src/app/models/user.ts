@@ -5,6 +5,10 @@ export interface UserCreateDTO {
     name: string;
     email: string;
     password: string;
+    department?: string; // Departamento (nombre)
+    province?: string;   // Provincia (nombre)
+    district?: string;   // Distrito (nombre)
+    birthDate?: string;  // ISO date string yyyy-mm-dd
 }
 
 export interface UserUpdateDTO {
@@ -13,12 +17,16 @@ export interface UserUpdateDTO {
 }
 
 export interface UserResponseDTO {
-    id: string; // UUID
+    id: string;
     name: string;
     email: string;
     maxPets: number;
-    userLevel: UserLevel; 
+    userLevel: UserLevel;
     userXp: number;
-    status: Status; 
+    status: Status;
     createdAt: string;
+    department?: string;
+    province?: string;
+    district?: string;
+    birthDate?: string;
 }

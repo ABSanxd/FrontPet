@@ -2,15 +2,23 @@
 @import './styles/_buttons.css';
 @import './styles/_typography.css';
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
+  overflow-x: hidden;
+
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.navbar-collapse {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
 }
 
 app-root {

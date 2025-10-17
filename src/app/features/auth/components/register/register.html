@@ -1,49 +1,91 @@
 <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
     <div class="modal-content shadow-lg rounded-2 border-orange" style="color: var(--color-brown-dark)">
-      
-      <!-- Encabezado -->
+
       <div class="modal-header border-0 pb-0 position-relative">
-        <button type="button" class="btn-close position-absolute end-0 top-0 me-3 mt-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close position-absolute end-0 top-0 me-3 mt-3" data-bs-dismiss="modal"
+          aria-label="Cerrar"></button>
       </div>
 
       <div class="text-center mb-3 mt-1">
         <img src="/assets/logo-orange.svg" alt="Logo" style="height: 50px;">
       </div>
 
-      <!-- Cuerpo del formulario -->
       <div class="modal-body px-4 pb-4">
         <form (ngSubmit)="onSubmit()">
-          
+
           <div class="mb-3">
             <label for="nameReg" class="form-label small">Nombre Completo</label>
             <input type="text" class="form-control rounded-3 form-control-sm border-orange" id="nameReg"
-                   placeholder="Tus nombres" name="name" [(ngModel)]="name" required>
+              placeholder="Tus nombres" name="name" [(ngModel)]="name" required>
           </div>
 
           <div class="mb-3">
             <label for="emailReg" class="form-label small">Correo electrónico</label>
             <input type="email" class="form-control rounded-3 form-control-sm border-orange" id="emailReg"
-                   placeholder="tucorreo@ejemplo.com" name="email" [(ngModel)]="email" required>
+              placeholder="tucorreo@ejemplo.com" name="email" [(ngModel)]="email" required>
           </div>
 
           <div class="mb-3">
             <label for="passwordReg" class="form-label small">Contraseña</label>
             <input type="password" class="form-control rounded-3 form-control-sm border-orange" id="passwordReg"
-                   placeholder="•••••••••••••••" name="password" [(ngModel)]="password" required>
+              placeholder="•••••••••••••••" name="password" [(ngModel)]="password" required>
+          </div>
+
+          <!-- Ubigeos: departamento / provincia / distrito -->
+          <div class="row g-2">
+            <div class="col-12 mb-2">
+              <label class="form-label small">Departamento</label>
+              <select class="form-select form-select-sm border-orange" [(ngModel)]="department" name="department"
+                (change)="onDepartmentChange()" aria-label="Departamento" required>
+                <option value="">Selecciona departamento</option>
+                @for (d of departments; track d) {
+                <option [value]="d">{{ d }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-6 mb-2">
+              <label class="form-label small">Provincia</label>
+              <select class="form-select form-select-sm border-orange" [(ngModel)]="province" name="province"
+                (change)="onProvinceChange()" aria-label="Provincia" [disabled]="!provinces.length" required>
+                <option value="">Selecciona provincia</option>
+                @for (p of provinces; track p) {
+                <option [value]="p">{{ p }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-6 mb-2">
+              <label class="form-label small">Distrito</label>
+              <select class="form-select form-select-sm border-orange" [(ngModel)]="district" name="district"
+                aria-label="Distrito" [disabled]="!districts.length" required>
+                <option value="">Selecciona distrito</option>
+                @for (di of districts; track di) {
+                <option [value]="di">{{ di }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Fecha de nacimiento -->
+          <div class="mb-3">
+            <label for="birthdateReg" class="form-label small">Fecha de nacimiento</label>
+            <input id="birthdateReg" name="birthDate" [(ngModel)]="birthDate"
+              class="form-control form-control-sm border-orange rounded-3" type="date" [max]="todayMinus9Years()" required />
           </div>
 
           <!-- Mensaje de error -->
           @if (error) {
-          <small class="text-danger d-block mb-2">* {{ error }}</small>
+          <small class=" text-danger d-block mb-2">* {{ error }}</small>
           }
 
           <div class="text-center mt-3">
             <small>
               ¿Ya tienes cuenta?
               <a href="#" class="text-decoration-none fw-semibold" style="color: var(--color-brown-dark);"
-                 data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">
-                 Inicia sesión aquí
+                data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">
+                Inicia sesión aquí
               </a>
             </small>
           </div>
