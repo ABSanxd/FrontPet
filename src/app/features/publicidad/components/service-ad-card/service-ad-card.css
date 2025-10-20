@@ -1,0 +1,66 @@
+/* Colores de ejemplo basados en tu diseño (morado/marrón) */
+:root {
+  --color-primary-dark: #581611; /* Marrón oscuro */
+  --color-secondary-light: #8b5cf6; /* Morado/Violeta */
+  --color-background-light: #fdfae7; /* Beige muy claro */
+}
+
+/* --- Contenedor Principal --- */
+.service-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- Prioridad (Destacado) --- */
+.service-card.priority-card {
+  border: 2px solid var(--color-secondary-light) !important;
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2) !important;
+}
+
+.priority-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ffc107;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  z-index: 5;
+}
+
+/* --- Visual del Anuncio (Imagen/Placeholder) --- */
+.ad-visual-container {
+  height: 200px; /* Altura fija para uniformidad */
+  background-color: var(--color-background-light); /* Fondo si no hay imagen */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border-radius: 0.25rem 0.25rem 0 0;
+  overflow: hidden;
+}
+
+.visual-overlay {
+  position: absolute;
+  inset: 0;
+  /* Degradado sutil para oscurecer la parte inferior y asegurar legibilidad */
+  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+/*.ad-visual-container.has-image {
+  /* Si la imagen falla, se verá el color de fondo sin la superposición de imagen */
+
+/* --- Contenido --- */
+.card-title {
+  min-height: 2.5rem; /* Asegura que todos los títulos tengan espacio similar */
+}
+
+
+.btn-success { /* Para el botón de Llamar/WhatsApp */
+  background-color: #24c249;
+  border-color: #28a745;
+}

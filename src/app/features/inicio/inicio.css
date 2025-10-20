@@ -1,0 +1,8 @@
+/* Estilo simple para el placeholder del lateral */
+.side-ad-placeholder {
+    height: 250px; /* Una altura aproximada del banner lateral */
+    background-color: #f5f5f5;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}

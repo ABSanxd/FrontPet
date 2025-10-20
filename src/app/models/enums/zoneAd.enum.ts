@@ -1,0 +1,7 @@
+export enum ZoneAd {
+  TOP_BANNER = 'TOP_BANNER',
+  SIDE_BANNER = 'SIDE_BANNER',
+  SERVICES = 'SERVICES',
+  FOOTER = 'FOOTER',
+  POP_UP = 'POP_UP'
+}

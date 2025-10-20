@@ -1,0 +1,58 @@
+<div class="card h-100 shadow-sm border-0 service-card" 
+     [class.priority-card]="ad.priority === 'PRIORITY_1'">
+  
+  <div class="card-img-top ad-visual-container" 
+       [class.has-image]="ad.imageUrl" 
+       [style.background-image]="'url(' + ad.imageUrl + ')'">
+       
+    @if (ad.priority === 'PRIORITY_1') {
+      <span class="badge priority-badge">Destacado</span>
+    }
+
+    <div class="visual-overlay"></div>
+  </div>
+
+  <div class="card-body d-flex flex-column">
+    <h5 class="card-title fw-bold text-primary-dark">{{ ad.name }}</h5>
+    <p class="card-text text-muted mb-3 flex-grow-1">{{ ad.description }}</p>
+
+    <div class="contact-info small mb-3 border-top pt-3">
+      @if (ad.contact.email) {
+        <div class="d-flex align-items-center mb-1">
+          <i class="bi bi-envelope-fill me-2 text-secondary-light"></i>
+          <span class="text-truncate" title="{{ ad.contact.email }}">{{ ad.contact.email }}</span>
+        </div>
+      }
+      @if (ad.contact.phone) {
+        <div class="d-flex align-items-center mb-1">
+          <i class="bi bi-telephone-fill me-2 text-secondary-light"></i>
+          <a [href]="'tel:' + ad.contact.phone" class="text-decoration-none">{{ ad.contact.phone }}</a>
+        </div>
+      }
+      @if (ad.contact.socialMedia?.url) {
+        <div class="d-flex align-items-center mb-1">
+          <i class="bi bi-link-45deg me-2 text-secondary-light"></i>
+          <a [href]="ad.contact.socialMedia!.url" target="_blank" rel="noopener noreferrer">
+            {{ getSocialName(ad.contact.socialMedia!.type) }}
+          </a>
+        </div>
+      }
+    </div>
+    
+    <div class="card-actions mt-auto d-grid">
+      @if (ad.link) {
+        <a [href]="ad.link" target="_blank" class="btn btn-orange fw-bold">
+          Ver Sitio Web <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+      } @else if (ad.contact.socialMedia?.type === 'WHATSAPP') {
+        <a [href]="'tel:' + ad.contact.socialMedia?.url" class="btn btn-success fw-bold">
+          <i class="bi bi-whatsapp me-2"></i> Llamar Ahora
+        </a>
+      } @else if (ad.contact.email) {
+        <a [href]="'mailto:' + ad.contact.email" class="btn btn-info fw-bold">
+          <i class="bi bi-envelope-fill me-2"></i> Contactar
+        </a>
+      }
+    </div>
+  </div>
+</div>

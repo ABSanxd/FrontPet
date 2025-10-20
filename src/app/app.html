@@ -1,7 +1,28 @@
 <app-header></app-header>
 
-<main class="main-content flex-grow-1">
-  <router-outlet></router-outlet>
-</main>
+@if(mostrarBannerTop){ 
+  @defer (on idle) {
+    <app-ad-zone [zone]="ZoneAd.TOP_BANNER" [rotationInterval]="7000"></app-ad-zone>
+  } @placeholder {
+    <div class="top-banner-placeholder"></div>
+  } 
+}
+
+<div class="layout-container" [class.sin-publicidad]="!mostrarBannerTop">
+  <main class="main-content flex-grow-1">
+    <router-outlet></router-outlet>
+  </main>
+  
+  <!-- Banner Lateral -->
+  @if (mostrarBannerLateral) {
+    <aside class="side-banner">
+      @defer (on idle) {
+        <app-ad-zone [zone]="ZoneAd.SIDE_BANNER" [rotationInterval]="8000"></app-ad-zone>
+      } @placeholder {
+        <div class="side-banner-placeholder"></div>
+      }
+    </aside>
+  }
+</div>
 
 <app-footer></app-footer>

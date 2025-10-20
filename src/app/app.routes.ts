@@ -3,10 +3,11 @@ import { Landing } from './features/landing/landing';
 import { Inicio } from './features/inicio/inicio';
 import { authGuard } from './core/guards/auth.guard';
 import { Adopciones } from './features/adopciones/adopciones';
-import { Servicios } from './features/servicios/servicios';
+
 import { Donaciones } from './features/donaciones/donaciones';
 import { Perfil } from './features/perfil/perfil';
 import { guestGuard } from './core/guards/guest.guard';
+import { Servicios } from './features/publicidad/servicios';
 
 
 export const routes: Routes = [
@@ -36,6 +37,7 @@ export const routes: Routes = [
         component: Perfil,
         canActivate: [authGuard]
     },
+    
     { path: '**', redirectTo: '' }
 
 ];

@@ -1,0 +1,34 @@
+<section class="ad-zone-container" [attr.data-zone]="zone">
+  @if (ads.length > 0) { @if (zone === ZoneAd.TOP_BANNER) {
+  <div
+    id="topBannerCarousel"
+    class="carousel slide carousel-fade banner-top-carousel"
+    data-bs-ride="carousel"
+    [attr.data-bs-interval]="rotationInterval"
+  >
+    <div class="carousel-inner h-100">
+      @for (ad of ads; track ad.id; let i = $index) {
+      <div class="carousel-item" [class.active]="i === currentIndex">
+        <app-top-banner-ad [ad]="ad" class="h-100"></app-top-banner-ad>
+      </div>
+      }
+    </div>
+  </div>
+  }
+   @else if (zone === ZoneAd.SIDE_BANNER) {
+  <div class="side-ad-wrapper">
+    <p class="text-muted small mb-2 text-center">Patrocinado</p>
+    <!-- Rotación también sin indicadores -->
+    <app-side-banner-ad [ad]="currentAd!"></app-side-banner-ad>
+  </div>
+  } @else if (zone === ZoneAd.FOOTER) {
+  <!--<app-footer-banner-ad [ad]="currentAd!"></app-footer-banner-ad> -->
+  } @else {
+  <p>Diseño no implementado para {{ zone }}</p>
+  } }
+
+  <!-- Skeleton loader -->
+  @if (isLoading) {
+  <div class="banner-skeleton" [attr.data-zone]="zone"></div>
+  }
+</section>

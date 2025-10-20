@@ -1,0 +1,65 @@
+<div class="side-banner-card">
+  <!-- Imagen o degradado -->
+  <div class="banner-image-wrapper">
+    @if (ad.imageUrl) {
+    <img [src]="ad.imageUrl" [alt]="ad.name" class="banner-image" (error)="onImageError($event)" />
+    <div class="image-overlay"></div>
+    } @else {
+    <div class="banner-gradient" [attr.data-priority]="ad.priority"></div>
+    }
+
+    <!-- Badge de prioridad -->
+    @if (ad.priority === 'PRIORITY_1') {
+    <span class="priority-badge">
+      <i class="bi bi-star-fill me-1"></i>
+      Destacado
+    </span>
+    }
+  </div>
+
+  <!-- Contenido -->
+  <div class="banner-content">
+    <h3 class="banner-title">{{ ad.name }}</h3>
+    <p class="banner-description">{{ ad.description }}</p>
+
+    <!-- Información de contacto -->
+    <div class="contact-info">
+      @if (ad.contact.phone) {
+      <div class="contact-item">
+        <i class="bi bi-telephone-fill"></i>
+        <span>{{ ad.contact.phone }}</span>
+      </div>
+      } @if (ad.contact.email) {
+      <div class="contact-item">
+        <i class="bi bi-envelope-fill"></i>
+        <span class="text-truncate">{{ ad.contact.email }}</span>
+      </div>
+      } @if (ad.contact.address) {
+      <div class="contact-item">
+        <i class="bi bi-geo-alt-fill"></i>
+        <span>{{ ad.contact.address }}</span>
+      </div>
+      }
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="banner-actions">
+      @if(ad.link){
+      <button (click)="abrirLink(ad.link)" class="btn btn-orange w-100 mb-2">
+        Ver más
+        <i class="bi bi-arrow-right ms-2"></i>
+      </button>
+      } @else if(ad.contact.socialMedia){
+      <button (click)="abrirLink(ad.contact.socialMedia.url)" class="btn btn-orange w-100 mb-2">
+        <i [class]="getSocialIcon(ad.contact.socialMedia.type)" class="me-2"></i>
+        {{ getSocialName(ad.contact.socialMedia.type) }}
+      </button>
+      } @if (ad.contact.phone) {
+      <a [href]="'tel:' + ad.contact.phone" class="btn btn-lateral btn-outline-secondary w-100">
+        <i class="bi bi-telephone-fill me-2"></i>
+        Llamar ahora
+      </a>
+      }
+    </div>
+  </div>
+</div>

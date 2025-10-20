@@ -1,0 +1,87 @@
+/* Layout con banner lateral */
+.layout-container {
+  display: flex;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.side-banner {
+  width: 250px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+/* Scrollbar personalizado para side-banner */
+.side-banner::-webkit-scrollbar {
+  width: 4px;
+}
+
+.side-banner::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.side-banner::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+/* Placeholders */
+.top-banner-placeholder,
+.side-banner-placeholder {
+  background: linear-gradient(
+    90deg,
+    #e0e0e0 25%,
+    #f0f0f0 50%,
+    #e0e0e0 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+.top-banner-placeholder {
+  height: 350px;
+  margin-bottom: 1rem;
+}
+
+.side-banner-placeholder {
+  height: 600px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Sin publicidad */
+.layout-container.sin-publicidad {
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .side-banner {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-container {
+    padding: 0.5rem;
+  }
+}
