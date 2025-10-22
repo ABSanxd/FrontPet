@@ -15,35 +15,30 @@ import { ZoneAd } from './models/enums/zoneAd.enum';
 })
 export class App {
   protected readonly title = signal('front-pet');
-
   protected readonly ZoneAd = ZoneAd;
 
   mostrarBannerTop = false;
   mostrarBannerLateral = false;
 
   constructor(private router: Router) {
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      this.actualizarVisibilidad();
-    }); // Ejecutar en la primera carga
+    
     this.actualizarVisibilidad();
+    
+    // Escuchar cambios de ruta
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.actualizarVisibilidad();
+      });
   }
 
   private actualizarVisibilidad() {
-    const url = this.router.url.split('?')[0]; 
+    const url = this.router.url.split('?')[0];
 
-    const rutasConBannerTop = [
-      '/', 
-      '/adopciones', 
-      '/servicios',
-      
-      
-    ];
+    const rutasConBannerTop = ['/servicios', '/donaciones'];
+    const rutasConBannerLateral = ['/adopciones', '/donaciones'];
 
-    const rutasConBannerLateral = ['/adopciones', '/donaciones', '/servicios'];
-
-    // El Top Banner  se muestra si la URL está en la lista de rutasConBannerTop.
     this.mostrarBannerTop = rutasConBannerTop.includes(url);
-
     this.mostrarBannerLateral = rutasConBannerLateral.includes(url);
   }
 }

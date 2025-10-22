@@ -2,13 +2,11 @@
 .banner-item {
   position: relative;
   height: 320px;
-  overflow: hidden;
 }
 /* --- Imagen del banner --- */
 .banner-image-container {
   position: absolute;
   inset: 0;
-  overflow: hidden;
 }
 
 .banner-img {
@@ -135,7 +133,6 @@
     -webkit-line-clamp: 3;
     line-clamp: 3;
     -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   .btn-banner {

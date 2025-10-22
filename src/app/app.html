@@ -1,28 +1,28 @@
 <app-header></app-header>
 
-@if(mostrarBannerTop){ 
-  @defer (on idle) {
-    <app-ad-zone [zone]="ZoneAd.TOP_BANNER" [rotationInterval]="7000"></app-ad-zone>
-  } @placeholder {
-    <div class="top-banner-placeholder"></div>
-  } 
-}
-
-<div class="layout-container" [class.sin-publicidad]="!mostrarBannerTop">
+@if(mostrarBannerTop){ @defer (on idle) {
+<app-ad-zone [zone]="ZoneAd.TOP_BANNER" [rotationInterval]="7000"></app-ad-zone>
+} @placeholder {
+<div class="top-banner-placeholder"></div>
+} } @if (mostrarBannerLateral) {
+<div class="layout-container">
   <main class="main-content flex-grow-1">
     <router-outlet></router-outlet>
   </main>
-  
-  <!-- Banner Lateral -->
-  @if (mostrarBannerLateral) {
-    <aside class="side-banner">
-      @defer (on idle) {
-        <app-ad-zone [zone]="ZoneAd.SIDE_BANNER" [rotationInterval]="8000"></app-ad-zone>
-      } @placeholder {
-        <div class="side-banner-placeholder"></div>
-      }
-    </aside>
-  }
+
+  <aside class="side-banner">
+    @defer (on idle) {
+    <app-ad-zone [zone]="ZoneAd.SIDE_BANNER" [rotationInterval]="8000"></app-ad-zone>
+    } @placeholder {
+    <div class="side-banner-placeholder"></div>
+    }
+  </aside>
 </div>
+} @else {
+
+<main class="main-content-full flex-grow-1">
+  <router-outlet></router-outlet>
+</main>
+}
 
 <app-footer></app-footer>
