@@ -12,7 +12,7 @@ export interface UserCreateDTO {
 }
 
 export interface UserUpdateDTO {
-    name: string;
+    name?: string;
     password?: string;
     department?: string;
     province?: string;

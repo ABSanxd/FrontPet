@@ -8,7 +8,7 @@ type RawUbigeos = Record<string, any>; // top-level: { "AMAZONAS": { "BAGUA": { 
   providedIn: 'root'
 })
 export class UbigeoService {
-  private url = 'https://free.e-api.net.pe/ubigeos.json';
+  private url = '/api-ubigeos/ubigeos.json';
   private cache$?: Observable<RawUbigeos>;
 
   constructor(private http: HttpClient) { }

@@ -20,52 +20,40 @@ export class Perfil implements OnInit {
   public departments$!: Observable<string[]>;
   public provinces$!: Observable<string[]>;
   public districts$!: Observable<string[]>;
-  public showPasswordForm: boolean = false; 
-  public isEditing: boolean = false;
+  public isEditing = false;
   public errorMessage: string | null = null;
-  public SuccessMessage: string | null = null;
-  public isLoading: boolean = true;
+  public successMessage: string | null = null;
+  public isLoading = true;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private ubigeoService: UbigeoService,
-    private authSerivce: AuthService
+    private authService: AuthService
   ) {
     // Obtener el ID del usuario al inicializar
-    const user = this.authSerivce.getUser();
-    if (user) {
-      this.currentUserId = user.id;
-    }
+    const user = this.authService.getUser();
+    if (user) this.currentUserId = user.id;
     this.createForm();
   }
 
   ngOnInit(): void {
-      // Ahora, antes de cargar los datos, verificamos si tenemos un ID
-      if (this.currentUserId) {
-          this.loadUserData();
-      } else {
-          // Opcional: Manejar el caso donde no hay usuario (ej. redirigir a login si el guard falla)
-          console.error("No se encontró ID de usuario. Redirigiendo o mostrando error.");
-          this.isLoading = false;
-      }
-      this.setupUbigeoListeners();
-    }
+    // Ahora, antes de cargar los datos, verificamos si tenemos un ID
+    if (this.currentUserId) this.loadUserData();
+    else this.isLoading = false;
+    this.setupUbigeoListeners();
+  }
 
   createForm(): void {
     this.profileForm = this.fb.group({
-      name: [
-        { value: '', disabled: !this.isEditing },
-        [Validators.required, Validators.minLength(2)],
-      ],
+      name: [{ value: '', disabled: !this.isEditing }, [Validators.required, Validators.minLength(2)]],
       email: [{ value: '', disabled: true }],
       department: [{ value: '', disabled: !this.isEditing }],
       province: [{ value: '', disabled: !this.isEditing }],
       district: [{ value: '', disabled: !this.isEditing }],
-      currentPassword: [''],
-      newPassword:['',[Validators.minLength(8)]],
+      newPassword: ['', [Validators.minLength(8)]],
       confirmNewPassword: [''],
-    },{validator: this.passwordMatchValidator});
+    }, { validators: this.passwordMatchValidator });
   }
 
   passwordMatchValidator(form: FormGroup) {
@@ -73,13 +61,13 @@ export class Perfil implements OnInit {
     const confirmPass = form.get('confirmNewPassword');
 
     if (newPass && confirmPass && newPass.value !== confirmPass.value) {
-        return { passwordsNotMatching: true };
+      return { passwordsNotMatching: true };
     }
     return null;
-}
+  }
 
   loadUserData(): void {
-    if(!this.currentUserId) return;
+    if (!this.currentUserId) return;
     this.isLoading = true;
     this.userService.getUserById(this.currentUserId).subscribe({
       next: (user) => {
@@ -94,10 +82,9 @@ export class Perfil implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-             // Es crucial manejar errores 401 aquí si no lo hace el interceptor
-             this.isLoading = false;
-             this.errorMessage = 'Error al cargar perfil: ' + err.error.message;
-        }
+        this.errorMessage = 'Error al cargar perfil: ' + (err.error?.message || err.message);
+        this.isLoading = false;
+      }
     });
   }
 
@@ -107,28 +94,21 @@ export class Perfil implements OnInit {
     //cargar provincias cuando cambian departamento
     this.provinces$ = this.profileForm.get('department')!.valueChanges.pipe(
       startWith(this.profileForm.get('department')!.value),
-      switchMap((department) => {
-        if (!department) return [];
-        //Reseta provincia y distrito si departamente cambia
+      switchMap(dep => {
         this.profileForm.get('province')!.setValue('');
         this.profileForm.get('district')!.setValue('');
-        return this.ubigeoService.getProvinces(department);
+        return dep ? this.ubigeoService.getProvinces(dep) : [];
       })
     );
 
     //cargar distritos cuando cambian departamento y provincia
     this.districts$ = combineLatest([
-      this.profileForm
-        .get('department')!
-        .valueChanges.pipe(startWith(this.profileForm.get('department')!.value)),
-      this.profileForm
-        .get('province')!
-        .valueChanges.pipe(startWith(this.profileForm.get('province')!.value)),
+      this.profileForm.get('department')!.valueChanges.pipe(startWith(this.profileForm.get('department')!.value)),
+      this.profileForm.get('province')!.valueChanges.pipe(startWith(this.profileForm.get('province')!.value)),
     ]).pipe(
-      switchMap(([department, province]) => {
-        if (!department || !province) return [];
+      switchMap(([dep, prov]) => {
         this.profileForm.get('district')!.setValue('');
-        return this.ubigeoService.getDistricts(department, province);
+        return dep && prov ? this.ubigeoService.getDistricts(dep, prov) : [];
       })
     );
   }
@@ -143,9 +123,9 @@ export class Perfil implements OnInit {
   }
 
   onSaveChanges(): void {
-    if(!this.currentUserId || this.profileForm.invalid) return;
+    if (!this.currentUserId || this.profileForm.invalid) return;
     this.errorMessage = null;
-    this.SuccessMessage = null;
+    this.successMessage = null;
     if (this.profileForm.invalid) {
       this.errorMessage = 'Por favor, completa correctamente los campos requeridos';
       return;
@@ -163,7 +143,7 @@ export class Perfil implements OnInit {
       next: (UpdatedUser) => {
         this.user$.next(UpdatedUser);
         this.toggleEditMode(false);
-        this.SuccessMessage = 'Perfil actualizado exitosamente';
+        this.successMessage = 'Perfil actualizado exitosamente';
       },
       error: (err) => {
         this.errorMessage = 'Error al actualizar:' + err.error.message;
@@ -178,7 +158,7 @@ export class Perfil implements OnInit {
         next: () => {
           //logica para cerrar sesion y redirgir al login o landing page
           console.log('Cuenta Eliminada');
-          this.authSerivce.logout();
+          this.authService.logout();
         },
         error: (err) => {
           this.errorMessage = 'Error al eliminar la cuenta: ' + err;
@@ -186,6 +166,6 @@ export class Perfil implements OnInit {
       });
     }
   }
-  
-  
+
+
 }

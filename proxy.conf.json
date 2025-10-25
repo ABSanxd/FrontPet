@@ -1,0 +1,10 @@
+{
+    "/api-ubigeos": {
+        "target": "https://free.e-api.net.pe",
+        "secure": true,
+        "changeOrigin": true,
+        "pathRewrite": {
+            "^/api-ubigeos": ""
+        }
+    }
+}
