@@ -1,0 +1,106 @@
+<div class="register-container">
+  <div class="container py-5">
+    
+    <header class="text-center mb-4">
+      <h1 class="register-title">
+        {{ isEditMode ? 'Editar Mascota' : '¡Agrega una nueva mascota!' }}
+      </h1>
+      <p class="register-subtitle">
+        {{ isEditMode ? 'Actualiza los datos de tu amigo' : '¡Comienza una nueva aventura con tu mejor amigo!' }}
+      </p>
+    </header>
+
+    <div class="register-card">
+      <form [formGroup]="petForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="row g-4 g-lg-5">
+          
+          <div class="col-lg-5 text-center">
+            
+            <input type="file" id="fileUpload" (change)="onFileSelect($event)" accept="image/png, image/jpeg" style="display: none;"/>
+            
+            <label for="fileUpload" class="image-uploader">
+              @if (previewUrl) {
+                <img [src]="previewUrl" alt="Vista previa" class="img-preview">
+              } @else {
+                <div class="uploader-icon"><i class="bi bi-plus-lg"></i></div>
+                <span>Subir foto de tu mascota</span>
+              }
+            </label>
+
+            <div class="form-group text-start mt-4">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" placeholder="Ej: Firulais"
+                formControlName="nombre" [class.is-invalid]="f['nombre'].touched && f['nombre'].invalid">
+              @if (f['nombre'].touched && f['nombre'].invalid) {
+                <div class="invalid-feedback d-block text-start">
+                  @if (f['nombre'].errors?.['required']) { El nombre es obligatorio. }
+                  @if (f['nombre'].errors?.['minlength']) { Debe tener al menos 2 caracteres. }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="col-lg-7">
+            
+            <div class="form-group mb-3">
+              <label for="especie" class="form-label">Especie</label>
+              <select id="especie" class="form-select" formControlName="especie"
+                [class.is-invalid]="f['especie'].touched && f['especie'].invalid">
+                <option value="" disabled>Selecciona una opción...</option>
+                @for (specie of speciesList; track specie) {
+                  <option [value]="specie">{{ specie | titlecase }}</option>
+                }
+              </select>
+              @if (f['especie'].touched && f['especie'].invalid) {
+                <div class="invalid-feedback d-block text-start"> La especie es obligatoria. </div>
+              }
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="breed" class="form-label">Raza</label>
+              <input type="text" class="form-control" id="breed" placeholder="Ej: Golden Retriever"
+                formControlName="breed">
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="petAge" class="form-label">Edad (años)</label>
+              <input type="number" class="form-control" id="petAge" placeholder="Ingresa la edad de tu mascota"
+                formControlName="petAge">
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="petWeight" class="form-label">Peso (kg)</label>
+              <input type="number" class="form-control" id="petWeight" placeholder="Ejm: 10.5"
+                step="0.1" formControlName="petWeight">
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12 text-center">
+            
+            @if (error) {
+              <p class="text-danger mb-3">{{ error }}</p>
+            }
+
+            <button type="submit" class="btn btn-orange btn-lg" [disabled]="isLoading">
+              @if (isLoading) {
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span>{{ isEditMode ? 'Guardando...' : 'Registrando...' }}</span>
+              } @else {
+                <span>{{ isEditMode ? 'Guardar Cambios' : '¡Registrar mascota!' }}</span>
+              }
+            </button>
+            
+            <div class="mt-2">
+              <a [routerLink]="(isEditMode && currentPetId) ? ['/mascotas', currentPetId] : ['/mascotas']" class="btn-cancel">
+                Cancelar
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

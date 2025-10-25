@@ -1,0 +1,7 @@
+export enum PetLevel {
+  NOVATO = 'NOVATO',
+  EXPLORADOR = 'EXPLORADOR',
+  CAZADOR = 'CAZADOR',
+  MAESTRO = 'MAESTRO',
+  ALFA = 'ALFA'
+}

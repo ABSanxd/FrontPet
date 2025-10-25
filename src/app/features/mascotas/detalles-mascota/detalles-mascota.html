@@ -1,0 +1,84 @@
+<div class="detail-container py-4"> <div class="container">
+
+
+    @if (isLoading) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary-dark" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando datos de tu mascota...</p>
+      </div>
+    }
+
+    @if (!isLoading && error) {
+      <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ error }}
+      </div>
+    }
+
+    @if (pet) {
+      <div class="row g-4 align-items-center">
+        
+        <div class="col-lg-3 col-md-4">
+          <div class="pet-image-wrapper">
+            <img 
+              [src]="pet.photo || 'assets/img-pet-placeholder.png'" 
+              [alt]="pet.nombre"
+              (error)="onImageError($event)"
+            >
+          </div>
+        </div>
+
+        <div class="col-lg-5 col-md-8">
+          <div class="pet-info">
+            <h1>¡Hola, soy {{ pet.nombre }}!</h1>
+            <ul>
+              <li><strong>Especie:</strong> {{ pet.especie | titlecase }}</li>
+              <li><strong>Raza:</strong> {{ pet.breed || 'No especificada' }}</li>
+              <li><strong>Edad:</strong> {{ pet.petAge ? (pet.petAge + ' años') : 'No especificada' }}</li>
+              <li><strong>Inicio de aventura:</strong> {{ pet.createdAt | date:'yyyy-MM-dd' }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+          <div class="level-badge-wrapper">
+            <img [src]="getPetLevelImage(pet.nivel)" alt="Medalla de nivel {{pet.nivel}}">
+            
+            <div class="level-info">
+              <span class="level-label">Nivel:</span>
+              <span class="level-name">{{ pet.nivel | titlecase }}</span>
+            </div>
+
+            <div class="progress" 
+                 role="progressbar" 
+                 [attr.aria-valuenow]="pet.petXp" 
+                 aria-valuemin="0" 
+                 [attr.aria-valuemax]="getMaxXPForLevel(pet.nivel)">
+              <div 
+                class="progress-bar" 
+                [style.width.%]="getPetXPPercentage(pet.petXp, pet.nivel)"
+              ></div>
+            </div>
+            <div class="xp-text">
+              XP: {{ pet.petXp }} / {{ getMaxXPForLevel(pet.nivel) }}
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4"> <div class="col-12 text-center d-flex justify-content-center gap-3">
+          <a [routerLink]="['/mascotas', pet.id, 'editar']" class="btn btn-orange">
+            <i class="bi bi-pencil-fill me-2"></i> Editar
+          </a>
+          
+          <button (click)="onDeletePet()" class="btn btn-red" [disabled]="isLoading">
+            <i class="bi bi-trash-fill me-2"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
