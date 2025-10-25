@@ -8,9 +8,13 @@
         
         <!-- Título -->
         <div class="text-center mb-4">
-          <h2 class="fw-bold title-orange mb-3">¡Agrega una nueva publicación!</h2>
+          <h2 class="fw-bold title-orange mb-3">
+            {{ isEditMode ? '¡Edita tu publicación!' : '¡Agrega una nueva publicación!' }}
+          </h2>
           <div class="subtitle-box">
-            <p class="mb-0">¡Dale a una mascota el hogar que merece!</p>
+            <p class="mb-0">
+              {{ isEditMode ? '¡Actualiza los datos de tu mascota!' : '¡Dale a una mascota el hogar que merece!' }}
+            </p>
           </div>
         </div>
 
