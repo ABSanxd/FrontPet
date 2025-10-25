@@ -33,7 +33,7 @@ export class UserService {
 
   // Actualizar usuario
   updateUser(id: string, user: UserUpdateDTO): Observable<UserResponseDTO> {
-    return this.http.put<{ status: string, data: UserResponseDTO }>(`${this.apiUrl}/${id}`, user)
+    return this.http.patch<{ status: string, data: UserResponseDTO }>(`${this.apiUrl}/${id}`, user)
       .pipe(map(res => res.data));
   }
 

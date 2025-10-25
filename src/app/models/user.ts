@@ -13,7 +13,10 @@ export interface UserCreateDTO {
 
 export interface UserUpdateDTO {
     name: string;
-    password: string;
+    password?: string;
+    department?: string;
+    province?: string;
+    district?: string;
 }
 
 export interface UserResponseDTO {
