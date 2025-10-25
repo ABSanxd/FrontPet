@@ -14,21 +14,19 @@
       }
     </div>
   </div>
-  }
-   @else if (zone === ZoneAd.SIDE_BANNER) {
+  } @else if (zone === ZoneAd.SIDE_BANNER) {
   <div class="side-ad-wrapper">
     <p class="text-muted small mb-2 text-center">Patrocinado</p>
-    <!-- Rotación también sin indicadores -->
     <app-side-banner-ad [ad]="currentAd!"></app-side-banner-ad>
   </div>
   } @else if (zone === ZoneAd.FOOTER) {
-  <!--<app-footer-banner-ad [ad]="currentAd!"></app-footer-banner-ad> -->
+  <app-footer-ad [ad]="currentAd!"></app-footer-ad>
   } @else {
   <p>Diseño no implementado para {{ zone }}</p>
   } }
 
   <!-- Skeleton loader -->
-  @if (isLoading) {
+  @if (isLoading && zone !== ZoneAd.FOOTER) {
   <div class="banner-skeleton" [attr.data-zone]="zone"></div>
   }
 </section>

@@ -1,10 +1,12 @@
 <app-header></app-header>
 
-@if(mostrarBannerTop){ @defer (on idle) {
+@if(mostrarBannerTop)
+{ @defer (on idle) {
 <app-ad-zone [zone]="ZoneAd.TOP_BANNER" [rotationInterval]="7000"></app-ad-zone>
 } @placeholder {
 <div class="top-banner-placeholder"></div>
-} } @if (mostrarBannerLateral) {
+} } 
+@if (mostrarBannerLateral) {
 <div class="layout-container">
   <main class="main-content flex-grow-1">
     <router-outlet></router-outlet>
@@ -24,5 +26,17 @@
   <router-outlet></router-outlet>
 </main>
 }
-
+@if(mostrarBannerFooter)
+{ @defer (on idle) {
+<app-ad-zone [zone]="ZoneAd.FOOTER" [rotationInterval]="7000"></app-ad-zone>
+} @placeholder {
+<div class="top-banner-placeholder"></div>
+} } 
 <app-footer></app-footer>
+
+@if (popupActual$ | async; as popup) {
+  <app-pop-up
+    [publicidad]="popup"
+    (cerrar)="cerrarPopup()"
+  ></app-pop-up>
+}

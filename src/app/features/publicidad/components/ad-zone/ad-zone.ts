@@ -5,10 +5,11 @@ import { CommonModule } from '@angular/common';
 import { ZoneAd } from '../../../../models/enums/zoneAd.enum';
 import { TopBannerAd } from '../top-banner-ad/top-banner-ad';
 import { SideBannerAd } from '../side-banner-ad/side-banner-ad';
+import { FooterAd } from '../footer-ad/footer-ad';
 
 @Component({
   selector: 'app-ad-zone',
-  imports: [CommonModule, TopBannerAd, SideBannerAd],
+  imports: [CommonModule, TopBannerAd, SideBannerAd, FooterAd],
   templateUrl: './ad-zone.html',
   styleUrl: './ad-zone.css',
 })

@@ -1,21 +1,25 @@
-<div class="container py-5">
+<div class="services-hero">
+  <i class="bi bi-award-fill paw-icon paw-1"></i>
+  <i class="bi bi-heart-fill paw-icon paw-2"></i>
+  <i class="bi bi-star-fill paw-icon paw-3"></i>
   
-  <header class="text-center mb-5">
-    <h1 class="display-4 fw-bold text-primary-dark">Servicios Destacados</h1>
-    <p class="lead text-muted">Encuentra los mejores profesionales y negocios para el cuidado de tu mascota.</p>
-  </header>
 
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  <div class="container text-center position-relative">
+    <h1>🐾 Servicios Destacados</h1>
+    <p>Encuentra los mejores profesionales y negocios para el cuidado de tu mascota</p>
+  </div>
+</div>
+<div class="container pb-5">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-5">
     @for (ad of serviceAds; track ad.id) {
-      <div class="col">
-        <app-service-ad-card [ad]="ad"></app-service-ad-card>
-      </div>
+    <div class="col">
+      <app-service-ad-card [ad]="ad"></app-service-ad-card>
+    </div>
     } @empty {
-      <div class="col-12 text-center py-5">
-        <i class="bi bi-info-circle-fill text-muted fs-3 mb-3"></i>
-        <p class="text-muted">No hay servicios destacados disponibles por el momento.</p>
-      </div>
+    <div class="col-12 text-center py-5">
+      <i class="bi bi-info-circle-fill text-muted fs-3 mb-3"></i>
+      <p class="text-muted">No hay servicios destacados disponibles por el momento.</p>
+    </div>
     }
   </div>
-
 </div>

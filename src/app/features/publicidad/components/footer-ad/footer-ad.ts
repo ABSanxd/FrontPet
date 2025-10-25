@@ -1,15 +1,38 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AdvertisementResponseDTO } from '../../../../models/advertisement';
 import { SocialMediaType } from '../../../../models/enums/socialMediaType.enum';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-service-ad-card',
-  imports: [],
-  templateUrl: './service-ad-card.html',
-  styleUrl: './service-ad-card.css',
+  selector: 'app-footer-ad',
+  imports: [CommonModule],
+  templateUrl: './footer-ad.html',
+  styleUrl: './footer-ad.css',
 })
-export class ServiceAdCard {
+export class FooterAd {
   @Input({ required: true }) ad!: AdvertisementResponseDTO;
+  @Output() closed = new EventEmitter<void>();
+
+  mostrarBanner = true;
+  cerrando = false;
+
+  cerrarBanner() {
+    this.cerrando = true;
+    setTimeout(() => {
+      this.mostrarBanner = false;
+      this.closed.emit(); // Notificar al padre que se cerró
+    }, 300);
+  }
+  abrirLink(url: string) {
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  onImageError(event: any) {
+    console.error('Error al cargar imagen:', this.ad.imageUrl);
+    this.ad.imageUrl = '';
+  }
 
   getSocialIcon(type: SocialMediaType): string {
     const icons: Record<SocialMediaType, string> = {
@@ -33,9 +56,5 @@ export class ServiceAdCard {
       [SocialMediaType.WHATSAPP]: 'WhatsApp',
     };
     return names[type] || 'Red Social';
-  }
-
-  onImageError(event: any) {
-    console.error('Error al cargar imagen del servicio:', this.ad.imageUrl);
   }
 }

@@ -1,0 +1,122 @@
+<div class="popup-overlay" (click)="cerrarPopup()"></div>
+
+<div class="popup-modal rounded-4 shadow-lg">
+  <button type="button" class="btn-close" aria-label="Cerrar" (click)="cerrarPopup()"></button>
+
+  @if (publicidad.imageUrl) {
+  <div class="popup-image-mode">
+    <div class="image-background" [style.background-image]="'url(' + publicidad.imageUrl + ')'">
+      <div class="image-overlay"></div>
+    </div>
+    <div class="popup-body p-4 text-white">
+      <div class="popup-content-box">
+        <h3 class="fw-bold mb-2">{{ publicidad.name }}</h3>
+        <p class="description-text mb-3">{{ publicidad.description }}</p>
+        @if(publicidad.contact.address){
+        <p class="description-text mb-3">
+          <i class="bi bi-geo-alt-fill me-2"></i> <span>{{ publicidad.contact.address }}</span>
+        </p>
+        } @if (publicidad.link) {
+        <a
+          [href]="publicidad.link"
+          target="_blank"
+          class="btn btn-orange btn-lg rounded-pill shadow-sm"
+        >
+          <i class="bi bi-link-45deg me-2"></i>
+          Visitar
+        </a>
+        } @else if (publicidad.contact.socialMedia?.url) {
+        <a
+          [href]="publicidad.contact.socialMedia!.url"
+          target="_blank"
+          class="btn btn-outline-light btn-lg rounded-pill shadow-sm"
+        >
+          <i class="bi bi-{{ getSocialMediaIcon(publicidad.contact.socialMedia!.type) }} me-2"></i>
+          Contactar
+        </a>
+        }@else if(publicidad.contact.email){
+        <a
+          [href]="'mailto:' + publicidad.contact.email"
+          class="btn btn-red btn-lg rounded-pill shadow-sm"
+        >
+          <i class="bi bi-envelope-fill me-2"></i>
+          Enviar un correo
+        </a>
+        }@else if( publicidad.contact.phone){
+        <a
+          [href]="'tel:' + publicidad.contact.phone"
+          class="btn btn-green btn-lg rounded-pill shadow-sm"
+        >
+          <i class="bi bi-telephone-fill me-2"></i>
+          Llamar</a
+        >
+        }
+      </div>
+    </div>
+  </div>
+  } @else {
+  <div
+    class="popup-gradient-mode p-4 pb-0 text-center text-white"
+    [attr.data-priority]="publicidad.priority"
+  >
+    <h3 class="fw-bold mb-2">{{ publicidad.name }}</h3>
+    <div class="info-box-blur px-4 p-3 rounded-3 m-4">
+      <p class="mb-2">{{ publicidad.description }}</p>
+      @if(publicidad.contact.address){
+      <p class="mb-2">
+        <i class="bi bi-geo-alt-fill me-2"></i> <span>{{ publicidad.contact.address }}</span>
+      </p>
+      } @if(publicidad.contact.phone && publicidad.contact.socialMedia?.type !== 'WHATSAPP'){
+      <a [href]="'tel:' + publicidad.contact.phone" class="mb-2 text-dark">
+        <i class="bi bi-telephone-fill me-2"></i>
+        {{ publicidad.contact.phone }}</a
+      >
+      } @if(publicidad.contact.email && publicidad.contact.socialMedia?.url){
+      <a [href]="'mailto:' + publicidad.contact.email" class="mb-2 text-dark">
+        <i class="bi bi-envelope-fill me-2"></i>
+        Enviar un correo
+      </a>
+      }
+    </div>
+    @if (publicidad.link) {
+    <a
+      [href]="publicidad.link"
+      target="_blank"
+      class="btn btn-orange btn-lg rounded-pill shadow-sm"
+    >
+      <i class="bi bi-link-45deg me-2"></i>
+      Visitar
+    </a>
+    } @else if (publicidad.contact.socialMedia?.url) {
+    <a
+      [href]="publicidad.contact.socialMedia!.url"
+      target="_blank"
+      class="btn btn-red btn-lg rounded-pill shadow-sm"
+    >
+      <i class="bi bi-{{ getSocialMediaIcon(publicidad.contact.socialMedia!.type) }} me-2"></i>
+      Contactar
+    </a>
+    }@else if(publicidad.contact.email){
+    <a
+      [href]="'mailto:' + publicidad.contact.email"
+      class="btn btn-red btn-lg rounded-pill shadow-sm"
+    >
+      <i class="bi bi-envelope-fill me-2"></i>
+      Enviar un correo
+    </a>
+    }
+    <div class="pet-gif-container row mt-0">
+      <img
+        src="https://i.gifer.com/4xjK.gif"
+        alt="Perrito animado"
+        class="img-fluid rabit-gif col"
+      />
+      <img
+        src="https://i.gifer.com/DAS.gif"
+        alt="Gatito"
+        class="img-fluid cat-gif col"
+      />
+    </div>
+  </div>
+  }
+</div>
