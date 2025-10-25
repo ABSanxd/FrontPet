@@ -1,0 +1,152 @@
+<div class="form-container">
+  <!-- Background con patitas -->
+  <div class="paw-background"></div>
+  
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-9">
+        
+        <!-- Título -->
+        <div class="text-center mb-4">
+          <h2 class="fw-bold title-orange mb-3">¡Agrega una nueva publicación!</h2>
+          <div class="subtitle-box">
+            <p class="mb-0">¡Dale a una mascota el hogar que merece!</p>
+          </div>
+        </div>
+
+        <!-- Decoración perrito -->
+        <div class="dog-decoration">
+          <img src="assets/dog-and-cat.png" alt="Perros" onerror="this.style.display='none'">
+        </div>
+
+        <!-- Formulario -->
+        <div class="form-card">
+          <form [formGroup]="publicationForm" (ngSubmit)="onSubmit()">
+            
+            <div class="row">
+              <!-- Columna izquierda: Foto y Nombre -->
+              <div class="col-md-5 mb-4">
+                <!-- Subir foto -->
+                <div class="photo-upload-wrapper">
+                  <div class="photo-upload-box" (click)="triggerFileInput()">
+                    <div class="photo-preview" *ngIf="photoPreview">
+                      <img [src]="photoPreview" alt="Preview">
+                    </div>
+                    <div class="photo-placeholder" *ngIf="!photoPreview">
+                      <div class="plus-circle">
+                        <i class="bi bi-plus"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="photo-label">Subir foto de la mascota</p>
+                  <input 
+                    type="file" 
+                    id="fileInput"
+                    accept="image/*"
+                    (change)="onFileSelected($event)"
+                    style="display: none;">
+                </div>
+
+                <!-- Nombre -->
+                <div class="mb-3">
+                  <label class="form-label">Nombre</label>
+                  <input 
+                    type="text" 
+                    class="form-control form-control-custom" 
+                    formControlName="tempName"
+                    placeholder="Nombre y apellidos"
+                    [class.is-invalid]="f['tempName'].invalid && f['tempName'].touched">
+                </div>
+              </div>
+
+              <!-- Columna derecha: Datos -->
+              <div class="col-md-7">
+                <!-- Especie -->
+                <div class="mb-3">
+                  <label class="form-label">Especie</label>
+                  <select 
+                    class="form-select form-control-custom" 
+                    formControlName="species"
+                    [class.is-invalid]="f['species'].invalid && f['species'].touched">
+                    <option value="">Selecciona una opción...</option>
+                    <option *ngFor="let especie of especies" [value]="especie">
+                      {{getSpeciesEmoji(especie)}} {{getSpeciesLabel(especie)}}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Edad -->
+                <div class="mb-3">
+                  <label class="form-label">Edad</label>
+                  <input 
+                    type="text" 
+                    class="form-control form-control-custom" 
+                    formControlName="approxAge"
+                    placeholder="Ingresa la edad de tu mascota"
+                    [class.is-invalid]="f['approxAge'].invalid && f['approxAge'].touched">
+                </div>
+
+                <!-- Ubicación -->
+                <div class="mb-3">
+                  <label class="form-label">Ubicacion</label>
+                  <input 
+                    type="text" 
+                    class="form-control form-control-custom" 
+                    formControlName="location"
+                    placeholder="Nombre de ciudad"
+                    [class.is-invalid]="f['location'].invalid && f['location'].touched">
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-3">
+                  <label class="form-label">Descripcion</label>
+                  <textarea 
+                    class="form-control form-control-custom" 
+                    rows="3" 
+                    formControlName="description"
+                    placeholder="Añade una descripcion corta sobre tu mascota"
+                    [class.is-invalid]="f['description'].invalid && f['description'].touched"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Acerca de la adopción (ancho completo) -->
+            <div class="mb-4">
+              <label class="form-label">Acerca de la adopcion:</label>
+              <textarea 
+                class="form-control form-control-custom" 
+                rows="3" 
+                formControlName="adoptionInfo"
+                placeholder="Añade una descripcion corta sobre datos para la adopcion"
+                [class.is-invalid]="f['adoptionInfo'].invalid && f['adoptionInfo'].touched"></textarea>
+            </div>
+
+            <!-- Botones -->
+            <div class="text-center">
+              <button 
+                type="submit" 
+                class="btn btn-register mb-3"
+                [disabled]="loading">
+                <span *ngIf="!loading">¡Registrar mascota!</span>
+                <span *ngIf="loading">
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Registrando...
+                </span>
+              </button>
+              <br>
+              <button 
+                type="button" 
+                class="btn btn-link text-dark text-decoration-none"
+                (click)="onCancel()"
+                [disabled]="loading">
+                Cancelar
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
