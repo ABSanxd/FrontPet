@@ -11,147 +11,181 @@ import { AuthService } from '../../core/services/auth/auth.service';
   selector: 'app-perfil',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
-  styleUrl: './perfil.css'
+  styleUrl: './perfil.css',
 })
 export class Perfil implements OnInit {
+  private currentUserId: string | null = null;
+  public user$ = new BehaviorSubject<UserResponseDTO | null>(null);
+  public profileForm!: FormGroup;
+  public departments$!: Observable<string[]>;
+  public provinces$!: Observable<string[]>;
+  public districts$!: Observable<string[]>;
+  public showPasswordForm: boolean = false; 
+  public isEditing: boolean = false;
+  public errorMessage: string | null = null;
+  public SuccessMessage: string | null = null;
+  public isLoading: boolean = true;
 
-      private userId: string = '248c8b1a-8212-4293-87e2-1a48c484252a'; 
-      public user$ = new BehaviorSubject<UserResponseDTO | null>(null);
-      public profileForm!: FormGroup;
-      public departments$!: Observable<string[]>;
-      public provinces$!: Observable<string[]>;
-      public districts$!: Observable<string[]>;
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private ubigeoService: UbigeoService,
+    private authSerivce: AuthService
+  ) {
+    // Obtener el ID del usuario al inicializar
+    const user = this.authSerivce.getUser();
+    if (user) {
+      this.currentUserId = user.id;
+    }
+    this.createForm();
+  }
 
-      public isEditing: boolean = false;
-      public errorMessage: string | null = null;
-      public SuccessMessage: string | null = null;
-      public isLoading: boolean = true;
-
-      constructor (private fb : FormBuilder, private userService: UserService, private ubigeoService: UbigeoService, private authSerivce: AuthService ){
-        this.createForm()
-      }
-
-      ngOnInit(): void {
+  ngOnInit(): void {
+      // Ahora, antes de cargar los datos, verificamos si tenemos un ID
+      if (this.currentUserId) {
           this.loadUserData();
-          this.setupUbigeoListeners()
+      } else {
+          // Opcional: Manejar el caso donde no hay usuario (ej. redirigir a login si el guard falla)
+          console.error("No se encontró ID de usuario. Redirigiendo o mostrando error.");
+          this.isLoading = false;
       }
+      this.setupUbigeoListeners();
+    }
 
-      createForm():void{
-        this.profileForm = this.fb.group({
-          name: [{value: '', disabled: !this.isEditing}, [Validators.required, Validators.minLength(2)]],
-          email: [{value: '', disabled: true}],
-          department: [{value: '', disabled: !this.isEditing}],
-          province: [{value: '', disabled: !this.isEditing}],
-          district: [{value: '', disabled: !this.isEditing}],
-          password: [''],
-          confirmPassword: ['']
-        })
-      }
+  createForm(): void {
+    this.profileForm = this.fb.group({
+      name: [
+        { value: '', disabled: !this.isEditing },
+        [Validators.required, Validators.minLength(2)],
+      ],
+      email: [{ value: '', disabled: true }],
+      department: [{ value: '', disabled: !this.isEditing }],
+      province: [{ value: '', disabled: !this.isEditing }],
+      district: [{ value: '', disabled: !this.isEditing }],
+      currentPassword: [''],
+      newPassword:['',[Validators.minLength(8)]],
+      confirmNewPassword: [''],
+    },{validator: this.passwordMatchValidator});
+  }
 
+  passwordMatchValidator(form: FormGroup) {
+    const newPass = form.get('newPassword');
+    const confirmPass = form.get('confirmNewPassword');
 
-      loadUserData():void{
-        this.isLoading = true;
-        this.userService.getUserById(this.userId).subscribe({
-          next: (user) =>{
-            this.user$.next(user);
-            this.profileForm.patchValue({
-              name: user.name,
-              email: user.email,
-              department: user.department,
-              province: user.province,
-              district: user.district,
-            })
-            this.isLoading = false;
-          }
-        });
-      }
-
-      setupUbigeoListeners(): void{
-        this.departments$ = this.ubigeoService.getDepartments();
-
-      //cargar provincias cuando cambian departamento 
-        this.provinces$ = this.profileForm.get('department')!.valueChanges.pipe(
-          startWith(this.profileForm.get('department')!.value),
-          switchMap(department =>{
-            if(!department) return [];
-            //Reseta provincia y distrito si departamente cambia
-            this.profileForm.get('province')!.setValue('');
-            this.profileForm.get('district')!.setValue('');
-            return this.ubigeoService.getProvinces(department); 
-          })
-        );
-        
-        //cargar distritos cuando cambian departamento y provincia 
-        this.districts$ = combineLatest([
-          this.profileForm.get('department')!.valueChanges.pipe(startWith(this.profileForm.get('department')!.value)),
-          this.profileForm.get('province')!.valueChanges.pipe(startWith(this.profileForm.get('province')!.value))
-        ]).pipe(
-          switchMap(([department, province])=>{
-            if(!department || !province) return[];
-            this.profileForm.get('district')!.setValue('')
-            return this.ubigeoService.getDistricts(department, province)
-          })
-        )
-      }
-
-      toggleEditMode(enable: boolean): void{
-        this.isEditing = enable;
-        Object.keys(this.profileForm.controls).forEach(key =>{
-          if(key !== 'email' && key !== 'password' && key !=='confirmPassword'){
-            this.isEditing ? this.profileForm.get(key)!.enable() : this.profileForm.get(key)!.disable(); 
-          }
-        })
-      }
-
-      onSaveChanges(): void{
-        this.errorMessage = null;
-        this.SuccessMessage= null;
-        if(this.profileForm.invalid){
-          this.errorMessage = "Por favor, completa correctamente los campos requeridos";
-          return;
-        }
-
-        //obtener solo los campos que tienen valor para la actualizacion parcial (PATCH)
-        const updatePayload: UserUpdateDTO={
-          name: this.profileForm.get('name')!.value,
-          department: this.profileForm.get('department')!.value,
-          province: this.profileForm.get('province')!.value,
-          district: this.profileForm.get('district')!.value,
-        };
-
-        this.userService.updateUser(this.userId, updatePayload).subscribe({
-          next: (UpdatedUser)=>{
-            this.user$.next(UpdatedUser) ;
-            this.toggleEditMode(false);
-            this.SuccessMessage= 'Perfil actualizado exitosamente';
-          },
-          error: (err)=>{
-            this.errorMessage = 'Error al actualizar:' + err.error.message;
-          }
-        });
-      }
-
-      onDeleteAccount(): void{
-        if(confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta accion es irreversible')){
-          this.userService.deleteUser(this.userId).subscribe({
-            next:()=>{
-              //logica para cerrar sesion y redirgir al login o landing page
-              console.log('Cuenta Eliminada');
-              this.authSerivce.logout();
-            },
-            error: (err) =>{
-              this.errorMessage = 'Error al eliminar la cuenta: '+ err
-            }
-          })
-        }
-      }
-
-
-      
-
-      
-
-
+    if (newPass && confirmPass && newPass.value !== confirmPass.value) {
+        return { passwordsNotMatching: true };
+    }
+    return null;
 }
 
+  loadUserData(): void {
+    if(!this.currentUserId) return;
+    this.isLoading = true;
+    this.userService.getUserById(this.currentUserId).subscribe({
+      next: (user) => {
+        this.user$.next(user);
+        this.profileForm.patchValue({
+          name: user.name,
+          email: user.email,
+          department: user.department,
+          province: user.province,
+          district: user.district,
+        });
+        this.isLoading = false;
+      },
+      error: (err) => {
+             // Es crucial manejar errores 401 aquí si no lo hace el interceptor
+             this.isLoading = false;
+             this.errorMessage = 'Error al cargar perfil: ' + err.error.message;
+        }
+    });
+  }
 
+  setupUbigeoListeners(): void {
+    this.departments$ = this.ubigeoService.getDepartments();
+
+    //cargar provincias cuando cambian departamento
+    this.provinces$ = this.profileForm.get('department')!.valueChanges.pipe(
+      startWith(this.profileForm.get('department')!.value),
+      switchMap((department) => {
+        if (!department) return [];
+        //Reseta provincia y distrito si departamente cambia
+        this.profileForm.get('province')!.setValue('');
+        this.profileForm.get('district')!.setValue('');
+        return this.ubigeoService.getProvinces(department);
+      })
+    );
+
+    //cargar distritos cuando cambian departamento y provincia
+    this.districts$ = combineLatest([
+      this.profileForm
+        .get('department')!
+        .valueChanges.pipe(startWith(this.profileForm.get('department')!.value)),
+      this.profileForm
+        .get('province')!
+        .valueChanges.pipe(startWith(this.profileForm.get('province')!.value)),
+    ]).pipe(
+      switchMap(([department, province]) => {
+        if (!department || !province) return [];
+        this.profileForm.get('district')!.setValue('');
+        return this.ubigeoService.getDistricts(department, province);
+      })
+    );
+  }
+
+  toggleEditMode(enable: boolean): void {
+    this.isEditing = enable;
+    Object.keys(this.profileForm.controls).forEach((key) => {
+      if (key !== 'email' && key !== 'password' && key !== 'confirmPassword') {
+        this.isEditing ? this.profileForm.get(key)!.enable() : this.profileForm.get(key)!.disable();
+      }
+    });
+  }
+
+  onSaveChanges(): void {
+    if(!this.currentUserId || this.profileForm.invalid) return;
+    this.errorMessage = null;
+    this.SuccessMessage = null;
+    if (this.profileForm.invalid) {
+      this.errorMessage = 'Por favor, completa correctamente los campos requeridos';
+      return;
+    }
+
+    //obtener solo los campos que tienen valor para la actualizacion parcial (PATCH)
+    const updatePayload: UserUpdateDTO = {
+      name: this.profileForm.get('name')!.value,
+      department: this.profileForm.get('department')!.value,
+      province: this.profileForm.get('province')!.value,
+      district: this.profileForm.get('district')!.value,
+    };
+
+    this.userService.updateUser(this.currentUserId, updatePayload).subscribe({
+      next: (UpdatedUser) => {
+        this.user$.next(UpdatedUser);
+        this.toggleEditMode(false);
+        this.SuccessMessage = 'Perfil actualizado exitosamente';
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al actualizar:' + err.error.message;
+      },
+    });
+  }
+
+  onDeleteAccount(): void {
+    if (!this.currentUserId || this.profileForm.invalid) return
+    if (confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta accion es irreversible')) {
+      this.userService.deleteUser(this.currentUserId).subscribe({
+        next: () => {
+          //logica para cerrar sesion y redirgir al login o landing page
+          console.log('Cuenta Eliminada');
+          this.authSerivce.logout();
+        },
+        error: (err) => {
+          this.errorMessage = 'Error al eliminar la cuenta: ' + err;
+        },
+      });
+    }
+  }
+  
+  
+}
