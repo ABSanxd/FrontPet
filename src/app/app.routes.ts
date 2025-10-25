@@ -8,6 +8,9 @@ import { Donaciones } from './features/donaciones/donaciones';
 import { Perfil } from './features/perfil/perfil';
 import { guestGuard } from './core/guards/guest.guard';
 import { Servicios } from './features/publicidad/servicios';
+import { ListarMascotas } from './features/mascotas/listar-mascotas/listar-mascotas';
+import { RegistrarMascota } from './features/mascotas/registrar-mascota/registrar-mascota';
+import { DetallesMascota } from './features/mascotas/detalles-mascota/detalles-mascota';
 
 
 export const routes: Routes = [
@@ -37,7 +40,29 @@ export const routes: Routes = [
         component: Perfil,
         canActivate: [authGuard]
     },
-    
+    // --- RUTAS DE MASCOTAS (AHORA ACTIVAS) ---
+    {
+      path: 'mascotas/nueva',
+      component: RegistrarMascota,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'mascotas/:id', // <-- RUTA DE DETALLE (NUEVA)
+      component: DetallesMascota, 
+      canActivate: [authGuard]
+    },
+    {
+      path: 'mascotas/:id/editar', // <-- RUTA DE EDICIÓN (NUEVA)
+      component: RegistrarMascota, // Reusamos el formulario de registro
+      canActivate: [authGuard]
+    },
+
+    {
+    path: 'mascotas/:id/editar',
+    component: RegistrarMascota, // <-- Reutilizamos el componente
+    canActivate: [authGuard]
+    },
+
     { path: '**', redirectTo: '' }
 
 ];

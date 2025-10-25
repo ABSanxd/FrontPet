@@ -1,0 +1,72 @@
+<div class="list-container container py-5">
+
+  <header class="text-start mb-4">
+    <h1 class="list-title">¡Hola, {{ userName }}!</h1>
+    <p class="list-subtitle">Mira como van tus mascotas hoy</p>
+  </header>
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary-dark" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando tus mascotas...</p>
+    </div>
+  }
+
+  @if (!isLoading && error) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ error }}
+    </div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+      
+      @for (pet of pets; track pet.id) {
+        <div class="col">
+          <div class="card h-100 pet-card">
+            <div class="card-img-wrapper">
+              <img 
+                [src]="pet.photo || 'assets/pet-placeholder.png'" 
+                class="card-img-top" 
+                [alt]="pet.nombre"
+                (error)="onImageError($event)"
+              >
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ pet.nombre }}</h5>
+              <p class="card-text">{{ pet.breed || (pet.especie | titlecase) }}</p>
+              
+              <div class="pet-stats">
+                <span class="badge" [ngClass]="getPetLevelClass(pet.nivel)">
+                  Nivel: {{ pet.nivel | titlecase }}
+                </span>
+                <span class="pet-xp">XP: {{ pet.petXp }}</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <a [routerLink]="['/mascotas', pet.id]" class="btn btn-orange w-100">Ver más</a>
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="col">
+        <a [routerLink]="['/mascotas/nueva']" class="card h-100 add-pet-card">
+          <div class="card-body">
+            <img [src]="addPetImg" alt="Agregar mascota" class="add-pet-icons">
+            <div class="add-pet-content">
+              <div class="add-icon">
+                <i class="bi bi-plus-lg"></i>
+              </div>
+              <span class="add-text">Agregar mascota</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  }
+</div>
