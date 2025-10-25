@@ -10,7 +10,7 @@ import { ListarMascotas } from '../mascotas/listar-mascotas/listar-mascotas';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule, AdZone, ListarMascotas], 
+  imports: [CommonModule, ListarMascotas], 
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'
 })

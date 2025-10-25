@@ -8,7 +8,6 @@ import { Donaciones } from './features/donaciones/donaciones';
 import { Perfil } from './features/perfil/perfil';
 import { guestGuard } from './core/guards/guest.guard';
 import { Servicios } from './features/publicidad/servicios';
-import { ListarMascotas } from './features/mascotas/listar-mascotas/listar-mascotas';
 import { RegistrarMascota } from './features/mascotas/registrar-mascota/registrar-mascota';
 import { DetallesMascota } from './features/mascotas/detalles-mascota/detalles-mascota';
 
