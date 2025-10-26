@@ -11,7 +11,6 @@ import { UserResponseDTO } from '../../../models/user';
 export class PerfilInfoCard {
   @Input() profileForm!: FormGroup;
   @Input() user!: UserResponseDTO | null;
-  @Input() isEditing: boolean = false;
 
   isEmailDisabled(): boolean {
     return this.profileForm.get('email')!.disabled;
