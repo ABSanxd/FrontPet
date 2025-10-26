@@ -1,24 +1,19 @@
-/* perfil.css */
+/* perfil.css (ESTILOS GLOBALES DEL CONTENEDOR) */
 
 /* ==========================================
-   CONTENEDOR PRINCIPAL CON IMAGEN DE FONDO
+   1. CONTENEDOR PRINCIPAL Y FONDO
    ========================================== */
 .perfil-container {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
     
-    /* 🎨 COLOCA TU IMAGEN DE FONDO AQUÍ */
+    /* 🎨 MANTENER LA IMAGEN DE FONDO AQUÍ */
     background-image: url('../../../../public/assets/img-landing-01.png');
-    /* O también puedes usar una ruta relativa como: */
-    /* background-image: url('/assets/images/tu-imagen.png'); */
-    
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* Efecto parallax opcional */
-    
-    /* Color de respaldo si no carga la imagen */
+    background-attachment: fixed; 
     background-color: #f5e6d3;
 }
 
@@ -30,15 +25,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(245, 230, 211, 0.3); /* Overlay semi-transparente */
+    background: rgba(245, 230, 211, 0.3);
     z-index: 0;
     pointer-events: none;
-}
-
-/* Asegurar que el contenido esté sobre el fondo */
-.container {
-    position: relative;
-    z-index: 1;
 }
 
 /* Header */
@@ -47,6 +36,12 @@
     font-weight: 700;
     color: #5a3a1a;
     text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* Asegurar que el contenido esté sobre el fondo */
+.container {
+    position: relative;
+    z-index: 1;
 }
 
 /* Tarjeta principal del perfil */
@@ -61,26 +56,9 @@
     z-index: 1;
 }
 
-/* Sección del avatar */
-.avatar {
-    width: 120px;
-    height: 120px;
-    background: linear-gradient(135deg, #3b9e9a 0%, #2d7a77 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 5px 20px rgba(59, 158, 154, 0.3);
-}
-
-.user-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-}
-
-/* Estilos de formulario mejorados */
+/* ==========================================
+   2. ESTILOS BASE DE FORMULARIO (COMPARTIDOS)
+   ========================================== */
 .form-label {
     font-size: 0.9rem;
     font-weight: 600;
@@ -103,57 +81,13 @@
     box-shadow: 0 0 0 3px rgba(59, 158, 154, 0.1);
 }
 
-.form-control:disabled {
-    background-color: #f5f5f5;
-    color: #999;
-}
-
-/* Botón cambiar contraseña */
-.btn-change-password {
-    background: #3b9e9a;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-change-password:hover {
-    background: #2d7a77;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 158, 154, 0.3);
-}
-
-/* Información de mascotas */
-.pets-info {
-    background: #f8f9fa;
-    border-left: 4px solid #3b9e9a;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 25px 0;
-}
-
-.pets-info p {
-    color: #555;
-    font-size: 0.95rem;
-}
-
-.pets-info strong {
-    color: #3b9e9a;
-    font-weight: 700;
-}
-
-/* Mensajes de error personalizados */
+/* Mensajes de error y éxito */
 .error-message {
     color: #dc3545;
     font-size: 0.85rem;
     margin-top: 5px;
 }
 
-/* Alertas personalizadas */
 .alert {
     border-radius: 8px;
     border-left: 4px solid;
@@ -173,7 +107,11 @@
     border-left-color: #3a3;
 }
 
-/* Grupo de botones */
+/* ==========================================
+   3. BOTONES DE ACCIÓN (DEL COMPONENTE PADRE)
+   ========================================== */
+
+/* Grupo de botones de Guardar/Cancelar */
 .button-group {
     display: flex;
     gap: 10px;
@@ -183,7 +121,7 @@
     flex: 1;
 }
 
-/* Estilos de botones mejorados */
+/* Estilos de botones mejorados (General y primarios/secundarios) */
 .btn {
     padding: 12px 30px;
     border-radius: 8px;
@@ -192,24 +130,12 @@
     transition: all 0.3s ease;
 }
 
-.btn-primary {
+.btn-primary, .btn-success { /* Usado para Editar y Guardar */
     background: #6b9b37;
     border-color: #6b9b37;
 }
 
-.btn-primary:hover {
-    background: #5a8630;
-    border-color: #5a8630;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(107, 155, 55, 0.3);
-}
-
-.btn-success {
-    background: #6b9b37;
-    border-color: #6b9b37;
-}
-
-.btn-success:hover {
+.btn-primary:hover, .btn-success:hover {
     background: #5a8630;
     border-color: #5a8630;
     transform: translateY(-2px);
@@ -223,7 +149,7 @@
     transform: none;
 }
 
-.btn-secondary {
+.btn-secondary { /* Usado para Cancelar */
     background: #6c757d;
     border-color: #6c757d;
 }
@@ -233,6 +159,12 @@
     border-color: #5a6268;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+}
+
+.btn-danger { /* Usado para Eliminar Cuenta */
+    /* Mantener estilo base de Bootstrap o añadir tu color rojo */
+    background: #dc3545;
+    border-color: #dc3545;
 }
 
 .btn-danger:hover {
@@ -247,7 +179,9 @@
     text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 }
 
-/* Responsive */
+/* ==========================================
+   4. RESPONSIVE (Mantenidas aquí por ser generales)
+   ========================================== */
 @media (max-width: 768px) {
     .header h1 {
         font-size: 2rem;
@@ -271,16 +205,7 @@
     .header h1 {
         font-size: 1.75rem;
     }
-
-    .avatar {
-        width: 100px;
-        height: 100px;
-    }
-
-    .user-name {
-        font-size: 1.25rem;
-    }
-
+    
     .profile-card {
         padding: 20px;
     }

@@ -1,15 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '../../core/services/user/user.service';
-import { UbigeoService } from '../../services/ubigeo/ubigeo.service';
-import { UserResponseDTO, UserUpdateDTO } from '../../models/user';
-import { Observable, BehaviorSubject, combineLatest, startWith, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/services/auth/auth.service';
 
+import { UserService } from '../../core/services/user/user.service';
+import { AuthService } from '../../core/services/auth/auth.service';
+import { UserResponseDTO, UserUpdateDTO } from '../../models/user';
+import { BehaviorSubject } from 'rxjs';
+
+import { PerfilPasswordChange } from './perfil-password-change/perfil-password-change';
+import { PerfilLocationForm } from './perfil-location-form/perfil-location-form';
+import { PerfilInfoCard } from './perfil-info-card/perfil-info-card';
+import { PerfilPetsInfo } from './perfil-pets-info/perfil-pets-info';
 @Component({
   selector: 'app-perfil',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ReactiveFormsModule,
+    PerfilInfoCard,
+    PerfilLocationForm,
+    PerfilPasswordChange,
+    PerfilPetsInfo,
+  ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -17,49 +29,50 @@ export class Perfil implements OnInit {
   private currentUserId: string | null = null;
   public user$ = new BehaviorSubject<UserResponseDTO | null>(null);
   public profileForm!: FormGroup;
-  public departments$!: Observable<string[]>;
-  public provinces$!: Observable<string[]>;
-  public districts$!: Observable<string[]>;
   public isEditing = false;
+  public isLoading = true;
+
   public errorMessage: string | null = null;
   public successMessage: string | null = null;
-  public isLoading = true;
+  public showPasswordModal: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private ubigeoService: UbigeoService,
     private authService: AuthService
   ) {
-    // Obtener el ID del usuario al inicializar
     const user = this.authService.getUser();
     if (user) this.currentUserId = user.id;
     this.createForm();
   }
 
   ngOnInit(): void {
-    // Ahora, antes de cargar los datos, verificamos si tenemos un ID
+    // LÓGICA DE CARGA DE DATOS PRINCIPAL
     if (this.currentUserId) this.loadUserData();
     else this.isLoading = false;
-    this.setupUbigeoListeners();
   }
 
   createForm(): void {
-    this.profileForm = this.fb.group({
-      name: [{ value: '', disabled: !this.isEditing }, [Validators.required, Validators.minLength(2)]],
-      email: [{ value: '', disabled: true }],
-      department: [{ value: '', disabled: !this.isEditing }],
-      province: [{ value: '', disabled: !this.isEditing }],
-      district: [{ value: '', disabled: !this.isEditing }],
-      newPassword: ['', [Validators.minLength(8)]],
-      confirmNewPassword: [''],
-    }, { validators: this.passwordMatchValidator });
+    this.profileForm = this.fb.group(
+      {
+        name: [
+          { value: '', disabled: !this.isEditing },
+          [Validators.required, Validators.minLength(2)],
+        ],
+        email: [{ value: '', disabled: true }],
+        department: [{ value: '', disabled: !this.isEditing }],
+        province: [{ value: '', disabled: !this.isEditing }],
+        district: [{ value: '', disabled: !this.isEditing }],
+        newPassword: ['', [Validators.minLength(8)]],
+        confirmNewPassword: [''],
+      },
+      { validators: this.passwordMatchValidator }
+    );
   }
 
   passwordMatchValidator(form: FormGroup) {
     const newPass = form.get('newPassword');
     const confirmPass = form.get('confirmNewPassword');
-
     if (newPass && confirmPass && newPass.value !== confirmPass.value) {
       return { passwordsNotMatching: true };
     }
@@ -84,39 +97,14 @@ export class Perfil implements OnInit {
       error: (err) => {
         this.errorMessage = 'Error al cargar perfil: ' + (err.error?.message || err.message);
         this.isLoading = false;
-      }
+      },
     });
-  }
-
-  setupUbigeoListeners(): void {
-    this.departments$ = this.ubigeoService.getDepartments();
-
-    //cargar provincias cuando cambian departamento
-    this.provinces$ = this.profileForm.get('department')!.valueChanges.pipe(
-      startWith(this.profileForm.get('department')!.value),
-      switchMap(dep => {
-        this.profileForm.get('province')!.setValue('');
-        this.profileForm.get('district')!.setValue('');
-        return dep ? this.ubigeoService.getProvinces(dep) : [];
-      })
-    );
-
-    //cargar distritos cuando cambian departamento y provincia
-    this.districts$ = combineLatest([
-      this.profileForm.get('department')!.valueChanges.pipe(startWith(this.profileForm.get('department')!.value)),
-      this.profileForm.get('province')!.valueChanges.pipe(startWith(this.profileForm.get('province')!.value)),
-    ]).pipe(
-      switchMap(([dep, prov]) => {
-        this.profileForm.get('district')!.setValue('');
-        return dep && prov ? this.ubigeoService.getDistricts(dep, prov) : [];
-      })
-    );
   }
 
   toggleEditMode(enable: boolean): void {
     this.isEditing = enable;
     Object.keys(this.profileForm.controls).forEach((key) => {
-      if (key !== 'email' && key !== 'password' && key !== 'confirmPassword') {
+      if (key !== 'email' && key !== 'newPassword' && key !== 'confirmNewPassword') {
         this.isEditing ? this.profileForm.get(key)!.enable() : this.profileForm.get(key)!.disable();
       }
     });
@@ -126,12 +114,7 @@ export class Perfil implements OnInit {
     if (!this.currentUserId || this.profileForm.invalid) return;
     this.errorMessage = null;
     this.successMessage = null;
-    if (this.profileForm.invalid) {
-      this.errorMessage = 'Por favor, completa correctamente los campos requeridos';
-      return;
-    }
 
-    //obtener solo los campos que tienen valor para la actualizacion parcial (PATCH)
     const updatePayload: UserUpdateDTO = {
       name: this.profileForm.get('name')!.value,
       department: this.profileForm.get('department')!.value,
@@ -152,20 +135,67 @@ export class Perfil implements OnInit {
   }
 
   onDeleteAccount(): void {
-    if (!this.currentUserId || this.profileForm.invalid) return
-    if (confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta accion es irreversible')) {
-      this.userService.deleteUser(this.currentUserId).subscribe({
-        next: () => {
-          //logica para cerrar sesion y redirgir al login o landing page
-          console.log('Cuenta Eliminada');
-          this.authService.logout();
-        },
-        error: (err) => {
-          this.errorMessage = 'Error al eliminar la cuenta: ' + err;
-        },
-      });
-    }
+    if (!this.currentUserId || !confirm('¿Estás seguro de que deseas eliminar tu cuenta?')) return;
+    this.userService.deleteUser(this.currentUserId).subscribe({
+      next: () => {
+        console.log('Cuenta Eliminada');
+        this.authService.logout();
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al eliminar la cuenta: ' + err;
+      },
+    });
   }
 
+  openPasswordChange(): void {
+    this.showPasswordModal = !this.showPasswordModal;
+    this.errorMessage = null;
+    this.successMessage = null;
 
+    if (!this.showPasswordModal) {
+      this.profileForm.get('newPassword')!.reset('');
+      this.profileForm.get('confirmNewPassword')!.reset('');
+    }
+    this.profileForm.updateValueAndValidity();
+  }
+
+  onPasswordChangeSubmit(): void {
+    if (!this.currentUserId) return;
+
+    const newPassControl = this.profileForm.get('newPassword')!;
+    const confirmPassControl = this.profileForm.get('confirmNewPassword')!;
+
+    newPassControl.markAsTouched();
+    confirmPassControl.markAsTouched();
+
+    if (newPassControl.invalid || this.profileForm.hasError('passwordsNotMatching')) {
+      this.errorMessage =
+        'Verifique que la contraseña cumpla con los requisitos minimos (minimo 8 caracteres) y coincida';
+      return;
+    }
+
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    const passwordUpdatePayLoad: UserUpdateDTO = {
+      name: this.profileForm.get('name')!.value,
+      department: this.profileForm.get('department')!.value,
+      district: this.profileForm.get('district')!.value,
+      province: this.profileForm.get('province')!.value,
+      password: newPassControl.value,
+    };
+
+    this.userService.updateUser(this.currentUserId, passwordUpdatePayLoad).subscribe({
+      next: () => {
+        this.successMessage = 'Contraseña actualizada exitosamente.';
+        this.showPasswordModal = false;
+        newPassControl.reset('');
+        confirmPassControl.reset('');
+      },
+      error: (err) => {
+        this.errorMessage =
+          'Error al cambiar la contraseña: ' + (err.error?.message || 'Error de conexión');
+      },
+    });
+  }
 }

@@ -1,0 +1,30 @@
+<div class="mb-3" [formGroup]="profileForm">
+    <label class="form-label">Ubicación</label>
+    
+    <select 
+        class="form-select mb-2" 
+        formControlName="department">
+        <option value="" disabled>Seleccionar Departamento</option>
+        @for (dept of departments$ | async; track dept) {
+            <option [value]="dept">{{ dept }}</option>
+        }
+    </select>
+    
+    <select 
+        class="form-select mb-2" 
+        formControlName="province">
+        <option value="" disabled>Seleccionar Provincia</option>
+        @for (prov of provinces$ | async; track prov) {
+            <option [value]="prov">{{ prov }}</option>
+        }
+    </select>
+
+    <select 
+        class="form-select" 
+        formControlName="district">
+        <option value="" disabled>Seleccionar Distrito</option>
+        @for (dist of districts$ | async; track dist) {
+            <option [value]="dist">{{ dist }}</option>
+        }
+    </select>
+</div>
