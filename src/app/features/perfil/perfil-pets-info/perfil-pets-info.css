@@ -1,9 +1,7 @@
-/* perfil-pets-info.component.css */
 
-/* Información de mascotas */
 .pets-info {
     background: #f8f9fa;
-    border-left: 4px solid #3b9e9a; /* Color verde/turquesa del diseño */
+    border-left: 4px solid #3b9e9a; 
     padding: 15px;
     border-radius: 8px;
     margin: 25px 0;
