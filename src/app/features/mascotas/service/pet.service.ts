@@ -5,7 +5,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Pet, PetCreateRequest, PetUpdateRequest } from '../../../models/pet';
 import { ApiResponse } from '../../../models/api-response';
-import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,58 +12,54 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 export class PetService {
 
   private apiUrl = 'http://localhost:8080/api/v1/pets';
+  private storageApiUrl = 'http://localhost:8080/api/v1/storage';
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient) { }
 
-  private getHeaders(): HttpHeaders {
-    const user = this.authService.getUser();
-    if (!user) {
-      throw new Error('Usuario no autenticado');
-    }
-    return new HttpHeaders({
-      'X-User-Id': user.id
-    });
-  }
-
-  // GET /api/v1/pets -> Listar mascotas del usuario
   getAllPetsByUser(): Observable<Pet[]> {
-    const headers = this.getHeaders();
-    return this.http.get<ApiResponse<Pet[]>>(this.apiUrl, { headers })
+   
+    return this.http.get<ApiResponse<Pet[]>>(this.apiUrl)
       .pipe(map(response => response.data));
   }
 
-  // GET /api/v1/pets/{id} -> Ver detalle de una mascota
+
   getPetById(id: string): Observable<Pet> {
-    const headers = this.getHeaders();
-    return this.http.get<ApiResponse<Pet>>(`${this.apiUrl}/${id}`, { headers })
+   
+    return this.http.get<ApiResponse<Pet>>(`${this.apiUrl}/${id}`)
       .pipe(map(response => response.data));
   }
 
-  // POST /api/v1/pets -> Crear mascota
   createPet(pet: PetCreateRequest): Observable<Pet> {
-    const headers = this.getHeaders();
-    return this.http.post<ApiResponse<Pet>>(this.apiUrl, pet, { headers })
+    return this.http.post<ApiResponse<Pet>>(this.apiUrl, pet)
       .pipe(map(response => response.data));
   }
 
-  // PUT /api/v1/pets/{id} -> Actualizar mascota
+  // PUT /api/v1/pets/{id} 
   updatePet(id: string, pet: PetUpdateRequest): Observable<Pet> {
-    const headers = this.getHeaders();
-    return this.http.put<ApiResponse<Pet>>(`${this.apiUrl}/${id}`, pet, { headers })
+    // Quitamos { headers }
+    return this.http.put<ApiResponse<Pet>>(`${this.apiUrl}/${id}`, pet)
       .pipe(map(response => response.data));
   }
 
-  // DELETE /api/v1/pets/{id} -> Eliminar mascota (soft delete)
+  // DELETE /api/v1/pets/{id} 
   deletePet(id: string): Observable<void> {
-    const headers = this.getHeaders();
-    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`, { headers })
+    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`)
       .pipe(map(() => undefined));
   }
 
-  // GET /api/v1/pets/count -> Contar mascotas activas
+  // GET /api/v1/pets/count
   countActivePets(): Observable<number> {
-    const headers = this.getHeaders();
-    return this.http.get<ApiResponse<number>>(`${this.apiUrl}/count`, { headers })
+    return this.http.get<ApiResponse<number>>(`${this.apiUrl}/count`)
       .pipe(map(response => response.data));
+  }
+
+  uploadImage(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file); 
+
+    return this.http.post<ApiResponse<{url: string}>>(`${this.storageApiUrl}/upload`, formData)
+      .pipe(
+        map(response => response.data.url) 
+      );
   }
 }

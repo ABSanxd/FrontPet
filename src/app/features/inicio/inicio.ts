@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ZoneAd } from '../../models/enums/zoneAd.enum';
 import { AdZone } from '../publicidad/components/ad-zone/ad-zone'; 
 
+
 // --- NUEVO IMPORT ---
 import { ListarMascotas } from '../mascotas/listar-mascotas/listar-mascotas';
 
@@ -17,4 +18,6 @@ import { ListarMascotas } from '../mascotas/listar-mascotas/listar-mascotas';
 export class Inicio {
   // Dejamos solo la lógica que pertenece a inicio
   protected readonly ZoneAd = ZoneAd; 
+  // src/app/features/inicio/inicio.ts
+
 }
