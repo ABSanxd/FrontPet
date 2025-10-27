@@ -5,11 +5,14 @@ export interface Contact {
   phone?: string;
   email?: string;
   whatsapp?: string;
+  info?: string;
+  location?: string;
   [key: string]: any;
 }
 
 export interface Publication {
-  id: number;
+  id: string;
+  userId: string;
   tempName: string;
   species: Species;
   approxAge: string;
@@ -17,10 +20,13 @@ export interface Publication {
   description: string;
   contact: Contact;
   status: Status;
+  updateDate: string | null;
   creationDate: string;
-  updateDate?: string;
-  userId: string;
-  otros?: string;
+  department: string;
+  province: string;
+  district: string;
+  shared: number;
+  likes: number;
 }
 
 export interface CreatePublicationDTO {
@@ -30,8 +36,9 @@ export interface CreatePublicationDTO {
   photo: string;
   description: string;
   contact: Contact;
-  otros?: string;
-  userId?: string;
+  department: string;
+  province: string;
+  district: string;
 }
 
 export interface UpdatePublicationDTO {
@@ -42,11 +49,13 @@ export interface UpdatePublicationDTO {
   description?: string;
   contact?: Contact;
   status?: Status;
-  otros?: string;
+  department?: string;
+  province?: string;
+  district?: string;
 }
 
 export interface ApiResponse<T> {
-  status: string; // "success" o "error"
+  status: string;
   data?: T;
   message?: string;
   code?: number;

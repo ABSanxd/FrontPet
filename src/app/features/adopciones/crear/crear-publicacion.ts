@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PublicationService } from '../publication.service';
+import { UbigeoService } from '../../../services/ubigeo/ubigeo.service';
 import { Species } from '../../../models/enums/species.enum';
-import { CreatePublicationDTO } from '../../../models/publication';
+import { CreatePublicationDTO, Publication, UpdatePublicationDTO } from '../../../models/publication';
 
 @Component({
   selector: 'app-crear-publicacion',
@@ -13,68 +14,175 @@ import { CreatePublicationDTO } from '../../../models/publication';
   templateUrl: './crear-publicacion.html',
   styleUrl: './crear-publicacion.css'
 })
-export class CrearPublicacion {
+export class CrearPublicacion implements OnInit {
   publicationForm: FormGroup;
   loading = false;
   especies = Object.values(Species);
   photoPreview: string | null = null;
   photoBase64: string = '';
-  isEditMode = false; // Para que el HTML sepa que está en modo crear
+  isEditMode = false;
+  publicationId: string = '';
+
+  // Ubigeo
+  departments: string[] = [];
+  provinces: string[] = [];
+  districts: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private publicationService: PublicationService,
-    private router: Router
+    private ubigeoService: UbigeoService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.publicationForm = this.fb.group({
       tempName: ['', [Validators.required, Validators.minLength(2)]],
       species: ['', Validators.required],
       approxAge: ['', Validators.required],
-      location: ['', Validators.required],
+      department: ['', Validators.required],
+      province: ['', Validators.required],
+      district: ['', Validators.required],
       description: ['', [Validators.required, Validators.minLength(10)]],
       adoptionInfo: ['', [Validators.required, Validators.minLength(10)]]
     });
   }
 
-  // Obtener control del formulario para validaciones
+  ngOnInit(): void {
+    // Verificar si hay ID en la ruta (modo edición)
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.isEditMode = true;
+        this.publicationId = params['id'];
+        this.loadPublication();
+      }
+    });
+
+    // Cargar departamentos
+    this.ubigeoService.getDepartments().subscribe({
+      next: (deps: string[]) => {
+        this.departments = deps;
+      },
+      error: (err: any) => console.error('Error cargando departamentos:', err)
+    });
+
+    // Escuchar cambios en departamento
+    this.publicationForm.get('department')?.valueChanges.subscribe(dep => {
+      if (dep) {
+        this.ubigeoService.getProvinces(dep).subscribe({
+          next: (provs: string[]) => {
+            this.provinces = provs;
+            if (!this.isEditMode) {
+              this.publicationForm.patchValue({ province: '', district: '' });
+              this.districts = [];
+            }
+          }
+        });
+      }
+    });
+
+    // Escuchar cambios en provincia
+    this.publicationForm.get('province')?.valueChanges.subscribe(prov => {
+      const dep = this.publicationForm.get('department')?.value;
+      if (dep && prov) {
+        this.ubigeoService.getDistricts(dep, prov).subscribe({
+          next: (dists: string[]) => {
+            this.districts = dists;
+            if (!this.isEditMode) {
+              this.publicationForm.patchValue({ district: '' });
+            }
+          }
+        });
+      }
+    });
+  }
+
+  // Cargar publicación existente (modo edición)
+  loadPublication(): void {
+    this.loading = true;
+    this.publicationService.getPublicationById(this.publicationId).subscribe({
+      next: (response) => {
+        if (response.status === 'success' && response.data) {
+          this.fillForm(response.data);
+        } else {
+          alert('No se pudo cargar la publicación');
+          this.router.navigate(['/adopciones']);
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar publicación:', error);
+        alert('Error al cargar la publicación');
+        this.router.navigate(['/adopciones']);
+        this.loading = false;
+      }
+    });
+  }
+
+  // Llenar formulario con datos existentes
+  fillForm(publication: Publication): void {
+    this.publicationForm.patchValue({
+      tempName: publication.tempName,
+      species: publication.species,
+      approxAge: publication.approxAge,
+      department: publication.department,
+      province: publication.province,
+      district: publication.district,
+      description: publication.description,
+      adoptionInfo: (publication.contact as any)?.info || ''
+    });
+
+    // Cargar provincias y distritos
+    if (publication.department) {
+      this.ubigeoService.getProvinces(publication.department).subscribe({
+        next: (provs: string[]) => {
+          this.provinces = provs;
+          if (publication.province) {
+            this.ubigeoService.getDistricts(publication.department, publication.province).subscribe({
+              next: (dists: string[]) => {
+                this.districts = dists;
+              }
+            });
+          }
+        }
+      });
+    }
+
+    // Mostrar foto actual
+    this.photoBase64 = publication.photo;
+    this.photoPreview = publication.photo;
+  }
+
   get f() {
     return this.publicationForm.controls;
   }
 
-  // Manejar selección de archivo
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
       
-      // Validar que sea una imagen
       if (!file.type.startsWith('image/')) {
         alert('Por favor selecciona un archivo de imagen válido');
         return;
       }
 
-      // Validar tamaño (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('La imagen es muy grande. El tamaño máximo es 5MB');
         return;
       }
 
-      // Comprimir y convertir a Base64
       this.compressImage(file);
     }
   }
 
-  // Comprimir imagen antes de convertir a Base64
   compressImage(file: File): void {
     const reader = new FileReader();
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const img = new Image();
       img.onload = () => {
-        // Crear canvas para redimensionar
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        // Calcular nuevas dimensiones (máximo 800px en el lado más largo)
         let width = img.width;
         let height = img.height;
         const maxSize = 800;
@@ -93,11 +201,8 @@ export class CrearPublicacion {
         
         canvas.width = width;
         canvas.height = height;
-        
-        // Dibujar imagen redimensionada
         ctx?.drawImage(img, 0, 0, width, height);
         
-        // Convertir a Base64 con compresión (calidad 0.7)
         this.photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
         this.photoPreview = this.photoBase64;
         
@@ -109,12 +214,10 @@ export class CrearPublicacion {
     reader.readAsDataURL(file);
   }
 
-  // Trigger click en input file
   triggerFileInput(): void {
     document.getElementById('fileInput')?.click();
   }
 
-  // Obtener emoji según especie
   getSpeciesEmoji(species: string): string {
     const emojis: { [key: string]: string } = {
       'PERRO': '🐶',
@@ -126,7 +229,6 @@ export class CrearPublicacion {
     return emojis[species] || '🐾';
   }
 
-  // Obtener label de especie
   getSpeciesLabel(species: string): string {
     const labels: { [key: string]: string } = {
       'PERRO': 'Perro',
@@ -138,9 +240,7 @@ export class CrearPublicacion {
     return labels[species] || species;
   }
 
-  // Submit del formulario
   onSubmit(): void {
-    // Validar que haya foto
     if (!this.photoBase64) {
       alert('Por favor sube una foto de la mascota');
       return;
@@ -155,27 +255,32 @@ export class CrearPublicacion {
 
     this.loading = true;
 
-    // Construir el DTO con la información de contacto desde adoptionInfo
+    if (this.isEditMode) {
+      this.updatePublication();
+    } else {
+      this.createPublication();
+    }
+  }
+
+  createPublication(): void {
     const dto: CreatePublicationDTO = {
       tempName: this.publicationForm.value.tempName,
       species: this.publicationForm.value.species as Species,
       approxAge: this.publicationForm.value.approxAge,
-      photo: this.photoBase64, // Base64 string
-      description: `${this.publicationForm.value.description}\n\nUbicación: ${this.publicationForm.value.location}`,
+      photo: this.photoBase64,
+      description: this.publicationForm.value.description,
       contact: {
-        info: this.publicationForm.value.adoptionInfo,
-        location: this.publicationForm.value.location
-      }
+        info: this.publicationForm.value.adoptionInfo
+      },
+      department: this.publicationForm.value.department,
+      province: this.publicationForm.value.province,
+      district: this.publicationForm.value.district
     };
 
-    console.log('Enviando publicación (foto truncada):', {
-      ...dto,
-      photo: dto.photo.substring(0, 50) + '...'
-    });
+    console.log('Creando publicación:', { ...dto, photo: dto.photo.substring(0, 50) + '...' });
 
     this.publicationService.createPublication(dto).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor:', response);
         if (response.status === 'success') {
           alert('¡Publicación creada exitosamente! Está pendiente de aprobación.');
           this.router.navigate(['/adopciones']);
@@ -192,7 +297,41 @@ export class CrearPublicacion {
     });
   }
 
-  // Cancelar y volver
+  updatePublication(): void {
+    const dto: UpdatePublicationDTO = {
+      tempName: this.publicationForm.value.tempName,
+      species: this.publicationForm.value.species as Species,
+      approxAge: this.publicationForm.value.approxAge,
+      photo: this.photoBase64,
+      description: this.publicationForm.value.description,
+      contact: {
+        info: this.publicationForm.value.adoptionInfo
+      },
+      department: this.publicationForm.value.department,
+      province: this.publicationForm.value.province,
+      district: this.publicationForm.value.district
+    };
+
+    console.log('Actualizando publicación ID:', this.publicationId);
+
+    this.publicationService.updatePublication(this.publicationId, dto).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          alert('¡Publicación actualizada exitosamente!');
+          this.router.navigate(['/adopciones']);
+        } else {
+          alert('Error al actualizar la publicación: ' + (response.message || 'Error desconocido'));
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al actualizar publicación:', error);
+        alert('Error al actualizar la publicación: ' + (error.error?.message || error.message));
+        this.loading = false;
+      }
+    });
+  }
+
   onCancel(): void {
     if (this.publicationForm.dirty || this.photoBase64) {
       if (confirm('¿Estás seguro de cancelar? Se perderán los cambios.')) {

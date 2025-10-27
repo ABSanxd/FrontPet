@@ -112,7 +112,7 @@ export class Adopciones implements OnInit {
   }
 
   // Pausar publicación
-  pausePublication(id: number): void {
+  pausePublication(id: string): void {
     if (confirm('¿Estás seguro de pausar esta publicación?')) {
       this.loading = true;
       this.publicationService.changeStatus(id, Status.PAUSADO).subscribe({
@@ -132,7 +132,7 @@ export class Adopciones implements OnInit {
   }
 
   // Activar publicación
-  activatePublication(id: number): void {
+  activatePublication(id: string): void {
     if (confirm('¿Estás seguro de activar esta publicación?')) {
       this.loading = true;
       this.publicationService.changeStatus(id, Status.ACTIVO).subscribe({
@@ -152,7 +152,7 @@ export class Adopciones implements OnInit {
   }
 
   // Eliminar publicación
-  deletePublication(id: number): void {
+  deletePublication(id: string): void {
     if (confirm('¿Estás seguro de eliminar esta publicación? Esta acción no se puede deshacer.')) {
       this.loading = true;
       this.publicationService.deletePublication(id).subscribe({

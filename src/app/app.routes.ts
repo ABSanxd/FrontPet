@@ -4,7 +4,6 @@ import { Inicio } from './features/inicio/inicio';
 import { authGuard } from './core/guards/auth.guard';
 import { Adopciones } from './features/adopciones/adopciones';
 import { CrearPublicacion } from './features/adopciones/crear/crear-publicacion';
-import { EditarPublicacion } from './features/adopciones/editar/editar-publicacion';
 
 import { Donaciones } from './features/donaciones/donaciones';
 import { Perfil } from './features/perfil/perfil';
@@ -31,7 +30,7 @@ export const routes: Routes = [
     },
     {
         path: 'publicaciones/editar/:id',
-        component: EditarPublicacion,
+        component: CrearPublicacion,
         canActivate: [authGuard]
     },
 

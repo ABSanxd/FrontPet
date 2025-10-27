@@ -90,15 +90,40 @@
                     [class.is-invalid]="f['approxAge'].invalid && f['approxAge'].touched">
                 </div>
 
-                <!-- Ubicación -->
+                <!-- Ubicación (Ubigeo) -->
                 <div class="mb-3">
-                  <label class="form-label">Ubicacion</label>
-                  <input 
-                    type="text" 
-                    class="form-control form-control-custom" 
-                    formControlName="location"
-                    placeholder="Nombre de ciudad"
-                    [class.is-invalid]="f['location'].invalid && f['location'].touched">
+                  <label class="form-label">Departamento</label>
+                  <select 
+                    class="form-select form-control-custom" 
+                    formControlName="department"
+                    [class.is-invalid]="f['department'].invalid && f['department'].touched">
+                    <option value="">Selecciona departamento</option>
+                    <option *ngFor="let dep of departments" [value]="dep">{{dep}}</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Provincia</label>
+                  <select 
+                    class="form-select form-control-custom" 
+                    formControlName="province"
+                    [disabled]="!f['department'].value"
+                    [class.is-invalid]="f['province'].invalid && f['province'].touched">
+                    <option value="">Selecciona provincia</option>
+                    <option *ngFor="let prov of provinces" [value]="prov">{{prov}}</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Distrito</label>
+                  <select 
+                    class="form-select form-control-custom" 
+                    formControlName="district"
+                    [disabled]="!f['province'].value"
+                    [class.is-invalid]="f['district'].invalid && f['district'].touched">
+                    <option value="">Selecciona distrito</option>
+                    <option *ngFor="let dist of districts" [value]="dist">{{dist}}</option>
+                  </select>
                 </div>
 
                 <!-- Descripción -->
@@ -131,10 +156,12 @@
                 type="submit" 
                 class="btn btn-register mb-3"
                 [disabled]="loading">
-                <span *ngIf="!loading">¡Registrar mascota!</span>
+                <span *ngIf="!loading">
+                  {{ isEditMode ? '¡Actualizar mascota!' : '¡Registrar mascota!' }}
+                </span>
                 <span *ngIf="loading">
                   <span class="spinner-border spinner-border-sm me-2"></span>
-                  Registrando...
+                  {{ isEditMode ? 'Actualizando...' : 'Registrando...' }}
                 </span>
               </button>
               <br>

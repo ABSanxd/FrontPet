@@ -33,28 +33,27 @@ export class PublicationService {
   }
 
   // Obtener una publicación por ID
-  getPublicationById(id: number): Observable<ApiResponse<Publication>> {
+  getPublicationById(id: string): Observable<ApiResponse<Publication>> {
     return this.http.get<ApiResponse<Publication>>(`${this.apiUrl}/${id}`);
   }
 
   // Crear una nueva publicación
-  // El userId se enviará automáticamente desde el token via interceptor
   createPublication(dto: CreatePublicationDTO): Observable<ApiResponse<Publication>> {
     return this.http.post<ApiResponse<Publication>>(this.apiUrl, dto);
   }
 
   // Actualizar una publicación
-  updatePublication(id: number, dto: UpdatePublicationDTO): Observable<ApiResponse<Publication>> {
+  updatePublication(id: string, dto: UpdatePublicationDTO): Observable<ApiResponse<Publication>> {
     return this.http.put<ApiResponse<Publication>>(`${this.apiUrl}/${id}`, dto);
   }
 
   // Eliminar una publicación
-  deletePublication(id: number): Observable<ApiResponse<any>> {
+  deletePublication(id: string): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${id}`);
   }
 
   // Cambiar estado de una publicación
-  changeStatus(id: number, status: Status): Observable<ApiResponse<Publication>> {
+  changeStatus(id: string, status: Status): Observable<ApiResponse<Publication>> {
     return this.updatePublication(id, { status });
   }
 }
