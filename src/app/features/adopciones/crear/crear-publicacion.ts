@@ -58,41 +58,69 @@ export class CrearPublicacion implements OnInit {
     });
 
     // Cargar departamentos
+    this.loadDepartments();
+
+    // Escuchar cambios en departamento
+    this.publicationForm.get('department')?.valueChanges.subscribe(dep => {
+      if (dep) {
+        this.onDepartmentChange();
+      }
+    });
+
+    // Escuchar cambios en provincia
+    this.publicationForm.get('province')?.valueChanges.subscribe(prov => {
+      if (prov) {
+        this.onProvinceChange();
+      }
+    });
+  }
+
+  loadDepartments(): void {
     this.ubigeoService.getDepartments().subscribe({
       next: (deps: string[]) => {
         this.departments = deps;
       },
       error: (err: any) => console.error('Error cargando departamentos:', err)
     });
+  }
 
-    // Escuchar cambios en departamento
-    this.publicationForm.get('department')?.valueChanges.subscribe(dep => {
-      if (dep) {
-        this.ubigeoService.getProvinces(dep).subscribe({
-          next: (provs: string[]) => {
-            this.provinces = provs;
-            if (!this.isEditMode) {
-              this.publicationForm.patchValue({ province: '', district: '' });
-              this.districts = [];
-            }
-          }
-        });
-      }
+  onDepartmentChange(): void {
+    // Resetear provincia y distrito
+    this.publicationForm.patchValue({ 
+      province: '', 
+      district: '' 
     });
+    this.provinces = [];
+    this.districts = [];
 
-    // Escuchar cambios en provincia
-    this.publicationForm.get('province')?.valueChanges.subscribe(prov => {
-      const dep = this.publicationForm.get('department')?.value;
-      if (dep && prov) {
-        this.ubigeoService.getDistricts(dep, prov).subscribe({
-          next: (dists: string[]) => {
-            this.districts = dists;
-            if (!this.isEditMode) {
-              this.publicationForm.patchValue({ district: '' });
-            }
-          }
-        });
-      }
+    const dep = this.publicationForm.get('department')?.value;
+    if (!dep) return;
+
+    this.ubigeoService.getProvinces(dep).subscribe({
+      next: (provs: string[]) => {
+        this.provinces = provs;
+      },
+      error: (err: any) => console.error('Error cargando provincias:', err)
+    });
+  }
+
+  onProvinceChange(): void {
+    // Resetear distrito
+    this.publicationForm.patchValue({ 
+      district: '' 
+    });
+    this.districts = [];
+
+    const dep = this.publicationForm.get('department')?.value;
+    const prov = this.publicationForm.get('province')?.value;
+    
+    if (!dep || !prov) return;
+
+    this.ubigeoService.getDistricts(dep, prov).subscribe({
+      next: (dists: string[]) => {
+        this.districts = dists;
+      },
+      error: (err: any) => console.error('Error cargando distritos:', err)
     });
   }
 
@@ -120,6 +148,37 @@ export class CrearPublicacion implements OnInit {
 
   // Llenar formulario con datos existentes
   fillForm(publication: Publication): void {
+    // Primero cargar provincias y distritos ANTES de setear el formulario
+    if (publication.department) {
+      this.ubigeoService.getProvinces(publication.department).subscribe({
+        next: (provs: string[]) => {
+          this.provinces = provs;
+          
+          if (publication.province) {
+            this.ubigeoService.getDistricts(publication.department, publication.province).subscribe({
+              next: (dists: string[]) => {
+                this.districts = dists;
+                
+                // Ahora sí llenar el formulario con todos los datos
+                this.setFormValues(publication);
+              }
+            });
+          } else {
+            this.setFormValues(publication);
+          }
+        }
+      });
+    } else {
+      this.setFormValues(publication);
+    }
+
+    // Mostrar foto actual
+    this.photoBase64 = publication.photo;
+    this.photoPreview = publication.photo;
+  }
+
+  // Método auxiliar para setear valores sin disparar eventos
+  private setFormValues(publication: Publication): void {
     this.publicationForm.patchValue({
       tempName: publication.tempName,
       species: publication.species,
@@ -129,27 +188,7 @@ export class CrearPublicacion implements OnInit {
       district: publication.district,
       description: publication.description,
       adoptionInfo: (publication.contact as any)?.info || ''
-    });
-
-    // Cargar provincias y distritos
-    if (publication.department) {
-      this.ubigeoService.getProvinces(publication.department).subscribe({
-        next: (provs: string[]) => {
-          this.provinces = provs;
-          if (publication.province) {
-            this.ubigeoService.getDistricts(publication.department, publication.province).subscribe({
-              next: (dists: string[]) => {
-                this.districts = dists;
-              }
-            });
-          }
-        }
-      });
-    }
-
-    // Mostrar foto actual
-    this.photoBase64 = publication.photo;
-    this.photoPreview = publication.photo;
+    }, { emitEvent: false }); // IMPORTANTE: no emitir eventos
   }
 
   get f() {

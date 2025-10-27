@@ -65,6 +65,15 @@
   line-height: 1.5;
 }
 
+.texto-truncado {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Ajusta el número según necesites */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 3; /* Versión estándar, aunque aún con soporte limitado */
+}
+
 /* Card de nueva publicación */
 .new-publication-card {
   border: 3px dashed #ccc;
