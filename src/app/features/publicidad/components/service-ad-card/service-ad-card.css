@@ -1,66 +1,296 @@
-/* Colores de ejemplo basados en tu diseño (morado/marrón) */
-:root {
-  --color-primary-dark: #581611; /* Marrón oscuro */
-  --color-secondary-light: #8b5cf6; /* Morado/Violeta */
-  --color-background-light: #fdfae7; /* Beige muy claro */
-}
-
-/* --- Contenedor Principal --- */
 .service-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: none;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
-/* --- Prioridad (Destacado) --- */
-.service-card.priority-card {
-  border: 2px solid var(--color-secondary-light) !important;
-  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2) !important;
-}
-
-.priority-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #ffc107;
-  color: var(--color-primary-dark);
-  font-weight: 700;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  z-index: 5;
-}
-
-/* --- Visual del Anuncio (Imagen/Placeholder) --- */
-.ad-visual-container {
-  height: 200px; /* Altura fija para uniformidad */
-  background-color: var(--color-background-light); /* Fondo si no hay imagen */
-  background-size: cover;
-  background-position: center;
+/* IMAGEN DEL SERVICIO */
+.service-image-container {
   position: relative;
-  border-radius: 0.25rem 0.25rem 0 0;
+  height: 300px;
   overflow: hidden;
+  background: linear-gradient(135deg, var(--color-green) 0%, #ffe9d6 100%);
 }
 
-.visual-overlay {
+.service-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.service-card:hover .service-image {
+  transform: scale(1.1);
+}
+
+/* Overlay con degradado */
+.service-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+  z-index: 2;
+}
+
+/* Imagen de huellitas de fondo */
+.service-image-placeholder {
   position: absolute;
   inset: 0;
-  /* Degradado sutil para oscurecer la parte inferior y asegurar legibilidad */
-  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-green) 0%, var(--color-green-dark) 100%);
 }
 
-/*.ad-visual-container.has-image {
-  /* Si la imagen falla, se verá el color de fondo sin la superposición de imagen */
-
-/* --- Contenido --- */
-.card-title {
-  min-height: 2.5rem; /* Asegura que todos los títulos tengan espacio similar */
+.service-image-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  background-image: url('https://img.freepik.com/vector-gratis/fondo-huellas-patas-gradiente_23-2151105462.jpg?semt=ais_hybrid&w=740&q=80');
+  background-size: cover;
 }
 
+.service-image-placeholder i {
+  font-size: 4rem;
+  color: white;
+  opacity: 0.9;
+  z-index: 1;
+}
 
-.btn-success { /* Para el botón de Llamar/WhatsApp */
-  background-color: #24c249;
-  border-color: #28a745;
+/* Badge de Prioridad */
+.priority-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: var(--color-brown-dark);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/*CONTENIDO DE LA CARD*/
+.service-body {
+  padding: 1.75rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-brown-dark);
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  min-height: 2.6rem;
+}
+
+.service-description {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+/* INFORMACIÓN DE CONTACTO*/
+.contact-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1.25rem;
+  border-radius: 15px;
+  margin-bottom: 1.25rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-item:hover {
+  padding-left: 0.5rem;
+}
+
+.contact-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.contact-icon.email {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.contact-icon.phone {
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+  color: white;
+}
+
+.contact-icon.location {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: white;
+}
+
+.contact-icon.social {
+  background: linear-gradient(135deg, #ff8c42 0%, #d4734c 100%);
+  color: white;
+}
+
+.contact-text {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #444;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.contact-text a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contact-text a:hover {
+  color: var(--color-brown);
+}
+
+/* BOTONES DE ACCIÓN - PREMIUM*/
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-button {
+  flex: 1;
+  padding: 0.85rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.action-button.primary {
+  background: linear-gradient(135deg, var(--color-cyan) 0%, var(--color-grey-dark) 100%);
+  color: white;
+}
+
+/* ESTADOS DE LOADING Y ERROR*/
+.loading-container {
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--color-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.empty-state i {
+  font-size: 5rem;
+  color: #ccc;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.empty-state h3 {
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #999;
+}
+
+/* RESPONSIVE*/
+@media (max-width: 768px) {
+  
+  .service-title {
+    font-size: 1.2rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .service-image-container {
+    height: 200px;
+  }
 }

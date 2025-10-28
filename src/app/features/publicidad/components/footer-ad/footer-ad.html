@@ -1,0 +1,99 @@
+@if(mostrarBanner){
+<div class="footer-banner-container">
+  <div class="footer-banner" [attr.data-priority]="ad.priority" [class.closing]="cerrando">
+    <button
+      class="footer-banner-close"
+      (click)="cerrarBanner()"
+      aria-label="Cerrar banner publicitario"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <div class="container">
+      <div class="footer-banner-content">
+        <!--  CON IMAGEN -->
+        @if (ad.imageUrl) {
+        <div class="footer-banner-image">
+          <img [src]="ad.imageUrl" [alt]="ad.name" (error)="onImageError($event)" />
+        </div>
+        }
+        <!--  SIN IMAGEN (con icono) -->
+        @else {
+        <div class="footer-banner-icon" [attr.data-priority]="ad.priority">
+          <i class="bi bi-heart-fill"></i>
+        </div>
+        }
+        <!-- INFORMACIÓN -->
+        <div class="footer-banner-info">
+          <div class="d-flex align-items-center gap-2 mb-1 flex-wrap titulo">
+            <h3 class="footer-banner-title mb-0">
+              {{ ad.name }}
+            </h3>
+            <span class="priority-mini-badge" [attr.data-priority]="ad.priority">
+              @if (ad.priority === 'PRIORITY_1') { Destacado } @else if (ad.priority ===
+              'PRIORITY_2') { Premium } @else { Patrocinado }
+            </span>
+          </div>
+
+          <p class="footer-banner-description">
+            {{ ad.description }}
+          </p>
+
+          @if (ad.contact.address) {
+          <div class="footer-banner-contact">
+            <i class="bi bi-pin-map-fill"></i>
+            <span>{{ ad.contact.address }} </span>
+          </div>
+          } @if (ad.contact.email) {
+          <div class="footer-banner-contact">
+            <i class="bi bi-envelope-at"></i>
+            <span>{{ ad.contact.email }} </span>
+          </div>
+          }
+        </div>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="footer-banner-action">
+          <!-- Botón principal: link o red social -->
+          @if (ad.link) {
+          <a
+            [href]="ad.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-cta-button"
+            [attr.data-priority]="ad.priority"
+          >
+            Visitar sitio web
+          </a>
+          } @else if (ad.contact.socialMedia?.url) {
+          <a
+            [href]="ad.contact.socialMedia?.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-cta-button"
+            [attr.data-priority]="ad.priority"
+          >
+            <i [class]="getSocialIcon(ad.contact.socialMedia?.type!)"></i>
+            Contactar
+          </a>
+          }
+
+          <!-- Botón secundario (si hay red social y link) -->
+          @if (ad.link && ad.contact.socialMedia?.url) {
+          <a
+            [href]="ad.contact.socialMedia?.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-social-button"
+            [attr.data-priority]="ad.priority"
+          >
+            <i [class]="getSocialIcon(ad.contact.socialMedia?.type!)"></i>
+            {{ getSocialName(ad.contact.socialMedia?.type!) }}
+          </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+}
