@@ -1,5 +1,4 @@
 <div class="perfil-container">
-  
   <div class="container py-5">
     <div class="header text-center mb-5">
       <h1>Perfil de Usuario</h1>
@@ -7,95 +6,26 @@
 
     @if (user$ | async; as user) {
       <div class="profile-card" [formGroup]="profileForm">
-        
-        <!-- Avatar Section -->
-        <div class="avatar-section text-center mb-4">
-          <div class="avatar mx-auto mb-3">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="white">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-          </div>
-          <h3 class="user-name">{{ user.name }}</h3>
-        </div>
 
-        <!-- Nombre -->
-        <div class="mb-3">
-          <label for="name" class="form-label">Nombre y Apellido</label>
-          <input 
-            id="name" 
-            type="text" 
-            class="form-control" 
-            formControlName="name" 
-            [placeholder]="user.name">
-          
-          @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
-            <div class="error-message">
-              El nombre es obligatorio y debe tener al menos 2 caracteres.
-            </div>
-          }
-        </div>
+        <app-perfil-info-card 
+            [profileForm]="profileForm" 
+            [user]="user" 
+            >
+        </app-perfil-info-card>
 
-        <!-- Email -->
-        <div class="mb-3">
-          <label for="email" class="form-label">Correo</label>
-          <input 
-            id="email" 
-            type="email" 
-            class="form-control" 
-            formControlName="email">
-        </div>
+        <app-perfil-location-form [profileForm]="profileForm"></app-perfil-location-form>
 
-        <!-- Ubicación -->
-        <div class="mb-3">
-          <label class="form-label">Ubicación</label>
-          
-          <select 
-            class="form-select mb-2" 
-            formControlName="department">
-            <option value="" disabled>Seleccionar Departamento</option>
-            @for (dept of departments$ | async; track dept) {
-              <option [value]="dept">{{ dept }}</option>
-            }
-          </select>
-          
-          <select 
-            class="form-select mb-2" 
-            formControlName="province">
-            <option value="" disabled>Seleccionar Provincia</option>
-            @for (prov of provinces$ | async; track prov) {
-              <option [value]="prov">{{ prov }}</option>
-            }
-          </select>
+        <app-perfil-password-change
+            [profileForm]="profileForm"
+            [showPasswordModal]="showPasswordModal"
+            [errorMessage]="errorMessage"
+            (toggleModal)="openPasswordChange()"
+            (submitPassword)="onPasswordChangeSubmit()">
+        </app-perfil-password-change>
 
-          <select 
-            class="form-select" 
-            formControlName="district">
-            <option value="" disabled>Seleccionar Distrito</option>
-            @for (dist of districts$ | async; track dist) {
-              <option [value]="dist">{{ dist }}</option>
-            }
-          </select>
-        </div>
+        <app-perfil-pets-info></app-perfil-pets-info>
 
-        <!-- Contraseña -->
-        <div class="mb-3">
-          <label for="password" class="form-label">Contraseña</label>
-          <input 
-            id="password" 
-            type="password" 
-            class="form-control" 
-            value="********" 
-            disabled>
-          <button class="btn-change-password mt-2">Cambiar Contraseña</button>
-        </div>
 
-        <!-- Info Mascotas -->
-        <div class="pets-info">
-          <p class="mb-1">Mascotas registradas: <strong>{{ user.maxPets - 1 }} mascotas</strong></p>
-          <p class="mb-0">Puedes registrar hasta <strong>{{ user.maxPets }} mascotas</strong></p>
-        </div>
-
-        <!-- Mensajes de error/éxito -->
         @if (errorMessage) {
           <div class="alert alert-danger">{{ errorMessage }}</div>
         }
@@ -103,7 +33,6 @@
           <div class="alert alert-success">{{ successMessage }}</div>
         }
 
-        <!-- Botones de acción -->
         @if (!isEditing) {
           <button 
             (click)="toggleEditMode(true)" 
