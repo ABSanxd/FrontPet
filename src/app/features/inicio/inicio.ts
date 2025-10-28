@@ -7,10 +7,11 @@ import { PopupService } from '../../services/pop_up/popup.service';
 import { AdvertisementService } from '../publicidad/advertisement.service';
 import { take } from 'rxjs';
 import { ListarMascotas } from '../mascotas/listar-mascotas/listar-mascotas';
+import { AdZone } from '../publicidad/components/ad-zone/ad-zone';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule, ListarMascotas], 
+  imports: [CommonModule, AdZone, ListarMascotas], 
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
