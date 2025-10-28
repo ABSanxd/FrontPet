@@ -3,6 +3,7 @@ import { Landing } from './features/landing/landing';
 import { Inicio } from './features/inicio/inicio';
 import { authGuard } from './core/guards/auth.guard';
 import { Adopciones } from './features/adopciones/adopciones';
+import { CrearPublicacion } from './features/adopciones/crear/crear-publicacion';
 
 import { Donaciones } from './features/donaciones/donaciones';
 import { Perfil } from './features/perfil/perfil';
@@ -24,6 +25,17 @@ export const routes: Routes = [
         component: Adopciones,
         canActivate: [authGuard]
     },
+    {
+        path: 'publicaciones/crear',
+        component: CrearPublicacion,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'publicaciones/editar/:id',
+        component: CrearPublicacion,
+        canActivate: [authGuard]
+    },
+
     {
         path: 'servicios',
         component: Servicios,

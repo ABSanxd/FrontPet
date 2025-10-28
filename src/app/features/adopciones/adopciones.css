@@ -1,0 +1,151 @@
+/* Variables de color (ajusta según tu paleta) */
+:root {
+  --color-green: #4a7c59;
+  --color-dark-green: #6b4e3d;
+  --color-orange: #ff9f5a;
+}
+
+/* Tabs personalizados */
+.nav-pills .nav-link {
+  color: #666;
+  font-weight: 500;
+  border-radius: 25px;
+  transition: all 0.3s;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: #f0f0f0;
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--color-green);
+  color: white;
+}
+
+/* Título */
+.text-dark-green {
+  color: var(--color-dark-green);
+}
+
+/* Tarjetas de publicación */
+.publication-card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.publication-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.publication-card.history-card {
+  opacity: 0.85;
+}
+
+.publication-card.history-card:hover {
+  opacity: 1;
+}
+
+/* Imagen de mascota */
+.pet-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+/* Truncar texto a 3 líneas */
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
+.texto-truncado {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Ajusta el número según necesites */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 3; /* Versión estándar, aunque aún con soporte limitado */
+}
+
+/* Card de nueva publicación */
+.new-publication-card {
+  border: 3px dashed #ccc;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-height: 400px;
+}
+
+.new-publication-card:hover {
+  border-color: var(--color-green);
+  background-color: #f5f5f5;
+}
+
+.pet-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.plus-icon {
+  font-size: 48px;
+  color: var(--color-green);
+  font-weight: bold;
+}
+
+/* Botones personalizados */
+.btn-warning {
+  background-color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+
+.btn-warning:hover {
+  background-color: #ff8c3a;
+  border-color: #ff8c3a;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Badges personalizados */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  z-index: 10;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pet-image {
+    height: 200px;
+  }
+
+  .nav-pills {
+    flex-direction: column;
+  }
+
+  .nav-pills .nav-link {
+    margin-bottom: 0.5rem;
+  }
+}
