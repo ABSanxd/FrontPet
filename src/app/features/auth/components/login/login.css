@@ -1,3 +1,30 @@
 .border-orange {
-  border: 1.5px solid var(--color-orange);
+  border: 2px solid var(--color-orange);
+}
+
+/* Inputs y selects */
+.form-control:focus, 
+.form-select:focus {
+  border-color: var(--color-orange);
+  box-shadow: 0 0 0 0.15rem rgba(255, 128, 0, 0.25);
+}
+
+.form-control, 
+.form-select {
+  border-radius: 8px;
+  border: 2px solid var(--color-grey); 
+  padding: 0.6rem 1rem;
+  color: var(--color-brown-dark);
+  font-size: 0.9rem;
+}
+
+/* Bordes rojos cuando hay error */
+.form-control.is-invalid {
+  border-color: var(--color-red);
+  padding-right: 2rem;
+}
+
+/* Etiquetas en negrita */
+.form-label {
+  font-weight: 600; 
 }
