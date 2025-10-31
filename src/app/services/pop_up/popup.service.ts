@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AdvertisementResponseDTO } from '../../models/advertisement';
 
@@ -12,6 +13,8 @@ export class PopupService {
   popup$: Observable<AdvertisementResponseDTO | null> = this.mostrarPopup$.asObservable();
 
   private readonly STORAGE_KEY = 'ultimo_popup_index';
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   mostrarSiguienteDeRotacion(popups: AdvertisementResponseDTO[], forzar: boolean = false) {
     if (popups.length === 0) return;
@@ -32,15 +35,29 @@ export class PopupService {
     this.mostrarPopup$.next(null);
   }
   private obtenerUltimoIndice(): number {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
-    return stored ? parseInt(stored, 10) : -1;
+    
+    if(isPlatformBrowser(this)){
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      return stored ? parseInt(stored, 10) : -1;
+
+    }
+    return -1;  
+    
   }
   private guardarIndice(indice: number): void {
-    localStorage.setItem(this.STORAGE_KEY, indice.toString());
+
+    if(isPlatformBrowser(this.platformId)){
+      localStorage.setItem(this.STORAGE_KEY, indice.toString());
+
+    }
   }
 
   // Método para resetear
   resetearRotacion(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
+
+    if(isPlatformBrowser(this.platformId)){
+      localStorage.removeItem(this.STORAGE_KEY);
+
+    }
   }
 }
