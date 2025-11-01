@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AdvertisementResponseDTO } from '../../models/advertisement';
 
@@ -6,41 +7,43 @@ import { AdvertisementResponseDTO } from '../../models/advertisement';
   providedIn: 'root',
 })
 export class PopupService {
-  //BehaviorSubject para mantener estado actual del pop-up
   private mostrarPopup$ = new BehaviorSubject<AdvertisementResponseDTO | null>(null);
-  //Los componentes se suscriben aquí para saber qué mostrar
   popup$: Observable<AdvertisementResponseDTO | null> = this.mostrarPopup$.asObservable();
 
   private readonly STORAGE_KEY = 'ultimo_popup_index';
+  private isBrowser: boolean;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   mostrarSiguienteDeRotacion(popups: AdvertisementResponseDTO[], forzar: boolean = false) {
-    if (popups.length === 0) return;
+    if (popups.length === 0 || !this.isBrowser) return;
 
-    // Obtener el último índice mostrado
     const ultimoIndice = this.obtenerUltimoIndice();
-    // Calcular el siguiente índice (rotación circular)
     const siguienteIndice = (ultimoIndice + 1) % popups.length;
-    // Obtener el pop-up a mostrar
     const popupAMostrar = popups[siguienteIndice];
-    // Guardar el índice actual
     this.guardarIndice(siguienteIndice);
-    // Mostrar el pop-up
     this.mostrarPopup$.next(popupAMostrar);
   }
 
   cerrar() {
     this.mostrarPopup$.next(null);
   }
+
   private obtenerUltimoIndice(): number {
+    if (!this.isBrowser) return -1;
     const stored = localStorage.getItem(this.STORAGE_KEY);
     return stored ? parseInt(stored, 10) : -1;
   }
+
   private guardarIndice(indice: number): void {
+    if (!this.isBrowser) return;
     localStorage.setItem(this.STORAGE_KEY, indice.toString());
   }
 
-  // Método para resetear
   resetearRotacion(): void {
+    if (!this.isBrowser) return;
     localStorage.removeItem(this.STORAGE_KEY);
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Carousel } from './components/carousel/carousel';
 import { Cards } from './components/cards/cards';
 import { PopupService } from '../../services/pop_up/popup.service';
-import { AdvertisementService } from '../publicidad/advertisement.service';
+import { AdvertisementService } from '../../services/advertisement/advertisement.service';
 import { ZoneAd } from '../../models/enums/zoneAd.enum';
 import { take } from 'rxjs';
 
