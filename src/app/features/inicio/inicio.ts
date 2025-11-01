@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ZoneAd } from '../../models/enums/zoneAd.enum';
 import { PopupService } from '../../services/pop_up/popup.service';
-import { AdvertisementService } from '../publicidad/advertisement.service';
+import { AdvertisementService } from '../../services/advertisement/advertisement.service';
 import { take } from 'rxjs';
 import { ListarMascotas } from '../mascotas/listar-mascotas/listar-mascotas';
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AdvertisementService } from './advertisement.service';
+import { AdvertisementService } from '../../services/advertisement/advertisement.service';
 import { ZoneAd } from '../../models/enums/zoneAd.enum';
 import { AdvertisementResponseDTO } from '../../models/advertisement';
 import { ServiceAdCard } from './components/service-ad-card/service-ad-card';

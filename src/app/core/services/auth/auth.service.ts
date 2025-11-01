@@ -1,7 +1,8 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map, tap } from "rxjs/operators";
 import { LoginResponse } from "../../../models/auth";
+import { isPlatformBrowser } from "@angular/common";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -9,16 +10,19 @@ export class AuthService {
   private tokenKey = 'token';
   private userKey = 'user';
 
-  constructor(private http: HttpClient) { }
+  public isBrowser: boolean;
 
-  private isBrowser(): boolean {
-    return typeof window !== 'undefined';
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object 
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
   }
 
   login(email: string, password: string) {
     return this.http.post<{ status: string, data: LoginResponse }>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap(res => {
-        if (this.isBrowser() && res.data) {
+        if (this.isBrowser && res.data) { 
           localStorage.setItem(this.tokenKey, res.data.token);
           localStorage.setItem(this.userKey, JSON.stringify({
             id: res.data.userId,
@@ -32,18 +36,18 @@ export class AuthService {
   }
 
   logout(): void {
-    if (this.isBrowser()) {
+    if (this.isBrowser) { 
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.userKey);
     }
   }
 
   getToken(): string | null {
-    return this.isBrowser() ? localStorage.getItem(this.tokenKey) : null;
+    return this.isBrowser ? localStorage.getItem(this.tokenKey) : null;
   }
 
   getUser(): { id: string; name: string; email: string } | null {
-    if (!this.isBrowser()) return null;
+    if (!this.isBrowser) return null;
     const user = localStorage.getItem(this.userKey);
     return user ? JSON.parse(user) : null;
   }
