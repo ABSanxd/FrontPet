@@ -1,38 +1,67 @@
-/* Variables de color (ajusta según tu paleta) */
-:root {
-  --color-green: #4a7c59;
-  --color-dark-green: #6b4e3d;
-  --color-orange: #ff9f5a;
+/* --- INICIO DE CAMBIOS: Estilos de Navegación de Pestañas --- */
+
+/* Contenedor full-width para la barra de navegación */
+.nav-pills-container {
+  background-color: var(--color-background);
+  padding: 1rem 0;
+  border-bottom: 2px solid var(--color-grey);
+  width: 100%; /* Ocupa todo el ancho */
 }
 
-/* Tabs personalizados */
+/* Ajustes al UL de Bootstrap */
+.nav-pills {
+  gap: 1.5rem; /* Espacio entre botones */
+}
+
+/* Tabs personalizados (Estilo de la imagen) */
 .nav-pills .nav-link {
-  color: #666;
-  font-weight: 500;
-  border-radius: 25px;
-  transition: all 0.3s;
+  /* Estilo base (inactivo) - como en la imagen */
+  color: var(--color-cyan) !important;
+  font-weight: 600;
+  border-radius: 8px; /* Rectangular redondeado */
+  transition: all 0.3s ease;
+  background-color: transparent !important;
+  border: 2px solid var(--color-cyan);
+  padding: 0.5rem 1.5rem;
+  line-height: 1.5;
 }
 
 .nav-pills .nav-link:hover {
-  background-color: #f0f0f0;
+  /* Estilo hover (como el activo) */
+  background-color: var(--color-cyan) !important;
+  color: var(--color-white) !important;
+  border-color: var(--color-cyan) !important;
 }
 
 .nav-pills .nav-link.active {
-  background-color: var(--color-green);
-  color: white;
+  /* Estilo activo (como en la imagen) */
+  background-color: var(--color-cyan) !important;
+  color: var(--color-white) !important;
+  border-color: var(--color-cyan) !important;
 }
+/* --- FIN DE CAMBIOS: Estilos de Navegación de Pestañas --- */
+
 
 /* Título */
 .text-dark-green {
-  color: var(--color-dark-green);
+  color: var(--color-brown-dark); 
 }
 
-/* Tarjetas de publicación */
+/* --- ESTILOS DE TARJETA ACTUALIZADOS --- */
+
 .publication-card {
-  border-radius: 15px;
-  overflow: hidden;
+  border-radius: 25px; 
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
+  
+  background-color: var(--color-background); 
+  border: 1px solid var(--color-grey); 
+  
+  display: flex;
+  flex-direction: column;
+  padding: 1rem; 
+  position: relative; 
+  overflow: visible; 
 }
 
 .publication-card:hover {
@@ -40,20 +69,114 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
+.publication-card .card-body {
+  text-align: center;
+  flex-grow: 1; 
+  padding: 0.5rem 0; 
+}
+
+.publication-card .card-footer {
+  background-color: transparent;
+  border-top: none;
+  padding: 0.5rem 0 0; 
+}
+
 .publication-card.history-card {
   opacity: 0.85;
 }
-
 .publication-card.history-card:hover {
   opacity: 1;
 }
 
-/* Imagen de mascota */
-.pet-image {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
+/* Contenedor de la imagen */
+.pet-image-container {
+  margin-bottom: 0.5rem;
 }
+
+/* Imagen de mascota (más pequeña y redondeada) */
+.pet-image {
+  width: 180px;  
+  height: 180px; 
+  object-fit: cover;
+  display: block; 
+  margin: 0 auto; 
+  border-radius: 20px; 
+}
+
+/* --- Badge de Estado (Actualizado con tus valores) --- */
+.publication-card .status-badge {
+  position: absolute;
+  top: 0px; 
+  left: 0rem; 
+  z-index: 10;
+  font-size: 1rem; 
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0; 
+  color: var(--color-white) !important;
+}
+/* --- Fin de cambios en Badge --- */
+
+/* --- AÑADIDO: Colores de Badges usando variables globales --- */
+.status-badge.bg-success {
+  background-color: var(--color-green) !important;
+}
+.status-badge.bg-warning {
+  background-color: var(--color-orange) !important;
+}
+.status-badge.bg-secondary {
+  background-color: var(--color-grey-dark) !important;
+}
+.status-badge.bg-danger {
+  background-color: var(--color-red) !important;
+}
+.status-badge.bg-info {
+  background-color: var(--color-cyan) !important;
+}
+/* --- FIN DE COLORES DE BADGES --- */
+
+
+/* Texto de Ubicación */
+.location-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.location-text i {
+  color: var(--color-orange); 
+}
+
+/* --- ESTILOS DE BOTONES ACTUALIZADOS --- */
+
+/* Estilos para TODOS los botones en la card */
+.publication-card .btn {
+  border-radius: 20px !important; 
+  font-size: 0.85rem;           
+  padding: 0.4rem 1rem;         
+  font-weight: 600;
+  color: var(--color-white) !important; 
+}
+
+/* Grupo de botones (Editar/Pausar) */
+.button-group-row {
+  display: flex;
+  gap: 0.5rem; 
+  margin-bottom: 0.5rem;
+  justify-content: center; 
+}
+.button-group-row .btn {
+  flex: 0 1 120px; 
+}
+
+/* Contenedor para el botón Eliminar centrado */
+.button-group-center {
+  text-align: center;
+}
+.button-group-center .btn {
+  width: 120px; 
+}
+
+/* --- FIN DE ESTILOS DE BOTONES --- */
+
 
 /* Truncar texto a 3 líneas */
 .text-truncate-3 {
@@ -68,10 +191,10 @@
 .texto-truncado {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /* Ajusta el número según necesites */
+  -webkit-line-clamp: 3; 
   overflow: hidden;
   text-overflow: ellipsis;
-  line-clamp: 3; /* Versión estándar, aunque aún con soporte limitado */
+  line-clamp: 3; 
 }
 
 /* Card de nueva publicación */
@@ -80,11 +203,18 @@
   cursor: pointer;
   transition: all 0.3s;
   min-height: 400px;
+  
+  background-image: url('/assets/img-nueva-publicacion-01.png');
+  background-repeat: no-repeat;
+  background-position: center top 3.5rem; 
+  background-size: auto 64px; 
+  position: relative; 
+  background-color: transparent; 
 }
 
 .new-publication-card:hover {
   border-color: var(--color-green);
-  background-color: #f5f5f5;
+  background-color: transparent; 
 }
 
 .pet-icons {
@@ -93,21 +223,51 @@
 }
 
 .plus-icon {
-  font-size: 48px;
+  font-size: 72px; 
   color: var(--color-green);
   font-weight: bold;
+  line-height: 1; 
 }
 
-/* Botones personalizados */
+/* --- AÑADIDO: Colores de Botones usando variables globales --- */
 .btn-warning {
-  background-color: var(--color-orange);
-  border-color: var(--color-orange);
+  background-color: var(--color-orange) !important;
+  border-color: var(--color-orange) !important;
 }
 
 .btn-warning:hover {
-  background-color: #ff8c3a;
-  border-color: #ff8c3a;
+  background-color: var(--color-orange-dark) !important;
+  border-color: var(--color-orange-dark) !important;
 }
+
+.btn-secondary {
+  background-color: var(--color-grey-dark) !important;
+  border-color: var(--color-grey-dark) !important;
+}
+.btn-secondary:hover {
+  background-color: var(--color-grey) !important;
+  border-color: var(--color-grey) !important;
+}
+
+.btn-danger {
+  background-color: var(--color-red) !important;
+  border-color: var(--color-red) !important;
+}
+.btn-danger:hover {
+  background-color: var(--color-red-dark) !important;
+  border-color: var(--color-red-dark) !important;
+}
+
+.btn-success {
+  background-color: var(--color-green) !important;
+  border-color: var(--color-green) !important;
+}
+.btn-success:hover {
+  background-color: var(--color-green-dark) !important;
+  border-color: var(--color-green-dark) !important;
+}
+/* --- FIN DE COLORES DE BOTONES --- */
+
 
 /* Loading overlay */
 .loading-overlay {
@@ -130,15 +290,18 @@
 
 /* Badges personalizados */
 .badge {
-  font-size: 0.75rem;
-  padding: 0.4rem 0.8rem;
   z-index: 10;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .pet-image {
-    height: 200px;
+    width: 150px; 
+    height: 150px;
+  }
+  
+  .publication-card .status-badge {
+     /* No necesita ajuste de responsive */
   }
 
   .nav-pills {
@@ -149,3 +312,186 @@
     margin-bottom: 0.5rem;
   }
 }
+
+/* --- AÑADIDO: Estilos para Modales de Confirmación --- */
+.modal-overlay-cancel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-dialog-cancel {
+  background: var(--color-white);
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden; 
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- INICIO: Estilos para el modal de Eliminar (NUEVO) --- */
+
+/* Usamos la clase .bg-danger de Bootstrap y la sobrescribimos */
+.modal-dialog-cancel .modal-header.bg-danger {
+  background-color: var(--color-red) !important; /* Usamos el rojo global */
+  padding: 1.5rem 2rem; /* <-- MÁS GRANDE */
+  text-align: left;
+}
+.modal-dialog-cancel .modal-header.bg-danger h5 {
+  font-weight: 700;
+  font-size: 1.75rem; /* <-- MÁS GRANDE */
+  color: var(--color-white); /* <-- TEXTO BLANCO */
+}
+
+.modal-body-content {
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.modal-pet-info {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 1rem; /* <-- Más padding */
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* <-- Más gap */
+}
+.modal-pet-info img {
+  width: 60px; /* <-- MÁS GRANDE */
+  height: 60px; /* <-- MÁS GRANDE */
+  object-fit: cover;
+  border-radius: 50%;
+}
+.modal-pet-info .details h6 {
+  margin: 0;
+  font-weight: 700; /* <-- Más grueso */
+  font-size: 1.1rem; /* <-- MÁS GRANDE */
+  color: var(--color-brown-dark);
+}
+.modal-pet-info .details span {
+  font-size: 1rem; /* <-- MÁS GRANDE */
+  color: #666;
+}
+
+.modal-alert-warning {
+  background-color: #fffbeb; 
+  border: 1px solid #ffe58f; 
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+.modal-alert-warning strong {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-brown-dark);
+}
+.modal-alert-warning ul {
+  font-size: 0.9rem;
+  color: #666;
+  padding-left: 1.2rem; 
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+/* --- FIN: Estilos para el modal de Eliminar --- */
+
+
+.modal-dialog-cancel h5 {
+  font-weight: 700;
+  color: var(--color-brown-dark);
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.modal-dialog-cancel p {
+  color: var(--color-brown-dark);
+  opacity: 0.8;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions-cancel {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap; 
+  padding: 0 1.5rem 1.5rem; /* Padding para los botones */
+}
+
+.modal-actions-cancel .btn {
+  border-radius: 20px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  color: var(--color-white) !important;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.modal-actions-cancel .btn i {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Colores para botones del modal (usando las reglas de botón globales) */
+.modal-actions-cancel .btn-green {
+  background-color: var(--color-green) !important;
+  border-color: var(--color-green) !important;
+}
+.modal-actions-cancel .btn-green:hover {
+  background-color: var(--color-green-dark) !important;
+  border-color: var(--color-green-dark) !important;
+}
+
+.modal-actions-cancel .btn-danger {
+  background-color: var(--color-red) !important; /* <-- Usando el rojo global */
+  border-color: var(--color-red) !important; 
+}
+.modal-actions-cancel .btn-danger:hover {
+  background-color: var(--color-red-dark) !important; 
+  border-color: var(--color-red-dark) !important; 
+}
+
+.modal-actions-cancel .btn-secondary {
+  background-color: var(--color-grey) !important; 
+  border-color: var(--color-grey) !important;
+  color: var(--color-brown-dark) !important; 
+}
+.modal-actions-cancel .btn-secondary:hover {
+  background-color: var(--color-grey-dark) !important;
+  border-color: var(--color-grey-dark) !important;
+  color: var(--color-white) !important; 
+}
+
+/* Botón Pausar (Gris) */
+.modal-actions-cancel .btn-grey {
+  background-color: var(--color-grey-dark) !important;
+  border-color: var(--color-grey-dark) !important;
+}
+.modal-actions-cancel .btn-grey:hover {
+  background-color: var(--color-grey) !important;
+  border-color: var(--color-grey) !important;
+}
+/* --- FIN DE ESTILOS DE MODALES --- */

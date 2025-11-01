@@ -2,31 +2,7 @@
 .form-container {
   min-height: 100vh;
   position: relative;
-  background: linear-gradient(135deg, #FFF8E7 0%, #FFE4B5 100%);
-}
-
-/* Background con patitas */
-.paw-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/assets/paw-pattern.png'); /* Coloca aquí tu imagen de patitas */
-  background-repeat: repeat;
-  background-size: 100px;
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Si no tienes la imagen, puedes usar este patrón simple */
-.paw-background::before {
-  content: '🐾';
-  position: absolute;
-  font-size: 40px;
-  animation: float 3s ease-in-out infinite;
-  opacity: 0.2;
+  background-color: var(--color-background); 
 }
 
 .container {
@@ -36,20 +12,20 @@
 
 /* Título */
 .title-orange {
-  color: #8B4513;
+  color: var(--color-brown-dark); 
   font-size: 2.5rem;
 }
 
 .subtitle-box {
   display: inline-block;
-  background-color: #9DBF8E;
-  color: white;
+  background-color: var(--color-green); 
+  color: var(--color-white); 
   padding: 12px 40px;
   border-radius: 25px;
   font-size: 1.1rem;
 }
 
-/* Decoración perrito */
+/* Decoración perrito (Sin cambios) */
 .dog-decoration {
   position: absolute;
   right: 50px;
@@ -64,11 +40,11 @@
 
 /* Card del formulario */
 .form-card {
-  background: white;
+  background: var(--color-white); 
   border-radius: 30px;
   padding: 40px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border: 3px solid #E8DCC7;
+  border: 3px solid #E8DCC7; 
 }
 
 /* Área de subir foto */
@@ -77,13 +53,13 @@
 }
 
 .photo-upload-box {
-  border: 3px dashed #9DBF8E;
+  border: 3px dashed var(--color-green); 
   border-radius: 20px;
   min-height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F5F5F5;
+  background: #F5F5F5; 
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
@@ -91,8 +67,8 @@
 }
 
 .photo-upload-box:hover {
-  border-color: #7DA96D;
-  background: #EAFFEA;
+  border-color: var(--color-green-dark); 
+  background: #EAFFEA; 
   transform: scale(1.02);
 }
 
@@ -103,7 +79,7 @@
 .plus-circle {
   width: 80px;
   height: 80px;
-  border: 3px dashed #9DBF8E;
+  border: 3px dashed var(--color-green); 
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -113,7 +89,7 @@
 
 .plus-circle i {
   font-size: 40px;
-  color: #9DBF8E;
+  color: var(--color-green); 
 }
 
 .photo-preview {
@@ -133,7 +109,7 @@
 }
 
 .photo-label {
-  color: #8B4513;
+  color: var(--color-brown-dark); 
   font-weight: 600;
   margin-top: 15px;
   font-size: 0.95rem;
@@ -141,7 +117,7 @@
 
 /* Labels */
 .form-label {
-  color: #666;
+  color: var(--color-brown-dark); 
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 0.95rem;
@@ -149,7 +125,7 @@
 
 /* Form controls personalizados */
 .form-control-custom {
-  border: 2px solid #E0E0E0;
+  border: 2px solid var(--color-grey); 
   border-radius: 12px;
   padding: 12px 18px;
   font-size: 0.95rem;
@@ -157,54 +133,68 @@
 }
 
 .form-control-custom:focus {
-  border-color: #FF9F5A;
-  box-shadow: 0 0 0 0.2rem rgba(255, 159, 90, 0.15);
+  border-color: var(--color-orange); 
+  box-shadow: 0 0 0 0.2rem rgba(238, 142, 79, 0.15); 
   outline: none;
 }
 
 .form-control-custom::placeholder {
-  color: #CCC;
+  color: var(--color-grey); 
 }
 
 .form-control-custom.is-invalid {
-  border-color: #dc3545;
+  border-color: var(--color-red); 
 }
 
 /* Botón registrar */
 .btn-register {
-  background-color: #FF9F5A;
-  color: white;
+  background-color: var(--color-orange); 
+  color: var(--color-white); 
   border: none;
   padding: 15px 60px;
   border-radius: 30px;
   font-size: 1.1rem;
   font-weight: 600;
   transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(255, 159, 90, 0.3);
+  box-shadow: 0 4px 15px rgba(238, 142, 79, 0.3); 
 }
 
 .btn-register:hover:not(:disabled) {
-  background-color: #FF8C3A;
+  background-color: var(--color-orange-dark); 
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 159, 90, 0.4);
+  box-shadow: 0 6px 20px rgba(216, 126, 63, 0.4); 
 }
 
 .btn-register:disabled {
-  background-color: #FFB380;
+  background-color: var(--color-orange); 
+  opacity: 0.7; 
   cursor: not-allowed;
 }
 
-/* Botón cancelar */
+/* Botón cancelar (link) */
 .btn-link {
   font-size: 1rem;
   font-weight: 500;
+  color: var(--color-grey-dark) !important; 
+  text-decoration: none !important; 
+  background: none;
+  border: none;
+  padding: 0.375rem 0.75rem; 
 }
 
 .btn-link:hover {
-  color: #8B4513 !important;
+  color: var(--color-brown-dark) !important; 
+  text-decoration: underline !important;
 }
 
-/* Responsive */
+/* Mensajes de error (para que funcionen con d-block) */
+.invalid-feedback {
+  font-size: 0.875em;
+  text-align: left;
+  color: var(--color-red); 
+}
+
+/* Responsive (Sin cambios) */
 @media (max-width: 992px) {
   .dog-decoration {
     display: none;
@@ -236,7 +226,7 @@
   }
 }
 
-/* Animaciones */
+/* Animaciones (Sin cambios) */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -245,3 +235,156 @@
     transform: translateY(-10px);
   }
 }
+
+/* Estilo para el borde rojo en la foto */
+.photo-upload-box.is-invalid {
+  border-color: var(--color-red) !important; 
+}
+
+.photo-upload-box.is-invalid:hover {
+  border-color: var(--color-red-dark) !important; 
+}
+
+
+/* --- INICIO ESTILOS SECCIÓN CONTACTO --- */
+.btn-toggle-contact {
+  background: var(--color-green);
+  color: var(--color-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-toggle-contact:hover {
+  background: var(--color-green-dark);
+}
+
+.contact-form-section {
+  border: 2px solid var(--color-green);
+  border-top: none; /* El botón hace de borde superior */
+  padding: 20px;
+  border-radius: 0 0 8px 8px;
+  margin-top: -6px; /* Pega el formulario al botón */
+  background-color: #fafafa;
+}
+
+.contact-form-section .input-group-text {
+  background-color: var(--color-grey);
+  border: 2px solid var(--color-grey);
+  border-right: none;
+  color: var(--color-brown-dark);
+}
+.contact-form-section .input-group-text i {
+  font-size: 1.2rem;
+}
+.contact-form-section .form-control-custom {
+  border-left: none;
+}
+.contact-form-section .form-control-custom:focus {
+  border-left: none;
+  box-shadow: 0 0 0 0.2rem rgba(238, 142, 79, 0.15);
+}
+/* --- FIN ESTILOS SECCIÓN CONTACTO --- */
+
+
+/* --- ESTILOS AÑADIDOS PARA EL MODAL DE CANCELAR --- */
+.modal-overlay-cancel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-dialog-cancel {
+  background: var(--color-white); 
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-dialog-cancel h5 {
+  font-weight: 700;
+  color: var(--color-brown-dark); 
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.modal-dialog-cancel p {
+  color: var(--color-brown-dark); 
+  opacity: 0.8;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions-cancel {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap; /* Para móviles */
+}
+
+.modal-actions-cancel .btn {
+  border-radius: 20px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  color: var(--color-white) !important; 
+}
+
+/* --- AÑADIDO: Colores para botones del modal --- */
+.modal-actions-cancel .btn-green {
+  background-color: var(--color-green) !important;
+  border-color: var(--color-green) !important;
+}
+.modal-actions-cancel .btn-green:hover {
+  background-color: var(--color-green-dark) !important;
+  border-color: var(--color-green-dark) !important;
+}
+
+.modal-actions-cancel .btn-danger {
+  background-color: var(--color-red) !important;
+  border-color: var(--color-red) !important;
+}
+.modal-actions-cancel .btn-danger:hover {
+  background-color: var(--color-red-dark) !important;
+  border-color: var(--color-red-dark) !important;
+}
+
+.modal-actions-cancel .btn-secondary {
+  background-color: var(--color-grey-dark) !important;
+  border-color: var(--color-grey-dark) !important;
+}
+.modal-actions-cancel .btn-secondary:hover {
+  background-color: var(--color-grey) !important;
+  border-color: var(--color-grey) !important;
+}
+/* --- FIN DE ESTILOS AÑADIDOS --- */
