@@ -1,81 +1,77 @@
 <nav class="navbar navbar-expand-lg bg-white shadow-sm px-3">
     <div class="container-fluid">
 
-        <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" routerLink="/">
             <img src="/assets/logo-green.svg" alt="Logo" style="height: 35px;" />
         </a>
 
-        <!-- Botón hamburguesa -->
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Contenedor del menú -->
         <div class="collapse navbar-collapse" id="navbarNav">
 
             <div class="d-flex w-100 flex-column flex-lg-row align-items-center justify-content-between">
 
-                <!-- Si NO está autenticado -->
-                @if (!auth.isAuthenticated()) {
-                <div class="ms-auto d-flex flex-column flex-lg-row align-items-center gap-2">
-                    <button class="btn btn-green btn-sm rounded-pill" data-bs-toggle="modal"
-                        data-bs-target="#loginModal">
-                        Iniciar sesión
-                    </button>
-                    <button class="btn btn-orange btn-sm rounded-pill" data-bs-toggle="modal"
-                        data-bs-target="#registerModal">
-                        Registrarse
-                    </button>
-                </div>
-                }
+                @if (auth.isBrowser) {
 
-                <!-- Si está autenticado -->
-                @if (auth.isAuthenticated()) {
-                <div
-                    class="d-flex align-items-center flex-column flex-lg-row w-100 justify-content-center justify-content-lg-between">
-
-                    <!-- Menú -->
-                    <ul class="navbar-nav d-flex flex-row gap-4 text-center menu-links mx-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link fw-semibold" routerLink="/inicio" routerLinkActive="active"
-                                [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fw-semibold" routerLink="/adopciones"
-                                routerLinkActive="active">Adopciones</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fw-semibold" routerLink="/servicios"
-                                routerLinkActive="active">Servicios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fw-semibold" routerLink="/donaciones"
-                                routerLinkActive="active">Donaciones</a>
-                        </li>
-                    </ul>
-
-                    <!-- Iconos -->
-                    <div class="d-flex align-items-center mt-2 mt-lg-0">
-                        <button class="rounded-circle d-flex justify-content-center align-items-center me-3"
-                            style="width: 35px; height: 35px; font-weight: bold; background-color: var(--color-cyan); color: white; border: none;"
-                            title="Perfil" routerLink="/perfil">
-                            {{ getUserInitial() }}
+                    @if (!auth.isAuthenticated()) {
+                    <div class="ms-auto d-flex flex-column flex-lg-row align-items-center gap-2">
+                        <button class="btn btn-green btn-sm rounded-pill" data-bs-toggle="modal"
+                            data-bs-target="#loginModal">
+                            Iniciar sesión
                         </button>
-
-                        <button class="btn p-2 me-3">
-                            <i class="bi bi-bell-fill" style="color: var(--color-grey-dark); font-size: 1.2rem;"></i>
-                        </button>
-
-                        <button class="btn btn-red btn-sm" (click)="logout()">
-                            <i class="bi bi-box-arrow-right"></i>
+                        <button class="btn btn-orange btn-sm rounded-pill" data-bs-toggle="modal"
+                            data-bs-target="#registerModal">
+                            Registrarse
                         </button>
                     </div>
+                    }
 
-                </div>
-                }
-            </div>
+                    @if (auth.isAuthenticated()) {
+                    <div
+                        class="d-flex align-items-center flex-column flex-lg-row w-100 justify-content-center justify-content-lg-between">
+
+                        <ul class="navbar-nav d-flex flex-row gap-4 text-center menu-links mx-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold" routerLink="/inicio" routerLinkActive="active"
+                                    [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold" routerLink="/adopciones"
+                                    routerLinkActive="active">Adopciones</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold" routerLink="/servicios"
+                                    routerLinkActive="active">Servicios</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold" routerLink="/donaciones"
+                                    routerLinkActive="active">Donaciones</a>
+                            </li>
+                        </ul>
+
+                        <div class="d-flex align-items-center mt-2 mt-lg-0">
+                            <button class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                                style="width: 35px; height: 35px; font-weight: bold; background-color: var(--color-cyan); color: white; border: none;"
+                                title="Perfil" routerLink="/perfil">
+                                {{ getUserInitial() }}
+                            </button>
+
+                            <button class="btn p-2 me-3">
+                                <i class="bi bi-bell-fill" style="color: var(--color-grey-dark); font-size: 1.2rem;"></i>
+                            </button>
+
+                            <button class="btn btn-red btn-sm" (click)="logout()">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                    }
+                
+                } </div>
         </div>
     </div>
 </nav>

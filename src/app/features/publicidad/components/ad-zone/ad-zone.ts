@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AdvertisementResponseDTO } from '../../../../models/advertisement';
-import { AdvertisementService } from '../../advertisement.service';
+import { AdvertisementService } from '../../../../services/advertisement/advertisement.service';
 import { CommonModule } from '@angular/common';
 import { ZoneAd } from '../../../../models/enums/zoneAd.enum';
 import { TopBannerAd } from '../top-banner-ad/top-banner-ad';
