@@ -3,8 +3,7 @@
     
     <select 
         class="form-select mb-2" 
-        formControlName="department"
-        [disabled]="!isEditing">
+        formControlName="department">
         
         <option value="" disabled>Seleccionar Departamento</option>
         @for (dept of departments$ | async; track dept) {
@@ -14,8 +13,7 @@
     
     <select 
         class="form-select mb-2" 
-        formControlName="province"
-        [disabled]="!isEditing">
+        formControlName="province">
         <option value="" disabled>Seleccionar Provincia</option>
         @for (prov of provinces$ | async; track prov) {
             <option [value]="prov">{{ prov }}</option>
@@ -24,8 +22,7 @@
 
     <select 
         class="form-select" 
-        formControlName="district"
-        [disabled]="isEditing">
+        formControlName="district">
         <option value="" disabled>Seleccionar Distrito</option>
         @for (dist of districts$ | async; track dist) {
             <option [value]="dist">{{ dist }}</option>
