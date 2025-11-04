@@ -30,7 +30,6 @@ export class Register implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private userService: UserService,
     private ubigeoService: UbigeoService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
@@ -115,7 +114,7 @@ export class Register implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     const newUser: UserCreateDTO = this.registerForm.value;
 
-    this.userService.createUser(newUser).subscribe({
+    this.authService.register(newUser).subscribe({
       next: () => {
         this.closeModal();
         this.authService.login(newUser.email, newUser.password).subscribe(() => {

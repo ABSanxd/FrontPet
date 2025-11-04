@@ -11,13 +11,13 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  // Crear usuario (register)
-  createUser(user: UserCreateDTO): Observable<UserResponseDTO> {
-    return this.http.post<{ status: string, data: UserResponseDTO }>(this.apiUrl, user)
-      .pipe(
-        map(res => res.data)
-      );
-  }
+  // Crear usuario (register) - Se usa en el Auth
+  // createUser(user: UserCreateDTO): Observable<UserResponseDTO> {
+  //   return this.http.post<{ status: string, data: UserResponseDTO }>(this.apiUrl, user)
+  //     .pipe(
+  //       map(res => res.data)
+  //     );
+  // }
 
   // Obtener todos los usuarios
   getAllUsers(): Observable<UserResponseDTO[]> {
