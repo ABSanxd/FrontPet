@@ -11,6 +11,7 @@ import { UbigeoService } from '../../../services/ubigeo/ubigeo.service';
 })
 export class PerfilLocationForm implements OnInit {
   @Input() profileForm!: FormGroup;
+  @Input() isEditing: boolean = false
 
   public departments$!: Observable<string[]>;
   public provinces$!: Observable<string[]>;
@@ -25,27 +26,38 @@ export class PerfilLocationForm implements OnInit {
   setupUbigeoListeners(): void {
     this.departments$ = this.ubigeoService.getDepartments();
 
+    const initialDepartment = this.profileForm.get('departmente')!.value;
+    const initialProvince = this.profileForm.get('province')!.value
+
+    //cargar provincias
     this.provinces$ = this.profileForm.get('department')!.valueChanges.pipe(
-      startWith(this.profileForm.get('department')!.value),
+      startWith(initialDepartment),
       switchMap((dep) => {
-        this.profileForm.get('province')!.setValue('');
-        this.profileForm.get('district')!.setValue('');
-        return dep ? this.ubigeoService.getProvinces(dep) : [];
+       if(dep !== initialDepartment){
+        this.profileForm.get('province')!.setValue('', {emitEvent: false})
+        this.profileForm.get('dstrict')!.setValue('',{emitEvente:false})
+       }else if(dep && !this.profileForm.get('province')!.value){
+
+       }
+       return dep ? this.ubigeoService.getProvinces(dep):[]
       })
     );
 
+    //cargar distrto
     this.districts$ = combineLatest([
-      this.profileForm
-        .get('department')!
-        .valueChanges.pipe(startWith(this.profileForm.get('department')!.value)),
-      this.profileForm
-        .get('province')!
-        .valueChanges.pipe(startWith(this.profileForm.get('province')!.value)),
+      this.profileForm.get('department')!.valueChanges.pipe(startWith(initialDepartment)),
+      this.profileForm.get('province')!.valueChanges.pipe(startWith(initialProvince)),
     ]).pipe(
       switchMap(([dep, prov]) => {
-        this.profileForm.get('district')!.setValue('');
-        return dep && prov ? this.ubigeoService.getDistricts(dep, prov) : [];
-      })
+        if (dep === initialDepartment && prov === initialProvince) {
+            // Es la carga inicial, no limpiamos nada
+        } else if (prov !== initialProvince && prov !== '') {
+            // Limpiamos el distrito si la provincia cambia (y no está vacío)
+             this.profileForm.get('district')!.setValue('', { emitEvent: false });
+        }
+        
+        return dep && prov ? this.ubigeoService.getDistricts(dep, prov) : [];
+      })
     );
   }
 }
