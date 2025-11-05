@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth/auth.service';
-import { UserService } from '../../../../core/services/user/user.service';
 import { UbigeoService } from '../../../../services/ubigeo/ubigeo.service';
 import { UserCreateDTO } from '../../../../models/user';
 import { PLATFORM_ID } from '@angular/core';

@@ -1,5 +1,5 @@
 import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { map, tap } from "rxjs/operators";
 import { LoginResponse } from "../../../models/auth";
 import { isPlatformBrowser } from "@angular/common";
@@ -44,6 +44,37 @@ export class AuthService {
         user
       )
       .pipe(map(res => res.data));
+  }
+
+  // Verificar código (email + code)
+  verifyCode(email: string, code: string): Observable<any> {
+    const params = new HttpParams().set('email', email).set('code', code);
+    return this.http.post<{ status: string, data: any }>(`${this.apiUrl}/verify-code`, null, { params })
+      .pipe(map(res => res));
+  }
+
+  // Reenviar código de verificación
+  resendCode(email: string): Observable<any> {
+    const params = new HttpParams().set('email', email);
+    return this.http.post<{ status: string, data: any }>(`${this.apiUrl}/resend-code`, null, { params })
+      .pipe(map(res => res));
+  }
+
+  // Solicitar código para recuperar contraseña
+  forgotPassword(email: string): Observable<any> {
+    const params = new HttpParams().set('email', email);
+    return this.http.post<{ status: string, data: any }>(`${this.apiUrl}/forgot-password`, null, { params })
+      .pipe(map(res => res));
+  }
+
+  // Restablecer contraseña
+  resetPassword(email: string, code: string, newPassword: string): Observable<any> {
+    const params = new HttpParams()
+      .set('email', email)
+      .set('code', code)
+      .set('newPassword', newPassword);
+    return this.http.post<{ status: string, data: any }>(`${this.apiUrl}/reset-password`, null, { params })
+      .pipe(map(res => res));
   }
 
   logout(): void {

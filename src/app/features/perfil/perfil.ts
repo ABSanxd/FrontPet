@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { UserService } from '../../core/services/user/user.service';
+import { UserService } from '../../services/user/user.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { UserResponseDTO, UserUpdateDTO } from '../../models/user';
 import { BehaviorSubject } from 'rxjs';
