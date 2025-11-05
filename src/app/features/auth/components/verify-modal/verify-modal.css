@@ -1,30 +1,34 @@
+/* Bordes y sombra */
 .border-orange {
   border: 2px solid var(--color-orange);
 }
 
-/* Inputs y selects */
-.form-control:focus, 
-.form-select:focus {
+/* Inputs */
+.form-control:focus {
   border-color: var(--color-orange);
   box-shadow: 0 0 0 0.15rem rgba(255, 128, 0, 0.25);
 }
 
-.form-control, 
-.form-select {
+.form-control {
   border-radius: 8px;
-  border: 2px solid var(--color-grey); 
+  border: 2px solid var(--color-grey);
   padding: 0.6rem 1rem;
-  color: var(--color-brown-dark);
   font-size: 0.9rem;
+  color: var(--color-brown-dark);
 }
 
-/* Bordes rojos cuando hay error */
+/* Input error */
 .form-control.is-invalid {
   border-color: var(--color-red);
-  padding-right: 2rem;
 }
 
-/* Etiquetas en negrita */
+/* Etiquetas */
 .form-label {
-  font-weight: 600; 
+  font-weight: 600;
+}
+
+/* Enlaces tipo login */
+a.text-decoration-none {
+  font-weight: 600;
+  font-size: 0.85rem;
 }

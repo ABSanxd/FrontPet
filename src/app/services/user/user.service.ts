@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { UserCreateDTO, UserResponseDTO, UserUpdateDTO } from '../../../models/user';
+import { UserResponseDTO, UserUpdateDTO } from '../../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +11,13 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  // Crear usuario (register)
-  createUser(user: UserCreateDTO): Observable<UserResponseDTO> {
-    return this.http.post<{ status: string, data: UserResponseDTO }>(this.apiUrl, user)
-      .pipe(
-        map(res => res.data)
-      );
-  }
+  // Crear usuario (register) - Se usa en el Auth
+  // createUser(user: UserCreateDTO): Observable<UserResponseDTO> {
+  //   return this.http.post<{ status: string, data: UserResponseDTO }>(this.apiUrl, user)
+  //     .pipe(
+  //       map(res => res.data)
+  //     );
+  // }
 
   // Obtener todos los usuarios
   getAllUsers(): Observable<UserResponseDTO[]> {

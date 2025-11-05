@@ -1,11 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PublicationService } from '../publication.service';
 import { UbigeoService } from '../../../services/ubigeo/ubigeo.service';
 import { Species } from '../../../models/enums/species.enum';
 import { CreatePublicationDTO, Publication, UpdatePublicationDTO } from '../../../models/publication';
+
+// --- AÑADIDO: Validador personalizado ---
+export const atLeastOneContactValidator: ValidatorFn = (
+  control: AbstractControl
+): ValidationErrors | null => {
+  const formGroup = control as FormGroup;
+  const phone = formGroup.get('contactPhone')?.value;
+  const email = formGroup.get('contactEmail')?.value;
+  const whatsapp = formGroup.get('contactWhatsapp')?.value;
+  const facebook = formGroup.get('contactFacebook')?.value;
+  const instagram = formGroup.get('contactInstagram')?.value;
+  const tiktok = formGroup.get('contactTiktok')?.value;
+
+  // Si al menos uno tiene valor, es válido
+  if (phone || email || whatsapp || facebook || instagram || tiktok) {
+    return null; // Válido
+  }
+
+  // Si todos están vacíos, es inválido
+  return { atLeastOneContact: true };
+};
+// --- FIN AÑADIDO ---
 
 @Component({
   selector: 'app-crear-publicacion',
@@ -22,6 +44,13 @@ export class CrearPublicacion implements OnInit {
   photoBase64: string = '';
   isEditMode = false;
   publicationId: string = '';
+  photoError: string | null = null; 
+  showCancelModal = false; 
+  showSuccessModal = false; 
+
+  // --- AÑADIDO ---
+  showContactForm = false; // Controla el desplegable
+  // --- FIN AÑADIDO ---
 
   // Ubigeo
   departments: string[] = [];
@@ -43,7 +72,19 @@ export class CrearPublicacion implements OnInit {
       province: ['', Validators.required],
       district: ['', Validators.required],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      adoptionInfo: ['', [Validators.required, Validators.minLength(10)]]
+      
+      // --- CAMPOS DE CONTACTO NUEVOS ---
+      contactPhone: [''],
+      contactEmail: ['', [Validators.email]],
+      contactWhatsapp: [''],
+      contactFacebook: [''],
+      contactInstagram: [''],
+      contactTiktok: ['']
+      // --- FIN CAMPOS DE CONTACTO ---
+
+    }, { 
+      // --- AÑADIDO: Validador de grupo ---
+      validators: atLeastOneContactValidator 
     });
   }
 
@@ -54,6 +95,7 @@ export class CrearPublicacion implements OnInit {
         this.isEditMode = true;
         this.publicationId = params['id'];
         this.loadPublication();
+        this.showContactForm = true; // Abrir desplegable en modo edición
       }
     });
 
@@ -179,6 +221,9 @@ export class CrearPublicacion implements OnInit {
 
   // Método auxiliar para setear valores sin disparar eventos
   private setFormValues(publication: Publication): void {
+    // --- MODIFICADO: Llenar campos de contacto ---
+    const contact = (publication.contact as any) || {};
+    
     this.publicationForm.patchValue({
       tempName: publication.tempName,
       species: publication.species,
@@ -187,7 +232,14 @@ export class CrearPublicacion implements OnInit {
       province: publication.province,
       district: publication.district,
       description: publication.description,
-      adoptionInfo: (publication.contact as any)?.info || ''
+      
+      contactPhone: contact.phone || '',
+      contactEmail: contact.email || '',
+      contactWhatsapp: contact.whatsapp || '',
+      contactFacebook: contact.facebook || '',
+      contactInstagram: contact.instagram || '',
+      contactTiktok: contact.tiktok || ''
+
     }, { emitEvent: false }); // IMPORTANTE: no emitir eventos
   }
 
@@ -198,6 +250,7 @@ export class CrearPublicacion implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
+      this.photoError = null; // Limpiar error de foto
       const file = input.files[0];
       
       if (!file.type.startsWith('image/')) {
@@ -257,17 +310,6 @@ export class CrearPublicacion implements OnInit {
     document.getElementById('fileInput')?.click();
   }
 
-  getSpeciesEmoji(species: string): string {
-    const emojis: { [key: string]: string } = {
-      'PERRO': '🐶',
-      'GATO': '🐱',
-      'AVE': '🐦',
-      'CONEJO': '🐰',
-      'OTRO': '🦊'
-    };
-    return emojis[species] || '🐾';
-  }
-
   getSpeciesLabel(species: string): string {
     const labels: { [key: string]: string } = {
       'PERRO': 'Perro',
@@ -280,8 +322,10 @@ export class CrearPublicacion implements OnInit {
   }
 
   onSubmit(): void {
+    this.photoError = null; 
+
     if (!this.photoBase64) {
-      alert('Por favor sube una foto de la mascota');
+      this.photoError = 'Por favor, sube una foto de la mascota.';
       return;
     }
 
@@ -289,6 +333,10 @@ export class CrearPublicacion implements OnInit {
       Object.keys(this.publicationForm.controls).forEach(key => {
         this.publicationForm.get(key)?.markAsTouched();
       });
+      // Abrir el formulario de contacto si está cerrado y hay error
+      if(this.publicationForm.hasError('atLeastOneContact')) {
+        this.showContactForm = true;
+      }
       return;
     }
 
@@ -301,6 +349,27 @@ export class CrearPublicacion implements OnInit {
     }
   }
 
+  // --- MODIFICADO: Construir DTO ---
+  private buildContactPayload(): any {
+    const formVal = this.publicationForm.value;
+    const contactPayload: any = {
+      phone: formVal.contactPhone || null,
+      email: formVal.contactEmail || null,
+      whatsapp: formVal.contactWhatsapp || null,
+      facebook: formVal.contactFacebook || null,
+      instagram: formVal.contactInstagram || null,
+      tiktok: formVal.contactTiktok || null
+    };
+
+    // Limpiar claves nulas o vacías
+    Object.keys(contactPayload).forEach(key => {
+      if (!contactPayload[key]) {
+        delete contactPayload[key];
+      }
+    });
+    return contactPayload;
+  }
+
   createPublication(): void {
     const dto: CreatePublicationDTO = {
       tempName: this.publicationForm.value.tempName,
@@ -308,9 +377,7 @@ export class CrearPublicacion implements OnInit {
       approxAge: this.publicationForm.value.approxAge,
       photo: this.photoBase64,
       description: this.publicationForm.value.description,
-      contact: {
-        info: this.publicationForm.value.adoptionInfo
-      },
+      contact: this.buildContactPayload(), // <-- MODIFICADO
       department: this.publicationForm.value.department,
       province: this.publicationForm.value.province,
       district: this.publicationForm.value.district
@@ -321,8 +388,7 @@ export class CrearPublicacion implements OnInit {
     this.publicationService.createPublication(dto).subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          alert('¡Publicación creada exitosamente! Está pendiente de aprobación.');
-          this.router.navigate(['/adopciones']);
+          this.showSuccessModal = true;
         } else {
           alert('Error al crear la publicación: ' + (response.message || 'Error desconocido'));
         }
@@ -343,9 +409,7 @@ export class CrearPublicacion implements OnInit {
       approxAge: this.publicationForm.value.approxAge,
       photo: this.photoBase64,
       description: this.publicationForm.value.description,
-      contact: {
-        info: this.publicationForm.value.adoptionInfo
-      },
+      contact: this.buildContactPayload(), // <-- MODIFICADO
       department: this.publicationForm.value.department,
       province: this.publicationForm.value.province,
       district: this.publicationForm.value.district
@@ -370,14 +434,35 @@ export class CrearPublicacion implements OnInit {
       }
     });
   }
+  // --- FIN MODIFICADO ---
 
+  // --- LÓGICA DEL MODAL DE CANCELAR ---
+  
   onCancel(): void {
-    if (this.publicationForm.dirty || this.photoBase64) {
-      if (confirm('¿Estás seguro de cancelar? Se perderán los cambios.')) {
-        this.router.navigate(['/adopciones']);
-      }
+    const hasChanges = this.publicationForm.dirty;
+    const hasNewPhoto = !this.isEditMode && this.photoBase64;
+    const hasChangesEditMode = this.isEditMode && this.publicationForm.dirty;
+
+
+    if (hasChanges || hasNewPhoto || hasChangesEditMode) {
+      this.showCancelModal = true;
     } else {
       this.router.navigate(['/adopciones']);
     }
+  }
+
+  confirmCancel(): void {
+    this.showCancelModal = false;
+    this.router.navigate(['/adopciones']);
+  }
+
+  closeCancelModal(): void {
+    this.showCancelModal = false;
+  }
+
+  // --- LÓGICA DEL MODAL DE ÉXITO ---
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.router.navigate(['/adopciones']);
   }
 }

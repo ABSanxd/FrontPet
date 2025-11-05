@@ -2,97 +2,153 @@
   <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
     <div class="modal-content shadow-lg rounded-2 border-orange" style="color: var(--color-brown-dark)">
 
+      <!-- Encabezado -->
       <div class="modal-header border-0 pb-0 position-relative">
-        <button type="button" class="btn-close position-absolute end-0 top-0 me-3 mt-3" data-bs-dismiss="modal"
-          aria-label="Cerrar"></button>
+        <button type="button" class="btn-close position-absolute end-0 top-0 me-3 mt-3" 
+                data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
 
+      <!-- Logo -->
       <div class="text-center mb-3 mt-1">
         <img src="/assets/logo-orange.svg" alt="Logo" style="height: 50px;">
       </div>
 
+      <!-- Formulario -->
       <div class="modal-body px-4 pb-4">
-        <form (ngSubmit)="onSubmit()">
-
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+          
+          <!-- Nombre -->
           <div class="mb-3">
             <label for="nameReg" class="form-label small">Nombre Completo</label>
-            <input type="text" class="form-control rounded-3 form-control-sm border-orange" id="nameReg"
-              placeholder="Tus nombres" name="name" [(ngModel)]="name" required>
+            <input id="nameReg" type="text" 
+                   class="form-control rounded-3 form-control-sm border-orange"
+                   placeholder="Tus nombres"
+                   formControlName="name"
+                   [class.is-invalid]="f['name'].touched && f['name'].invalid">
+            @if (f['name'].touched && f['name'].invalid) {
+              <small class="text-danger d-block mt-1">
+                @if (f['name'].errors?.['required']) { El nombre es obligatorio. }
+                @if (f['name'].errors?.['minlength']) { Debe tener al menos 2 caracteres. }
+              </small>
+            }
           </div>
 
+          <!-- Email -->
           <div class="mb-3">
             <label for="emailReg" class="form-label small">Correo electrónico</label>
-            <input type="email" class="form-control rounded-3 form-control-sm border-orange" id="emailReg"
-              placeholder="tucorreo@ejemplo.com" name="email" [(ngModel)]="email" required>
+            <input id="emailReg" type="email" 
+                   class="form-control rounded-3 form-control-sm border-orange"
+                   placeholder="tucorreo@gmail.com"
+                   formControlName="email"
+                   [class.is-invalid]="f['email'].touched && f['email'].invalid">
+            @if (f['email'].touched && f['email'].invalid) {
+              <small class="text-danger d-block mt-1">
+                @if (f['email'].errors?.['required']) { El correo es obligatorio. }
+                @if (f['email'].errors?.['email']) { Ingresa un correo válido. }
+              </small>
+            }
           </div>
 
+          <!-- Contraseña -->
           <div class="mb-3">
             <label for="passwordReg" class="form-label small">Contraseña</label>
-            <input type="password" class="form-control rounded-3 form-control-sm border-orange" id="passwordReg"
-              placeholder="•••••••••••••••" name="password" [(ngModel)]="password" required>
+            <input id="passwordReg" type="password" 
+                   class="form-control rounded-3 form-control-sm border-orange"
+                   placeholder="•••••••••••••••"
+                   formControlName="password"
+                   [class.is-invalid]="f['password'].touched && f['password'].invalid">
+            @if (f['password'].touched && f['password'].invalid) {
+              <small class="text-danger d-block mt-1">
+                @if (f['password'].errors?.['required']) { La contraseña es obligatoria. }
+                @if (f['password'].errors?.['minlength']) { Debe tener al menos 8 caracteres. }
+              </small>
+            }
           </div>
 
-          <!-- Ubigeos: departamento / provincia / distrito -->
+          <!-- Ubigeos -->
           <div class="row g-2">
+            <!-- Departamento -->
             <div class="col-12 mb-2">
               <label class="form-label small">Departamento</label>
-              <select class="form-select form-select-sm border-orange" [(ngModel)]="department" name="department"
-                (change)="onDepartmentChange()" aria-label="Departamento" required>
-                <option value="">Selecciona departamento</option>
+              <select class="form-select form-select-sm border-orange"
+                      formControlName="department"
+                      (change)="onDepartmentChange()"
+                      [class.is-invalid]="f['department'].touched && f['department'].invalid">
+                <option value="">Selecciona departamento.</option>
                 @for (d of departments; track d) {
-                <option [value]="d">{{ d }}</option>
+                  <option [value]="d">{{ d }}</option>
                 }
               </select>
+              @if (f['department'].touched && f['department'].invalid) {
+                <small class="text-danger d-block mt-1">El departamento es obligatorio.</small>
+              }
             </div>
 
+            <!-- Provincia -->
             <div class="col-6 mb-2">
               <label class="form-label small">Provincia</label>
-              <select class="form-select form-select-sm border-orange" [(ngModel)]="province" name="province"
-                (change)="onProvinceChange()" aria-label="Provincia" [disabled]="!provinces.length" required>
-                <option value="">Selecciona provincia</option>
+              <select class="form-select form-select-sm border-orange"
+                      formControlName="province"
+                      (change)="onProvinceChange()">
+                <option value="">Selecciona prov.</option>
                 @for (p of provinces; track p) {
-                <option [value]="p">{{ p }}</option>
+                  <option [value]="p">{{ p }}</option>
                 }
               </select>
             </div>
 
+            <!-- Distrito -->
             <div class="col-6 mb-2">
               <label class="form-label small">Distrito</label>
-              <select class="form-select form-select-sm border-orange" [(ngModel)]="district" name="district"
-                aria-label="Distrito" [disabled]="!districts.length" required>
-                <option value="">Selecciona distrito</option>
+              <select class="form-select form-select-sm border-orange"
+                      formControlName="district">
+                <option value="">Selecciona dist.</option>
                 @for (di of districts; track di) {
-                <option [value]="di">{{ di }}</option>
+                  <option [value]="di">{{ di }}</option>
                 }
               </select>
             </div>
           </div>
 
-          <!-- Fecha de nacimiento -->
+          <!-- Fecha -->
           <div class="mb-3">
             <label for="birthdateReg" class="form-label small">Fecha de nacimiento</label>
-            <input id="birthdateReg" name="birthDate" [(ngModel)]="birthDate"
-              class="form-control form-control-sm border-orange rounded-3" type="date" [max]="todayMinus9Years()" required />
+            <input id="birthdateReg" type="date"
+                   class="form-control form-control-sm border-orange rounded-3"
+                   [max]="todayMinus9Years()"
+                   formControlName="birthDate">
           </div>
 
-          <!-- Mensaje de error -->
+          <!-- Error global -->
           @if (error) {
-          <small class=" text-danger d-block mb-2">* {{ error }}</small>
+            <small class="text-danger d-block mb-2">* {{ error }}</small>
           }
 
+          <!-- Enlace a login -->
           <div class="text-center mt-3">
             <small>
               ¿Ya tienes cuenta?
-              <a href="#" class="text-decoration-none fw-semibold" style="color: var(--color-brown-dark);"
-                data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">
+              <a href="#" class="text-decoration-none fw-semibold" 
+                 style="color: var(--color-brown-dark);"
+                 data-bs-dismiss="modal"
+                 data-bs-toggle="modal"
+                 data-bs-target="#loginModal">
                 Inicia sesión aquí
               </a>
             </small>
           </div>
 
+          <!-- Botón -->
           <div class="text-center mt-4">
-            <button type="submit" class="btn btn-green w-100 py-2 fw-semibold rounded-3 btn-sm">
-              Registrarse
+            <button type="submit"
+                    class="btn btn-green w-100 py-2 fw-semibold rounded-3 btn-sm"
+                    [disabled]="isLoading">
+              @if (isLoading) {
+                <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                Registrando...
+              } @else {
+                Registrarse
+              }
             </button>
           </div>
 
@@ -101,3 +157,6 @@
     </div>
   </div>
 </div>
+
+
+<app-verify-modal #verifyModal (verified)="onVerified()" [email]="registerForm.get('email')?.value"></app-verify-modal>

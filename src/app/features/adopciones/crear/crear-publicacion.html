@@ -1,11 +1,8 @@
 <div class="form-container">
-  <!-- Background con patitas -->
-  
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg-10 col-xl-9">
         
-        <!-- Título -->
         <div class="text-center mb-4">
           <h2 class="fw-bold title-orange mb-3">
             {{ isEditMode ? '¡Edita tu publicación!' : '¡Agrega una nueva publicación!' }}
@@ -18,16 +15,13 @@
         </div>
 
 
-        <!-- Formulario -->
         <div class="form-card">
           <form [formGroup]="publicationForm" (ngSubmit)="onSubmit()">
             
             <div class="row">
-              <!-- Columna izquierda: Foto y Nombre -->
               <div class="col-md-5 mb-4">
-                <!-- Subir foto -->
                 <div class="photo-upload-wrapper">
-                  <div class="photo-upload-box" (click)="triggerFileInput()">
+                  <div class="photo-upload-box" (click)="triggerFileInput()" [class.is-invalid]="photoError">
                     <div class="photo-preview" *ngIf="photoPreview">
                       <img [src]="photoPreview" alt="Preview">
                     </div>
@@ -38,6 +32,13 @@
                     </div>
                   </div>
                   <p class="photo-label">Subir foto de la mascota</p>
+
+                  @if (photoError) {
+                    <div class="invalid-feedback d-block text-center mt-1">
+                      {{ photoError }}
+                    </div>
+                  }
+                  
                   <input 
                     type="file" 
                     id="fileInput"
@@ -46,7 +47,6 @@
                     style="display: none;">
                 </div>
 
-                <!-- Nombre -->
                 <div class="mb-3">
                   <label class="form-label">Nombre</label>
                   <input 
@@ -55,12 +55,20 @@
                     formControlName="tempName"
                     placeholder="Nombre y apellidos"
                     [class.is-invalid]="f['tempName'].invalid && f['tempName'].touched">
+                  @if (f['tempName'].invalid && f['tempName'].touched) {
+                    <div class="invalid-feedback d-block">
+                      @if (f['tempName'].errors?.['required']) {
+                        El nombre es obligatorio.
+                      }
+                      @if (f['tempName'].errors?.['minlength']) {
+                        Debe tener al menos 2 caracteres.
+                      }
+                    </div>
+                  }
                 </div>
               </div>
 
-              <!-- Columna derecha: Datos -->
               <div class="col-md-7">
-                <!-- Especie -->
                 <div class="mb-3">
                   <label class="form-label">Especie</label>
                   <select 
@@ -69,12 +77,16 @@
                     [class.is-invalid]="f['species'].invalid && f['species'].touched">
                     <option value="">Selecciona una opción...</option>
                     <option *ngFor="let especie of especies" [value]="especie">
-                      {{getSpeciesEmoji(especie)}} {{getSpeciesLabel(especie)}}
+                      {{getSpeciesLabel(especie)}}
                     </option>
                   </select>
+                  @if (f['species'].invalid && f['species'].touched) {
+                    <div class="invalid-feedback d-block">
+                      La especie es obligatoria.
+                    </div>
+                  }
                 </div>
 
-                <!-- Edad -->
                 <div class="mb-3">
                   <label class="form-label">Edad</label>
                   <input 
@@ -83,9 +95,13 @@
                     formControlName="approxAge"
                     placeholder="Ingresa la edad de tu mascota"
                     [class.is-invalid]="f['approxAge'].invalid && f['approxAge'].touched">
+                  @if (f['approxAge'].invalid && f['approxAge'].touched) {
+                    <div class="invalid-feedback d-block">
+                      La edad es obligatoria.
+                    </div>
+                  }
                 </div>
 
-                <!-- Ubicación (Ubigeo) -->
                 <div class="mb-3">
                   <label class="form-label">Departamento</label>
                   <select 
@@ -95,6 +111,11 @@
                     <option value="">Selecciona departamento</option>
                     <option *ngFor="let dep of departments" [value]="dep">{{dep}}</option>
                   </select>
+                  @if (f['department'].invalid && f['department'].touched) {
+                    <div class="invalid-feedback d-block">
+                      El departamento es obligatorio.
+                    </div>
+                  }
                 </div>
 
                 <div class="mb-3">
@@ -107,6 +128,11 @@
                     <option value="">Selecciona provincia</option>
                     <option *ngFor="let prov of provinces" [value]="prov">{{prov}}</option>
                   </select>
+                  @if (f['province'].invalid && f['province'].touched) {
+                    <div class="invalid-feedback d-block">
+                      La provincia es obligatoria.
+                    </div>
+                  }
                 </div>
 
                 <div class="mb-3">
@@ -119,9 +145,13 @@
                     <option value="">Selecciona distrito</option>
                     <option *ngFor="let dist of districts" [value]="dist">{{dist}}</option>
                   </select>
+                  @if (f['district'].invalid && f['district'].touched) {
+                    <div class="invalid-feedback d-block">
+                      El distrito es obligatorio.
+                    </div>
+                  }
                 </div>
 
-                <!-- Descripción -->
                 <div class="mb-3">
                   <label class="form-label">Descripcion</label>
                   <textarea 
@@ -130,22 +160,76 @@
                     formControlName="description"
                     placeholder="Añade una descripcion corta sobre tu mascota"
                     [class.is-invalid]="f['description'].invalid && f['description'].touched"></textarea>
+                  @if (f['description'].invalid && f['description'].touched) {
+                    <div class="invalid-feedback d-block">
+                      @if (f['description'].errors?.['required']) {
+                        La descripción es obligatoria.
+                      }
+                      @if (f['description'].errors?.['minlength']) {
+                        Debe tener al menos 10 caracteres.
+                      }
+                    </div>
+                  }
                 </div>
               </div>
             </div>
 
-            <!-- Acerca de la adopción (ancho completo) -->
-            <div class="mb-4">
-              <label class="form-label">Acerca de la adopcion:</label>
-              <textarea 
-                class="form-control form-control-custom" 
-                rows="3" 
-                formControlName="adoptionInfo"
-                placeholder="Añade una descripcion corta sobre datos para la adopcion"
-                [class.is-invalid]="f['adoptionInfo'].invalid && f['adoptionInfo'].touched"></textarea>
+            <div class="mb-3">
+              <button type="button" class="btn-toggle-contact" (click)="showContactForm = !showContactForm">
+                Información de Contacto
+                <i class="bi" [class.bi-chevron-down]="!showContactForm" [class.bi-chevron-up]="showContactForm"></i>
+              </button>
             </div>
 
-            <!-- Botones -->
+            @if (showContactForm) {
+              <div class="contact-form-section mb-4">
+                <p class="text-muted small text-center mb-3">
+                  Ingresa al menos un método de contacto para que puedan ubicarte.
+                </p>
+
+                <div class="input-group mb-3">
+                  <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                  <input type="email" class="form-control form-control-custom" placeholder="tu-correo@ejemplo.com" formControlName="contactEmail" [class.is-invalid]="f['contactEmail'].invalid && f['contactEmail'].touched">
+                </div>
+                @if (f['contactEmail'].invalid && f['contactEmail'].touched) {
+                  <div class="invalid-feedback d-block mb-2">
+                    Ingresa un correo válido.
+                  </div>
+                }
+
+                <div class="input-group mb-3">
+                  <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
+                  <input type="tel" class="form-control form-control-custom" placeholder="Teléfono (Ej: 987654321)" formControlName="contactPhone">
+                </div>
+
+                <div class="input-group mb-3">
+                  <span class="input-group-text"><i class="bi bi-whatsapp"></i></span>
+                  <input type="tel" class="form-control form-control-custom" placeholder="N° WhatsApp (Ej: 987654321)" formControlName="contactWhatsapp">
+                </div>
+                
+                <div class="input-group mb-3">
+                  <span class="input-group-text"><i class="bi bi-facebook"></i></span>
+                  <input type="text" class="form-control form-control-custom" placeholder="Usuario o link de Facebook" formControlName="contactFacebook">
+                </div>
+
+                <div class="input-group mb-3">
+                  <span class="input-group-text"><i class="bi bi-instagram"></i></span>
+                  <input type="text" class="form-control form-control-custom" placeholder="Usuario de Instagram (Ej: @usuario)" formControlName="contactInstagram">
+                </div>
+                
+                <div class="input-group mb-3">
+                  <span class="input-group-text"><i class="bi bi-tiktok"></i></span>
+                  <input type="text" class="form-control form-control-custom" placeholder="Usuario de TikTok (Ej: @usuario)" formControlName="contactTiktok">
+                </div>
+              </div>
+            }
+
+            @if (publicationForm.hasError('atLeastOneContact') && (publicationForm.touched || publicationForm.dirty)) {
+              <div class="invalid-feedback d-block text-center mb-3 fw-bold">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                Debes proporcionar al menos un método de contacto.
+              </div>
+            }
             <div class="text-center">
               <button 
                 type="submit" 
@@ -160,6 +244,7 @@
                 </span>
               </button>
               <br>
+              
               <button 
                 type="button" 
                 class="btn btn-link text-dark text-decoration-none"
@@ -175,4 +260,30 @@
       </div>
     </div>
   </div>
+
+  @if (showCancelModal) {
+    <div class="modal-overlay-cancel" (click)="closeCancelModal()">
+      <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
+        <h5>Confirmar cancelación</h5>
+        <p>¿Estás seguro de que deseas cancelar? Se perderán los cambios no guardados.</p>
+        <div class="modal-actions-cancel">
+          <button (click)="closeCancelModal()" class="btn btn-secondary">No, seguir editando</button>
+          <button (click)="confirmCancel()" class="btn btn-danger">Sí, cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showSuccessModal) {
+    <div class="modal-overlay-cancel" (click)="closeSuccessModal()">
+      <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
+        <h5>¡Éxito!</h5>
+        <p>¡Publicación creada exitosamente! Está pendiente de aprobación.</p>
+        <div class="modal-actions-cancel">
+          <button (click)="closeSuccessModal()" class="btn btn-green">Aceptar</button>
+        </div>
+      </div>
+    </div>
+  }
+
 </div>

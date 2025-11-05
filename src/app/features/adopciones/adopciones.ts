@@ -22,6 +22,17 @@ export class Adopciones implements OnInit {
   pendingPublications: Publication[] = [];
   adoptedPublications: Publication[] = [];
   deletedPublications: Publication[] = [];
+
+  // --- MODIFICADO: Variables para controlar los modales de confirmación ---
+  showDeleteConfirmModal = false;
+  publicationToDelete: Publication | null = null; // <-- Ahora es un objeto
+  
+  showPauseConfirmModal = false;
+  publicationToPauseId: string | null = null;
+
+  showActivateConfirmModal = false;
+  publicationToActivateId: string | null = null;
+  // --- FIN MODIFICADO ---
   
   constructor(
     private publicationService: PublicationService,
@@ -93,86 +104,114 @@ export class Adopciones implements OnInit {
     return labels[species] || species;
   }
 
-  // Obtener emoji de la especie
-  getSpeciesEmoji(species: Species): string {
-    const emojis: { [key in Species]: string } = {
-      [Species.PERRO]: '🐶',
-      [Species.GATO]: '🐱',
-      [Species.AVE]: '🐦',
-      [Species.CONEJO]: '🐰',
-      [Species.OTRO]: '🦊'
-    };
-    return emojis[species] || '🐾';
-  }
-
   // Editar publicación
   editPublication(publication: Publication): void {
     // Navegar a página de edición con el ID
     this.router.navigate(['/publicaciones/editar', publication.id]);
   }
 
-  // Pausar publicación
+  // Pausar publicación (MODIFICADO: Abre el modal)
   pausePublication(id: string): void {
-    if (confirm('¿Estás seguro de pausar esta publicación?')) {
-      this.loading = true;
-      this.publicationService.changeStatus(id, Status.PAUSADO).subscribe({
-        next: (response) => {
-          if (response.status === 'success') {
-            this.loadPublications();
-          }
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error al pausar publicación:', error);
-          this.loading = false;
-          alert('Error al pausar la publicación');
-        }
-      });
-    }
+    this.publicationToPauseId = id;
+    this.showPauseConfirmModal = true;
   }
 
-  // Activar publicación
+  // Activar publicación (MODIFICADO: Abre el modal)
   activatePublication(id: string): void {
-    if (confirm('¿Estás seguro de activar esta publicación?')) {
-      this.loading = true;
-      this.publicationService.changeStatus(id, Status.ACTIVO).subscribe({
-        next: (response) => {
-          if (response.status === 'success') {
-            this.loadPublications();
-          }
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error al activar publicación:', error);
-          this.loading = false;
-          alert('Error al activar la publicación');
-        }
-      });
-    }
+    this.publicationToActivateId = id;
+    this.showActivateConfirmModal = true;
   }
 
-  // Eliminar publicación
-  deletePublication(id: string): void {
-    if (confirm('¿Estás seguro de eliminar esta publicación? Esta acción no se puede deshacer.')) {
-      this.loading = true;
-      this.publicationService.deletePublication(id).subscribe({
-        next: (response) => {
-          if (response.status === 'success') {
-            this.loadPublications();
-          }
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error al eliminar publicación:', error);
-          this.loading = false;
-          alert('Error al eliminar la publicación');
-        }
-      });
-    }
+  // Eliminar publicación (MODIFICADO: Abre el modal y pasa el objeto)
+  deletePublication(pub: Publication): void {
+    this.publicationToDelete = pub;
+    this.showDeleteConfirmModal = true;
   }
 
   // Crear nueva publicación
   createNewPublication(): void {
     this.router.navigate(['/publicaciones/crear']);
   }
+
+  // --- AÑADIDO: Métodos para los modales de confirmación ---
+
+  // Confirmar Pausa
+  confirmPause(): void {
+    if (!this.publicationToPauseId) return;
+    this.loading = true;
+    this.publicationService.changeStatus(this.publicationToPauseId, Status.PAUSADO).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          this.loadPublications();
+        }
+        this.loading = false;
+        this.closePauseConfirmModal();
+      },
+      error: (error) => {
+        console.error('Error al pausar publicación:', error);
+        this.loading = false;
+        alert('Error al pausar la publicación');
+        this.closePauseConfirmModal();
+      }
+    });
+  }
+
+  // Confirmar Activación
+  confirmActivate(): void {
+    if (!this.publicationToActivateId) return;
+    this.loading = true;
+    this.publicationService.changeStatus(this.publicationToActivateId, Status.ACTIVO).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          this.loadPublications();
+        }
+        this.loading = false;
+        this.closeActivateConfirmModal();
+      },
+      error: (error) => {
+        console.error('Error al activar publicación:', error);
+        this.loading = false;
+        alert('Error al activar la publicación');
+        this.closeActivateConfirmModal();
+      }
+    });
+  }
+
+  // Confirmar Eliminación (MODIFICADO: usa el objeto)
+  confirmDelete(): void {
+    if (!this.publicationToDelete) return;
+    this.loading = true;
+    this.publicationService.deletePublication(this.publicationToDelete.id).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          this.loadPublications();
+        }
+        this.loading = false;
+        this.closeDeleteConfirmModal();
+      },
+      error: (error) => {
+        console.error('Error al eliminar publicación:', error);
+        this.loading = false;
+        alert('Error al eliminar la publicación');
+        this.closeDeleteConfirmModal();
+      }
+    });
+  }
+
+  // Métodos para cerrar los modales
+  closeDeleteConfirmModal(): void {
+    this.showDeleteConfirmModal = false;
+    this.publicationToDelete = null;
+  }
+  
+  closePauseConfirmModal(): void {
+    this.showPauseConfirmModal = false;
+    this.publicationToPauseId = null;
+  }
+  
+  closeActivateConfirmModal(): void {
+    this.showActivateConfirmModal = false;
+    this.publicationToActivateId = null;
+  }
+  // --- FIN AÑADIDO ---
 }
