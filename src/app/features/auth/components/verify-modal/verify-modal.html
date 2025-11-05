@@ -1,30 +1,49 @@
-<div class="modal fade" id="verifyModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
-    <div class="modal-content p-4 rounded-3 border-orange">
-      <h5 class="text-center mb-3">Verifica tu correo</h5>
+<div #verifyModal class="modal fade" id="verifyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
+        <div class="modal-content p-4 rounded-3 border-orange shadow-lg" style="color: var(--color-brown-dark)">
 
-      <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label class="form-label small">Código de verificación</label>
-          <input type="text" maxlength="6" formControlName="code"
-                 class="form-control form-control-sm border-orange text-center"
-                 placeholder="000000"
-                 [class.is-invalid]="f['code'].touched && f['code'].invalid">
-          @if (f['code'].touched && f['code'].invalid) {
-            <small class="text-danger">El código debe tener 6 dígitos.</small>
-          }
+            <h5 class="text-center mb-3">Verifica tu correo</h5>
+
+            <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+
+                <!-- Input código -->
+                <div class="mb-3">
+                    <label class="form-label small">Código de verificación</label>
+                    <input type="text" maxlength="6" formControlName="code"
+                        class="form-control form-control-sm border-orange text-center" placeholder="000000"
+                        [class.is-invalid]="f['code'].touched && f['code'].invalid">
+                    @if (f['code'].touched && f['code'].invalid) {
+                    <small class="text-danger d-block mt-1">El código debe tener 6 dígitos.</small>
+                    }
+                </div>
+
+                <!-- Mensajes -->
+                @if (error) {
+                <small class="text-danger d-block mb-2">* {{ error }}</small>
+                }
+                @if (message) {
+                <small class="d-block mt-2" style="color: var(--color-green-dark)">{{ message }}</small>
+                }
+                <!-- Botones -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+
+                    <!-- Reenviar código como link -->
+                    <a (click)="resendCode()" class="text-decoration-none fw-semibold small"
+                        style="color: var(--color-brown-dark); cursor: pointer;">
+                        Reenviar código
+                    </a>
+
+                    <div class="d-flex gap-2">
+                        <!-- Cancelar -->
+                        <button type="button" class="btn btn-red btn-sm" (click)="closeModal()">Cancelar</button>
+
+                        <!-- Confirmar -->
+                        <button type="submit" class="btn btn-orange btn-sm" [disabled]="isLoading">
+                            {{ isLoading ? 'Verificando...' : 'Confirmar' }}
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        @if (error) { <div class="alert alert-danger py-1">{{ error }}</div> }
-        @if (message) { <div class="alert alert-success py-1">{{ message }}</div> }
-
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <button type="button" class="btn btn-red p-0 small" (click)="resendCode()">Reenviar código</button>
-          <button type="submit" class="btn btn-orange btn-sm" [disabled]="isLoading">
-            {{ isLoading ? 'Verificando...' : 'Confirmar' }}
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
 </div>

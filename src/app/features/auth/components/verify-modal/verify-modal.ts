@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 
@@ -8,19 +8,28 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
   templateUrl: './verify-modal.html',
   styleUrl: './verify-modal.css'
 })
-export class VerifyModal {
-  @Input() email!: string; // viene del register
+export class VerifyModal implements AfterViewInit {
+  @Input() email!: string;
   @Output() verified = new EventEmitter<void>();
+
+  @ViewChild('verifyModal') modalEl!: ElementRef<HTMLDivElement>;
 
   verifyForm: FormGroup;
   message = '';
-  isLoading = false;
   error = '';
+  isLoading = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.verifyForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]]
     });
+  }
+
+  ngAfterViewInit() {
+    if (this.modalEl) {
+      const el = this.modalEl.nativeElement;
+      el.addEventListener('hidden.bs.modal', () => this.clearForm());
+    }
   }
 
   get f() {
@@ -29,7 +38,10 @@ export class VerifyModal {
 
   onSubmit() {
     if (this.verifyForm.invalid) return;
+
     this.isLoading = true;
+    this.error = '';
+    this.message = '';
 
     const code = this.verifyForm.value.code;
     this.authService.verifyCode(this.email, code).subscribe({
@@ -55,14 +67,22 @@ export class VerifyModal {
     });
   }
 
+  clearForm() {
+    this.verifyForm.reset();
+    this.error = '';
+    this.message = '';
+    this.isLoading = false;
+  }
+
   closeModal() {
-    const modalEl = document.getElementById('verifyModal');
-    if (modalEl) {
-      modalEl.classList.remove('show');
-      modalEl.style.display = 'none';
+    if (this.modalEl) {
+      const el = this.modalEl.nativeElement;
+      el.classList.remove('show');
+      el.style.display = 'none';
       document.body.classList.remove('modal-open');
       const backdrop = document.querySelector('.modal-backdrop');
       if (backdrop) backdrop.remove();
+      this.clearForm();
     }
   }
 }

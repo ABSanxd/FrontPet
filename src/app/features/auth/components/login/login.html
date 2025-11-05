@@ -20,7 +20,7 @@
           <div class="mb-3">
             <label for="email" class="form-label small">Correo electrónico</label>
             <input type="email" id="email" class="form-control rounded-3 form-control-sm border-orange"
-              formControlName="email" placeholder="tucorreo@ejemplo.com"
+              formControlName="email" placeholder="tucorreo@gmail.com"
               [class.is-invalid]="f['email'].touched && f['email'].invalid">
 
             @if (f['email'].touched && f['email'].invalid) {
@@ -62,10 +62,12 @@
             </small>
 
             <div class="mt-2">
-              <a routerLink="/reset-password" (click)="closeModal()" class="text-decoration-none fw-semibold"
-                style="color: var(--color-brown-dark);">
-                ¿Olvidaste tu contraseña?
-              </a>
+              <small>
+                <a routerLink="/reset-password" (click)="closeModal()" class="text-decoration-none fw-semibold"
+                  style="color: var(--color-brown-dark);">
+                  ¿Olvidaste tu contraseña?
+                </a>
+              </small>
             </div>
           </div>
 
