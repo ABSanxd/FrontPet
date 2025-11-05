@@ -7,10 +7,11 @@ import { UbigeoService } from '../../../../services/ubigeo/ubigeo.service';
 import { UserCreateDTO } from '../../../../models/user';
 import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { VerifyModal } from '../verify-modal/verify-modal';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, VerifyModal],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
@@ -115,12 +116,9 @@ export class Register implements OnInit, AfterViewInit, OnDestroy {
 
     this.authService.register(newUser).subscribe({
       next: () => {
-        this.closeModal();
-        this.authService.login(newUser.email, newUser.password).subscribe(() => {
-          this.router.navigate(['/inicio']);
-          this.clearForm();
-        });
         this.isLoading = false;
+        this.closeModal();
+        this.openVerifyModal(newUser.email);
       },
       error: (err) => {
         this.isLoading = false;
@@ -129,6 +127,25 @@ export class Register implements OnInit, AfterViewInit, OnDestroy {
           ? String(Object.values(data)[0])
           : err.error?.message || 'Error desconocido';
       }
+    });
+  }
+
+  private openVerifyModal(email: string) {
+    const modalEl = document.getElementById('verifyModal');
+    if (modalEl) {
+      modalEl.classList.add('show');
+      modalEl.style.display = 'block';
+      document.body.classList.add('modal-open');
+    }
+  }
+
+  onVerified() {
+    this.authService.login(
+      this.registerForm.value.email,
+      this.registerForm.value.password
+    ).subscribe(() => {
+      this.router.navigate(['/inicio']);
+      this.clearForm();
     });
   }
 
@@ -151,7 +168,6 @@ export class Register implements OnInit, AfterViewInit, OnDestroy {
 
   private closeModal() {
     if (!this.isBrowser()) return;
-
     const modalEl = document.getElementById('registerModal');
     if (modalEl) {
       modalEl.classList.remove('show');

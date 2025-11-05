@@ -11,6 +11,7 @@ import { guestGuard } from './core/guards/guest.guard';
 import { Servicios } from './features/publicidad/servicios';
 import { RegistrarMascota } from './features/mascotas/registrar-mascota/registrar-mascota';
 import { DetallesMascota } from './features/mascotas/detalles-mascota/detalles-mascota';
+import { ResetPassword } from './features/auth/components/reset-password/reset-password';
 
 
 export const routes: Routes = [
@@ -73,6 +74,12 @@ export const routes: Routes = [
     component: RegistrarMascota, // <-- Reutilizamos el componente
     canActivate: [authGuard]
     },
+
+    {
+    path: 'reset-password',
+    component: ResetPassword,
+    canActivate: [guestGuard] // Solo usuarios no logueados
+  },
 
     { path: '**', redirectTo: '' }
 

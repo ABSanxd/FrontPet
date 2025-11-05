@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -83,7 +83,7 @@ export class Login implements OnInit, AfterViewInit {
     this.formSubmitted = false; 
   }
 
-  private closeModal() {
+  closeModal() {
     if (!this.isBrowser()) return;
 
     const modalEl = document.getElementById('loginModal');

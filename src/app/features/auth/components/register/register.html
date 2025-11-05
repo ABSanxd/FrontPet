@@ -157,3 +157,6 @@
     </div>
   </div>
 </div>
+
+
+<app-verify-modal #verifyModal (verified)="onVerified()" [email]="registerForm.get('email')?.value"></app-verify-modal>

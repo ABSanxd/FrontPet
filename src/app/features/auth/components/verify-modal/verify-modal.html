@@ -1,0 +1,30 @@
+<div class="modal fade" id="verifyModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
+    <div class="modal-content p-4 rounded-3 border-orange">
+      <h5 class="text-center mb-3">Verifica tu correo</h5>
+
+      <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label small">Código de verificación</label>
+          <input type="text" maxlength="6" formControlName="code"
+                 class="form-control form-control-sm border-orange text-center"
+                 placeholder="000000"
+                 [class.is-invalid]="f['code'].touched && f['code'].invalid">
+          @if (f['code'].touched && f['code'].invalid) {
+            <small class="text-danger">El código debe tener 6 dígitos.</small>
+          }
+        </div>
+
+        @if (error) { <div class="alert alert-danger py-1">{{ error }}</div> }
+        @if (message) { <div class="alert alert-success py-1">{{ message }}</div> }
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <button type="button" class="btn btn-red p-0 small" (click)="resendCode()">Reenviar código</button>
+          <button type="submit" class="btn btn-orange btn-sm" [disabled]="isLoading">
+            {{ isLoading ? 'Verificando...' : 'Confirmar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -4,8 +4,8 @@
 
       <!-- Encabezado -->
       <div class="modal-header border-0 pb-0 position-relative">
-        <button type="button" class="btn-close position-absolute end-0 top-0 me-3 mt-3"
-                data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close position-absolute end-0 top-0 me-3 mt-3" data-bs-dismiss="modal"
+          aria-label="Cerrar"></button>
       </div>
 
       <div class="text-center mb-3 mt-1">
@@ -19,70 +19,64 @@
           <!-- Email -->
           <div class="mb-3">
             <label for="email" class="form-label small">Correo electrónico</label>
-            <input type="email"
-                   id="email"
-                   class="form-control rounded-3 form-control-sm border-orange"
-                   formControlName="email"
-                   placeholder="tucorreo@ejemplo.com"
-                   [class.is-invalid]="f['email'].touched && f['email'].invalid"
-                >
-                            
+            <input type="email" id="email" class="form-control rounded-3 form-control-sm border-orange"
+              formControlName="email" placeholder="tucorreo@ejemplo.com"
+              [class.is-invalid]="f['email'].touched && f['email'].invalid">
+
             @if (f['email'].touched && f['email'].invalid) {
-              <small class="text-danger d-block mt-1">
-                @if (f['email'].errors?.['required']) { El correo es obligatorio. }
-                @if (f['email'].errors?.['email']) { Ingresa un correo válido. }
-              </small>
+            <small class="text-danger d-block mt-1">
+              @if (f['email'].errors?.['required']) { El correo es obligatorio. }
+              @if (f['email'].errors?.['email']) { Ingresa un correo válido. }
+            </small>
             }
           </div>
 
           <!-- Contraseña -->
           <div class="mb-3">
             <label for="password" class="form-label small">Contraseña</label>
-            <input type="password"
-                   id="password"
-                   class="form-control rounded-3 form-control-sm border-orange"
-                   formControlName="password"
-                   placeholder="•••••••••••••••"
-                   [class.is-invalid]="f['password'].touched && f['password'].invalid"
-                >
-            
+            <input type="password" id="password" class="form-control rounded-3 form-control-sm border-orange"
+              formControlName="password" placeholder="•••••••••••••••"
+              [class.is-invalid]="f['password'].touched && f['password'].invalid">
+
             @if (f['password'].touched && f['password'].invalid) {
-              <small class="text-danger d-block mt-1">
-                @if (f['password'].errors?.['required']) { La contraseña es obligatoria. }
-                @if (f['password'].errors?.['minlength']) { Debe tener al menos 8 caracteres. }
-              </small>
+            <small class="text-danger d-block mt-1">
+              @if (f['password'].errors?.['required']) { La contraseña es obligatoria. }
+              @if (f['password'].errors?.['minlength']) { Debe tener al menos 8 caracteres. }
+            </small>
             }
           </div>
 
           <!-- Error global -->
           @if (error) {
-            <small class="text-danger d-block mb-2">* {{ error }}</small>
+          <small class="text-danger d-block mb-2">* {{ error }}</small>
           }
 
           <!-- Enlace a registro -->
           <div class="text-center mt-3">
             <small>
               ¿No tienes cuenta?
-              <a href="#" class="text-decoration-none fw-semibold"
-                 style="color: var(--color-brown-dark);"
-                 data-bs-dismiss="modal"
-                 data-bs-toggle="modal"
-                 data-bs-target="#registerModal">
+              <a href="#" class="text-decoration-none fw-semibold" style="color: var(--color-brown-dark);"
+                data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal">
                 Regístrate aquí
               </a>
             </small>
+
+            <div class="mt-2">
+              <a routerLink="/reset-password" (click)="closeModal()" class="text-decoration-none fw-semibold"
+                style="color: var(--color-brown-dark);">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
           </div>
 
           <!-- Botón -->
           <div class="text-center mt-4">
-            <button type="submit"
-                    class="btn btn-green w-100 py-2 fw-semibold rounded-3 btn-sm"
-                    [disabled]="isLoading">
+            <button type="submit" class="btn btn-green w-100 py-2 fw-semibold rounded-3 btn-sm" [disabled]="isLoading">
               @if (isLoading) {
-                <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
-                Iniciando...
+              <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+              Iniciando...
               } @else {
-                Iniciar Sesión
+              Iniciar Sesión
               }
             </button>
           </div>
