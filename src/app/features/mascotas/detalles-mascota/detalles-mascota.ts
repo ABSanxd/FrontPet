@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PetService } from '../service/pet.service';
-import { Pet } from '../../../models/pet';
+import { PetResponseDTO } from '../../../models/pet';
 import { PetLevel } from '../../../models/enums/pet-level.enum';
 
 @Component({
@@ -13,17 +13,16 @@ import { PetLevel } from '../../../models/enums/pet-level.enum';
 })
 export class DetallesMascota implements OnInit {
 
-  pet: Pet | null = null;
+  pet: PetResponseDTO | null = null;
   isLoading = true;
   error = '';
 
-  //XP Máximo por nivel 
   private levelXpThresholds: Record<PetLevel, number> = {
     [PetLevel.NOVATO]: 5000,
     [PetLevel.EXPLORADOR]: 10000,
     [PetLevel.CAZADOR]: 20000,
     [PetLevel.MAESTRO]: 50000,
-    [PetLevel.ALFA]: Infinity // Nivel máximo
+    [PetLevel.ALFA]: Infinity 
   };
 
   constructor(
@@ -61,7 +60,26 @@ export class DetallesMascota implements OnInit {
     });
   }
 
-  //Devuelve la imagen de la medalla según el nivel
+  getEdadFormateada(): string {
+    if (!this.pet || (this.pet.ageYears === undefined && this.pet.ageMonths === undefined)) {
+      return 'No especificada';
+    }
+    
+
+    const years = this.pet.ageYears ?? 0;
+    const months = this.pet.ageMonths ?? 0;
+
+    if (years === 0 && months === 0) {
+      return this.pet.birthDate ? 'Menos de 1 mes' : 'No especificada';
+    }
+
+    const yearText = years > 0 ? `${years} ${years === 1 ? 'año' : 'años'}` : '';
+    const monthText = months > 0 ? `${months} ${months === 1 ? 'mes' : 'meses'}` : '';
+
+   
+    return [yearText, monthText].filter(Boolean).join(' y ');
+  }
+
   getPetLevelImage(level: PetLevel): string {
     const images: Record<PetLevel, string> = {
       [PetLevel.NOVATO]: 'assets/img-level-bronce.png',
@@ -73,19 +91,16 @@ export class DetallesMascota implements OnInit {
     return images[level] || images[PetLevel.NOVATO];
   }
 
-  //Devuelve el XP máximo para el nivel actual
   getMaxXPForLevel(level: PetLevel): number {
     return this.levelXpThresholds[level] || 5000;
   }
 
-  //Calcula el porcentaje de XP para la barra de progreso
   getPetXPPercentage(xp: number, level: PetLevel): number {
     const maxXP = this.getMaxXPForLevel(level);
-    if (maxXP === Infinity) return 100; // Nivel ALFA está al 100%
+    if (maxXP === Infinity) return 100;
     return (xp / maxXP) * 100;
   }
   
-  //Manejador de error de imagen
   onImageError(event: any): void {
     event.target.src = 'assets/img/pet-placeholder.png'; 
   }
@@ -99,7 +114,7 @@ export class DetallesMascota implements OnInit {
       this.isLoading = true; 
       this.petService.deletePet(this.pet.id).subscribe({
         next: () => {
-          this.router.navigate(['/mascotas']); 
+          this.router.navigate(['/inicio']); 
         },
         error: (err) => {
           console.error('Error al eliminar mascota:', err);
@@ -109,6 +124,4 @@ export class DetallesMascota implements OnInit {
       });
     }
   }
-
-
 }

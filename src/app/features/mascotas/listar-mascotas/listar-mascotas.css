@@ -92,22 +92,21 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  position: relative;
+  position: relative; /* Asegura que el contenido esté por encima del fondo */
   overflow: hidden;
   min-height: 400px; 
+
+
+  background-image: url('/assets/animalitos.png');
+  background-repeat: no-repeat;
+  background-position: center top 1.5rem; 
+  background-size: 150px auto; 
 }
 .add-pet-card:hover {
   background-color: var(--color-white);
   border-color: var(--color-orange);
 }
 
-.add-pet-card .add-pet-icons {
-  position: absolute;
-  top: 1.5rem;
-  height: 40px;
-  width: auto;
-  opacity: 0.8;
-}
 
 .add-pet-card .add-pet-content {
   display: flex;
@@ -115,6 +114,7 @@
   align-items: center;
   justify-content: center;
   color: var(--color-green);
+  margin-top: 80px; /* Esto empuja el contenido hacia abajo */
 }
 .add-pet-card .add-icon {
   width: 70px;

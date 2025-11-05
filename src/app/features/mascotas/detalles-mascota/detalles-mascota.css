@@ -1,5 +1,3 @@
-
-
 /* Columna Imagen */
 .pet-image-wrapper {
   width: 100%;
@@ -86,9 +84,6 @@
   font-size: 0.9rem;
 }
 
-/* Botones de Acción */
-
-
 /* Responsive */
 @media (max-width: 991px) {
   .pet-info h1 {
@@ -108,4 +103,25 @@
     min-width: auto;
     margin-right: 0.5rem;
   }
+}
+
+.btn-back {
+  font-weight: 600;
+  color: var(--color-brown-dark);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-size: 0.95rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.btn-back:hover {
+  color: var(--color-orange-dark);
+  background-color: rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+}
+
+.btn-back i {
+  font-size: 1.1rem;
+  vertical-align: middle;
 }
