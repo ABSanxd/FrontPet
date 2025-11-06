@@ -1,0 +1,303 @@
+<div class="detail-container py-4">
+  <div class="container">
+
+    <div class="mb-3 position-relative" style="z-index: 30;">
+      <a (click)="goBack()" class="btn-back">
+        <i class="bi bi-arrow-left me-2"></i>
+        Volver a Mascotas
+      </a>
+    </div>
+
+    @if (isLoading) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary-dark" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando datos de la mascota...</p>
+      </div>
+    }
+
+    @if (!isLoading && error) {
+      <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ error }}
+      </div>
+    }
+
+    @if (publication) {
+      <!-- --- INICIO DE NUEVA ESTRUCTURA --- -->
+      <div class="row justify-content-center">
+        <!-- Columna principal que centra la tarjeta -->
+        <div class="col-lg-9 col-md-10">
+          
+          <!-- Tarjeta única que contiene TODO -->
+          <div class="pet-info-card"> 
+            
+            <!-- 1. Imagen (Carrusel) -->
+            <div id="petCarousel" class="carousel slide" data-bs-ride="carousel">
+              
+              <div class="carousel-indicators">
+                @for (photo of publication.photos; track $index; let i = $index) {
+                  <button 
+                    type="button" 
+                    data-bs-target="#petCarousel" 
+                    [attr.data-bs-slide-to]="i"
+                    [class.active]="i === 0" 
+                    [attr.aria-current]="i === 0 ? 'true' : 'false'"
+                    [attr.aria-label]="'Foto ' + (i + 1)">
+                  </button>
+                }
+              </div>
+
+              <div class="carousel-inner pet-image-wrapper">
+                @for (photo of publication.photos; track $index; let i = $index) {
+                  <div class="carousel-item" [class.active]="i === 0">
+                    <img 
+                      [src]="photo || 'assets/img-pet-placeholder.png'" 
+                      class="d-block w-100" 
+                      [alt]="publication.tempName + ' foto ' + (i + 1)"
+                      (error)="onImageError($event)">
+                  </div>
+                }
+                @if (publication.photos.length === 0) {
+                   <div class="carousel-item active">
+                    <img 
+                      src="assets/img-pet-placeholder.png"
+                      class="d-block w-100" 
+                      alt="Placeholder">
+                  </div>
+                }
+              </div>
+
+              <button class="carousel-control-prev" type="button" data-bs-target="#petCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#petCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+              </button>
+            </div> <!-- Fin .carousel -->
+
+            <!-- 2. Contenido de Información (dentro de la misma tarjeta) -->
+            <div class="pet-info"> 
+
+              <div class="pet-title-wrapper">
+                <h1 class="pet-title text-center mb-0">¡Hola! Soy "{{ publication.tempName }}"</h1>
+                
+                <!-- Contenedor de Likes y Shares -->
+                <div class="pet-stats-wrapper">
+                  <div class="pet-like-count">
+                    <i class="bi bi-heart-fill"></i>
+                    <span>{{ publication.likes }} Me Gusta</span>
+                  </div>
+                  <div class="pet-share-count">
+                    <i class="bi bi-share-fill"></i>
+                    <span>{{ publication.shared }} Comp.</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row g-3 mb-4 justify-content-center">
+                <div class="col-md-5 col-6">
+                  <div class="info-box">
+                    <i class="bi bi-heart-fill info-box-icon"></i>
+                    <div class="info-box-content">
+                      <small>ESPECIE</small>
+                      <strong>{{ getSpeciesLabel(publication.species) }}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-5 col-6">
+                  <div class="info-box">
+                    <i class="bi bi-calendar-event info-box-icon"></i>
+                    <div class="info-box-content">
+                      <small>EDAD</small>
+                      <strong>{{ publication.approxAge }}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-10 col-12 mt-md-3">
+                  <div class="info-box">
+                    <i class="bi bi-pin-map-fill info-box-icon"></i>
+                    <div class="info-box-content">
+                      <small>UBICACIÓN</small>
+                      <strong>{{ publication.district }}, {{ publication.province }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h5 class="section-title">Mi Historia</h5>
+              <p class="pet-description">{{ publication.description }}</p>
+
+              <h5 class="section-title">Sobre el publicante</h5>
+              @if(publication.user){
+                <p class="publisher-name">Publicado por: <strong>{{ publication.user.name }}</strong></p>
+              }
+              <ul class="contact-list list-unstyled">
+                @if(publication.contact.phone){
+                  <li><i class="bi bi-telephone-fill"></i> {{ publication.contact.phone }}</li>
+                }
+                @if(publication.contact.whatsapp){
+                  <li><i class="bi bi-whatsapp"></i> {{ publication.contact.whatsapp }}</li>
+                }
+                @if(publication.contact.email){
+                  <li><i class="bi bi-envelope-fill"></i> {{ publication.contact.email }}</li>
+                }
+                @if(publication.contact['facebook']){
+                  <li><i class="bi bi-facebook"></i> {{ publication.contact['facebook'] }}</li>
+                }
+                @if(publication.contact['instagram']){
+                  <li><i class="bi bi-instagram"></i> {{ publication.contact['instagram'] }}</li>
+                }
+                @if(publication.contact['tiktok']){
+                  <li><i class="bi bi-tiktok"></i> {{ publication.contact['tiktok'] }}</li>
+                }
+              </ul>
+
+              @if (!isOwner) {
+                <!-- Botón de Adoptar -->
+                <button class="btn btn-adopt w-100" (click)="onShowModal()">
+                  <i class="bi bi-envelope-heart-fill me-2"></i>
+                  Enviar Solicitud de Adopción
+                </button>
+                <!-- Botón de Compartir (NUEVO) -->
+                <button class="btn btn-share w-100 mt-2" (click)="onShare()">
+                  <i class="bi bi-share-fill me-2"></i>
+                  Compartir Publicación
+                </button>
+              } @else {
+                <div class="alert alert-info">
+                  <i class="bi bi-info-circle-fill me-2"></i>
+                  Esta es tu publicación. No puedes adoptarla.
+                </div>
+              }
+            </div> <!-- Fin .pet-info -->
+          </div> <!-- Fin .pet-info-card -->
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal de Confirmación de Adopción -->
+@if (showConfirmModal && publication) {
+  <div class="modal-overlay-adopt" (click)="onCloseModal()">
+    <div class="modal-dialog-adopt" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header-adopt">
+        <h5 class="mb-0">Adoptar Mascota</h5>
+        <i class="bi bi-paw-fill"></i>
+      </div>
+
+      <div class="modal-body-adopt">
+        
+        <div class="modal-info-card">
+          <img [src]="publication.photos[0]" [alt]="publication.tempName" (error)="onImageError($event)">
+          <div class="info">
+            <strong>{{ publication.tempName }}</strong>
+            <span>{{ getSpeciesLabel(publication.species) }} / {{ publication.approxAge }}</span>
+          </div>
+        </div>
+
+        <div class="modal-info-card">
+          <img src="assets/user.png" alt="Dueño"> <div class="info">
+            <strong>{{ publication.user?.name || 'Usuario' }}</strong>
+            <span>Dueño</span>
+          </div>
+        </div>
+
+        <p class="modal-confirm-text">
+          ¿Deseas mandar una solicitud de adopción a 
+          <strong>{{ publication.user?.name || 'Usuario' }}</strong> por 
+          <strong>{{ publication.tempName }}</strong>?
+        </p>
+
+        @if (modalError) {
+          <div class="alert alert-danger modal-error-text">
+            {{ modalError }}
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer-adopt">
+        <button class="btn btn-cancel-adopt" (click)="onCloseModal()" [disabled]="isSubmitting">
+          <i class="bi bi-x-lg"></i>
+          No, cancelar
+        </button>
+        <button class="btn btn-confirm-adopt" (click)="onConfirmAdoption()" [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Enviando...
+          } @else {
+            <i class="bi bi-check-lg"></i>
+            Sí, aceptar
+          }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- Modal de Éxito de Adopción -->
+@if (showSuccessModal) {
+  <div class="modal-overlay-adopt" (click)="onCloseSuccessModal()">
+    <div class="modal-dialog-adopt" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header-adopt" style="background-color: var(--color-green);">
+        <h5 class="mb-0">¡Solicitud Enviada!</h5>
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+
+      <div class="modal-body-adopt">
+        <p class="modal-confirm-text" style="margin-top: 0.5rem;">
+          Tu solicitud para <strong>{{ publication?.tempName }}</strong> ha sido enviada exitosamente.
+        </p>
+        <p class="text-muted small text-center">
+          El publicante ha sido notificado. ¡Mucha suerte!
+        </p>
+      </div>
+
+      <div class="modal-footer-adopt">
+        <button class="btn btn-confirm-adopt" (click)="onCloseSuccessModal()" style="background-color: var(--color-green);">
+          <i class="bi bi-check-lg"></i>
+          Entendido
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- NUEVO MODAL DE "COMPARTIR" -->
+@if (showShareModal) {
+  <div class="modal-overlay-adopt" (click)="onCloseShareModal()">
+    <div class="modal-dialog-adopt" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header-adopt" style="background-color: var(--color-cyan);">
+        <h5 class="mb-0">¡Enlace Copiado!</h5>
+        <i class="bi bi-clipboard-check-fill"></i>
+      </div>
+
+      <div class="modal-body-adopt">
+        <p class="modal-confirm-text" style="margin-top: 0.5rem;">
+          Se ha copiado el enlace de <strong>{{ publication?.tempName }}</strong> en tu portapapeles.
+        </p>
+        <p class="text-muted small text-center">
+          ¡Gracias por ayudar a difundir!
+        </p>
+      </div>
+
+      <div class="modal-footer-adopt">
+        <button class="btn btn-confirm-adopt" (click)="onCloseShareModal()" style="background-color: var(--color-cyan);">
+          <i class="bi bi-check-lg"></i>
+          Aceptar
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

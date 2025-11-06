@@ -13,6 +13,9 @@ import { RegistrarMascota } from './features/mascotas/registrar-mascota/registra
 import { DetallesMascota } from './features/mascotas/detalles-mascota/detalles-mascota';
 import { ResetPassword } from './features/auth/components/reset-password/reset-password';
 
+// --- IMPORTAR EL NUEVO COMPONENTE ---
+import { DetallePublicacion } from './features/adopciones/detalle/detalle-publicacion';
+
 
 export const routes: Routes = [
     { path: '', component: Landing, canActivate: [guestGuard] },
@@ -36,6 +39,14 @@ export const routes: Routes = [
         component: CrearPublicacion,
         canActivate: [authGuard]
     },
+
+    // --- RUTA MODIFICADA ---
+    {
+        path: 'publicaciones/:id/detalle',
+        component: DetallePublicacion, // Apunta al nuevo componente
+        canActivate: [authGuard]
+    },
+    // --- FIN DE RUTA MODIFICADA ---
 
     {
         path: 'servicios',

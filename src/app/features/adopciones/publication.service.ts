@@ -18,15 +18,30 @@ export class PublicationService {
 
   constructor(private http: HttpClient) { }
 
-  // Obtener todas las publicaciones
-  getAllPublications(): Observable<ApiResponse<Publication[]>> {
-    console.log('Servicio: Llamando a', this.apiUrl);
-    return this.http.get<ApiResponse<Publication[]>>(this.apiUrl).pipe(
+  // Obtiene las publicaciones disponibles para adoptar (las de otros usuarios)
+  getAvailablePublications(): Observable<ApiResponse<Publication[]>> {
+    console.log('Servicio: Llamando a', `${this.apiUrl}?view=available`);
+    return this.http.get<ApiResponse<Publication[]>>(`${this.apiUrl}?view=available`).pipe(
       tap(response => {
-        console.log('Servicio: Respuesta recibida', response);
+        console.log('Servicio: Respuesta de "available" recibida', response);
       }),
       catchError(error => {
-        console.error('Servicio: Error', error);
+        console.error('Servicio: Error en "available"', error);
+        throw error;
+      })
+    );
+  }
+
+  // Ahora obtiene solo las publicaciones del usuario (para "Mis Publicaciones")
+  getAllPublications(): Observable<ApiResponse<Publication[]>> {
+    console.log('Servicio: Llamando a', `${this.apiUrl}?view=mine`);
+    // Usamos el parámetro ?view=mine que definimos en el backend
+    return this.http.get<ApiResponse<Publication[]>>(`${this.apiUrl}?view=mine`).pipe(
+      tap(response => {
+        console.log('Servicio: Respuesta de "mine" recibida', response);
+      }),
+      catchError(error => {
+        console.error('Servicio: Error en "mine"', error);
         throw error;
       })
     );
@@ -56,4 +71,17 @@ export class PublicationService {
   changeStatus(id: string, status: Status): Observable<ApiResponse<Publication>> {
     return this.updatePublication(id, { status });
   }
+
+  // --- INICIO DE CAMBIOS ---
+
+  // Da Like o Unlike a una publicación
+  toggleLike(id: string): Observable<ApiResponse<Publication>> {
+    return this.http.patch<ApiResponse<Publication>>(`${this.apiUrl}/${id}/like`, {});
+  }
+
+  // Compartir una publicación
+  sharePublication(id: string): Observable<ApiResponse<Publication>> {
+    return this.http.patch<ApiResponse<Publication>>(`${this.apiUrl}/${id}/share`, {});
+  }
+  // --- FIN DE CAMBIOS ---
 }

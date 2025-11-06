@@ -7,7 +7,7 @@ import { UbigeoService } from '../../../services/ubigeo/ubigeo.service';
 import { Species } from '../../../models/enums/species.enum';
 import { CreatePublicationDTO, Publication, UpdatePublicationDTO } from '../../../models/publication';
 
-// --- AÑADIDO: Validador personalizado ---
+// --- Validador personalizado (sin cambios) ---
 export const atLeastOneContactValidator: ValidatorFn = (
   control: AbstractControl
 ): ValidationErrors | null => {
@@ -19,15 +19,12 @@ export const atLeastOneContactValidator: ValidatorFn = (
   const instagram = formGroup.get('contactInstagram')?.value;
   const tiktok = formGroup.get('contactTiktok')?.value;
 
-  // Si al menos uno tiene valor, es válido
   if (phone || email || whatsapp || facebook || instagram || tiktok) {
     return null; // Válido
   }
-
-  // Si todos están vacíos, es inválido
-  return { atLeastOneContact: true };
+  return { atLeastOneContact: true }; // Inválido
 };
-// --- FIN AÑADIDO ---
+// --- Fin Validador ---
 
 @Component({
   selector: 'app-crear-publicacion',
@@ -40,17 +37,19 @@ export class CrearPublicacion implements OnInit {
   publicationForm: FormGroup;
   loading = false;
   especies = Object.values(Species);
-  photoPreview: string | null = null;
-  photoBase64: string = '';
+  
+  // --- INICIO DE CAMBIOS DE FOTOS ---
+  photoPreviews: string[] = [];
+  photosBase64: string[] = []; // Esta es la lista que enviaremos al backend
+  // --- FIN DE CAMBIOS DE FOTOS ---
+
   isEditMode = false;
   publicationId: string = '';
   photoError: string | null = null; 
   showCancelModal = false; 
   showSuccessModal = false; 
 
-  // --- AÑADIDO ---
-  showContactForm = false; // Controla el desplegable
-  // --- FIN AÑADIDO ---
+  showContactForm = false;
 
   // Ubigeo
   departments: string[] = [];
@@ -72,18 +71,13 @@ export class CrearPublicacion implements OnInit {
       province: ['', Validators.required],
       district: ['', Validators.required],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      
-      // --- CAMPOS DE CONTACTO NUEVOS ---
       contactPhone: [''],
       contactEmail: ['', [Validators.email]],
       contactWhatsapp: [''],
       contactFacebook: [''],
       contactInstagram: [''],
       contactTiktok: ['']
-      // --- FIN CAMPOS DE CONTACTO ---
-
     }, { 
-      // --- AÑADIDO: Validador de grupo ---
       validators: atLeastOneContactValidator 
     });
   }
@@ -127,7 +121,6 @@ export class CrearPublicacion implements OnInit {
   }
 
   onDepartmentChange(): void {
-    // Resetear provincia y distrito
     this.publicationForm.patchValue({ 
       province: '', 
       district: '' 
@@ -147,7 +140,6 @@ export class CrearPublicacion implements OnInit {
   }
 
   onProvinceChange(): void {
-    // Resetear distrito
     this.publicationForm.patchValue({ 
       district: '' 
     });
@@ -190,7 +182,6 @@ export class CrearPublicacion implements OnInit {
 
   // Llenar formulario con datos existentes
   fillForm(publication: Publication): void {
-    // Primero cargar provincias y distritos ANTES de setear el formulario
     if (publication.department) {
       this.ubigeoService.getProvinces(publication.department).subscribe({
         next: (provs: string[]) => {
@@ -200,8 +191,6 @@ export class CrearPublicacion implements OnInit {
             this.ubigeoService.getDistricts(publication.department, publication.province).subscribe({
               next: (dists: string[]) => {
                 this.districts = dists;
-                
-                // Ahora sí llenar el formulario con todos los datos
                 this.setFormValues(publication);
               }
             });
@@ -214,14 +203,16 @@ export class CrearPublicacion implements OnInit {
       this.setFormValues(publication);
     }
 
-    // Mostrar foto actual
-    this.photoBase64 = publication.photo;
-    this.photoPreview = publication.photo;
+    // --- CAMBIO DE FOTOS ---
+    // @ts-ignore
+    this.photosBase64 = [...publication.photos];
+    // @ts-ignore
+    this.photoPreviews = [...publication.photos];
+    // --- FIN CAMBIO DE FOTOS ---
   }
 
-  // Método auxiliar para setear valores sin disparar eventos
+  // Método auxiliar para setear valores
   private setFormValues(publication: Publication): void {
-    // --- MODIFICADO: Llenar campos de contacto ---
     const contact = (publication.contact as any) || {};
     
     this.publicationForm.patchValue({
@@ -240,30 +231,41 @@ export class CrearPublicacion implements OnInit {
       contactInstagram: contact.instagram || '',
       contactTiktok: contact.tiktok || ''
 
-    }, { emitEvent: false }); // IMPORTANTE: no emitir eventos
+    }, { emitEvent: false }); // No emitir eventos
   }
 
   get f() {
     return this.publicationForm.controls;
   }
 
+  // --- LÓGICA DE MÚLTIPLES FOTOS ---
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      this.photoError = null; // Limpiar error de foto
-      const file = input.files[0];
+    if (input.files) {
+      this.photoError = null;
+      const files = Array.from(input.files);
       
-      if (!file.type.startsWith('image/')) {
-        alert('Por favor selecciona un archivo de imagen válido');
+      // Límite de 5 fotos en total
+      if (this.photoPreviews.length + files.length > 5) {
+        alert('Puedes subir un máximo de 5 fotos.');
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        alert('La imagen es muy grande. El tamaño máximo es 5MB');
-        return;
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) {
+          alert(`El archivo ${file.name} no es una imagen.`);
+          continue; // Salta este archivo y continúa con el siguiente
+        }
+        if (file.size > 5 * 1024 * 1024) { // 5MB Límite
+          alert(`La imagen ${file.name} es muy grande (Máx 5MB).`);
+          continue;
+        }
+        // Si pasa las validaciones, la procesamos
+        this.compressImage(file);
       }
-
-      this.compressImage(file);
+      
+      // Limpiar el input para permitir seleccionar los mismos archivos de nuevo
+      input.value = '';
     }
   }
 
@@ -277,7 +279,7 @@ export class CrearPublicacion implements OnInit {
         
         let width = img.width;
         let height = img.height;
-        const maxSize = 800;
+        const maxSize = 800; // Comprimir a 800px max
         
         if (width > height) {
           if (width > maxSize) {
@@ -295,16 +297,24 @@ export class CrearPublicacion implements OnInit {
         canvas.height = height;
         ctx?.drawImage(img, 0, 0, width, height);
         
-        this.photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-        this.photoPreview = this.photoBase64;
+        // Convertir a Base64 JPEG con calidad 0.7
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
         
-        console.log('Tamaño original:', file.size, 'bytes');
-        console.log('Tamaño comprimido:', this.photoBase64.length, 'caracteres');
+        // Añadir a las listas
+        this.photosBase64.push(compressedBase64);
+        this.photoPreviews.push(compressedBase64);
       };
       img.src = e.target?.result as string;
     };
     reader.readAsDataURL(file);
   }
+  
+  // --- AÑADIDO: Método para eliminar fotos ---
+  removePhoto(index: number): void {
+    this.photosBase64.splice(index, 1);
+    this.photoPreviews.splice(index, 1);
+  }
+  // --- FIN LÓGICA MÚLTIPLES FOTOS ---
 
   triggerFileInput(): void {
     document.getElementById('fileInput')?.click();
@@ -324,16 +334,17 @@ export class CrearPublicacion implements OnInit {
   onSubmit(): void {
     this.photoError = null; 
 
-    if (!this.photoBase64) {
-      this.photoError = 'Por favor, sube una foto de la mascota.';
+    // --- CAMBIO AQUÍ ---
+    if (this.photosBase64.length === 0) {
+      this.photoError = 'Por favor, sube al menos una foto de la mascota.';
       return;
     }
+    // --- FIN CAMBIO ---
 
     if (this.publicationForm.invalid) {
       Object.keys(this.publicationForm.controls).forEach(key => {
         this.publicationForm.get(key)?.markAsTouched();
       });
-      // Abrir el formulario de contacto si está cerrado y hay error
       if(this.publicationForm.hasError('atLeastOneContact')) {
         this.showContactForm = true;
       }
@@ -349,7 +360,6 @@ export class CrearPublicacion implements OnInit {
     }
   }
 
-  // --- MODIFICADO: Construir DTO ---
   private buildContactPayload(): any {
     const formVal = this.publicationForm.value;
     const contactPayload: any = {
@@ -360,12 +370,8 @@ export class CrearPublicacion implements OnInit {
       instagram: formVal.contactInstagram || null,
       tiktok: formVal.contactTiktok || null
     };
-
-    // Limpiar claves nulas o vacías
     Object.keys(contactPayload).forEach(key => {
-      if (!contactPayload[key]) {
-        delete contactPayload[key];
-      }
+      if (!contactPayload[key]) delete contactPayload[key];
     });
     return contactPayload;
   }
@@ -375,15 +381,15 @@ export class CrearPublicacion implements OnInit {
       tempName: this.publicationForm.value.tempName,
       species: this.publicationForm.value.species as Species,
       approxAge: this.publicationForm.value.approxAge,
-      photo: this.photoBase64,
+      // --- CAMBIO AQUÍ ---
+      photos: this.photosBase64,
+      // --- FIN CAMBIO ---
       description: this.publicationForm.value.description,
-      contact: this.buildContactPayload(), // <-- MODIFICADO
+      contact: this.buildContactPayload(),
       department: this.publicationForm.value.department,
       province: this.publicationForm.value.province,
       district: this.publicationForm.value.district
     };
-
-    console.log('Creando publicación:', { ...dto, photo: dto.photo.substring(0, 50) + '...' });
 
     this.publicationService.createPublication(dto).subscribe({
       next: (response) => {
@@ -407,15 +413,15 @@ export class CrearPublicacion implements OnInit {
       tempName: this.publicationForm.value.tempName,
       species: this.publicationForm.value.species as Species,
       approxAge: this.publicationForm.value.approxAge,
-      photo: this.photoBase64,
+      // --- CAMBIO AQUÍ ---
+      photos: this.photosBase64,
+      // --- FIN CAMBIO ---
       description: this.publicationForm.value.description,
-      contact: this.buildContactPayload(), // <-- MODIFICADO
+      contact: this.buildContactPayload(),
       department: this.publicationForm.value.department,
       province: this.publicationForm.value.province,
       district: this.publicationForm.value.district
     };
-
-    console.log('Actualizando publicación ID:', this.publicationId);
 
     this.publicationService.updatePublication(this.publicationId, dto).subscribe({
       next: (response) => {
@@ -434,15 +440,15 @@ export class CrearPublicacion implements OnInit {
       }
     });
   }
-  // --- FIN MODIFICADO ---
 
-  // --- LÓGICA DEL MODAL DE CANCELAR ---
+  // --- Lógica de Modales (sin cambios) ---
   
   onCancel(): void {
     const hasChanges = this.publicationForm.dirty;
-    const hasNewPhoto = !this.isEditMode && this.photoBase64;
+    // --- CAMBIO AQUÍ ---
+    const hasNewPhoto = !this.isEditMode && this.photosBase64.length > 0;
+    // --- FIN CAMBIO ---
     const hasChangesEditMode = this.isEditMode && this.publicationForm.dirty;
-
 
     if (hasChanges || hasNewPhoto || hasChangesEditMode) {
       this.showCancelModal = true;
@@ -460,7 +466,6 @@ export class CrearPublicacion implements OnInit {
     this.showCancelModal = false;
   }
 
-  // --- LÓGICA DEL MODAL DE ÉXITO ---
   closeSuccessModal(): void {
     this.showSuccessModal = false;
     this.router.navigate(['/adopciones']);

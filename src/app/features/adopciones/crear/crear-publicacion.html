@@ -20,18 +20,17 @@
             
             <div class="row">
               <div class="col-md-5 mb-4">
+                
                 <div class="photo-upload-wrapper">
+                  
                   <div class="photo-upload-box" (click)="triggerFileInput()" [class.is-invalid]="photoError">
-                    <div class="photo-preview" *ngIf="photoPreview">
-                      <img [src]="photoPreview" alt="Preview">
-                    </div>
-                    <div class="photo-placeholder" *ngIf="!photoPreview">
+                  <div class="photo-placeholder">
                       <div class="plus-circle">
                         <i class="bi bi-plus"></i>
                       </div>
                     </div>
                   </div>
-                  <p class="photo-label">Subir foto de la mascota</p>
+                  <p class="photo-label">Subir foto(s) (Máx. 5)</p>
 
                   @if (photoError) {
                     <div class="invalid-feedback d-block text-center mt-1">
@@ -44,9 +43,22 @@
                     id="fileInput"
                     accept="image/*"
                     (change)="onFileSelected($event)"
-                    style="display: none;">
-                </div>
+                    style="display: none;"
+                    multiple> <div class="previews-container mt-2">
+                    @for (preview of photoPreviews; track $index) {
+                      <div class="preview-item">
+                        <img [src]="preview" alt="Preview {{$index + 1}}">
+                        <button type="button" class="btn-remove-img" (click)="removePhoto($index)">
+                          <i class="bi bi-x"></i>
+                        </button>
+                        @if ($index === 0) {
+                          <span class="main-photo-badge">Principal</span>
+                        }
+                      </div>
+                    }
+                  </div>
 
+                </div>
                 <div class="mb-3">
                   <label class="form-label">Nombre</label>
                   <input 
@@ -230,6 +242,7 @@
                 Debes proporcionar al menos un método de contacto.
               </div>
             }
+
             <div class="text-center">
               <button 
                 type="submit" 

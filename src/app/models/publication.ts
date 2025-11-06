@@ -16,7 +16,9 @@ export interface Publication {
   tempName: string;
   species: Species;
   approxAge: string;
-  photo: string;
+  
+  photos: string[]; 
+
   description: string;
   contact: Contact;
   status: Status;
@@ -27,13 +29,25 @@ export interface Publication {
   district: string;
   shared: number;
   likes: number;
+
+  // --- INICIO DE CAMBIOS ---
+  likedByMe: boolean; // <-- AÑADIR ESTA LÍNEA
+  // --- FIN DE CAMBIOS ---
+
+  user?: {
+    id: string;
+    name: string;
+  };
 }
 
+// ... (Resto del archivo CreatePublicationDTO, UpdatePublicationDTO, etc. sin cambios) ...
 export interface CreatePublicationDTO {
   tempName: string;
   species: Species;
   approxAge: string;
-  photo: string;
+  
+  photos: string[]; 
+
   description: string;
   contact: Contact;
   department: string;
@@ -45,7 +59,9 @@ export interface UpdatePublicationDTO {
   tempName?: string;
   species?: Species;
   approxAge?: string;
-  photo?: string;
+  
+  photos?: string[]; 
+
   description?: string;
   contact?: Contact;
   status?: Status;
@@ -59,4 +75,33 @@ export interface ApiResponse<T> {
   data?: T;
   message?: string;
   code?: number;
+}
+
+// --- INTERFACES PARA ADOPTION REQUEST ---
+
+export interface AdoptionRequestCreateDTO {
+  publicationId: string;
+  message?: string;
+}
+
+export interface AdoptionRequest {
+  id: string;
+  status: Status; 
+  createdAt: string; 
+  message?: string;
+
+  applicant: {
+    userId: string;
+    name: string;
+    district: string;
+    province: string;
+  };
+  
+  publication: {
+    publicationId: string;
+    petName: string;
+    petPhoto: string; 
+    ownerId: string;
+    ownerName: string;
+  };
 }

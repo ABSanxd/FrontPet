@@ -1,56 +1,108 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { CommonModule, DatePipe } from '@angular/common'; // <--- Añadir DatePipe
+import { Router, RouterLink } from '@angular/router';
 import { PublicationService } from './publication.service';
-import { Publication } from '../../models/publication';
+import { Publication, AdoptionRequest } from '../../models/publication'; // <--- Añadir AdoptionRequest
 import { Species } from '../../models/enums/species.enum';
 import { Status } from '../../models/enums/status.enum';
+import { AdoptionRequestService } from './adoption-request.service'; // <--- AÑADIR NUEVO SERVICIO
+import { AuthService } from '../../core/services/auth/auth.service'; // <--- AÑADIR AUTHSERVICE
+import { forkJoin } from 'rxjs'; // <--- AÑADIR forkJoin
 
 @Component({
   selector: 'app-adopciones',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, DatePipe], // <--- Añadir DatePipe
   templateUrl: './adopciones.html',
   styleUrl: './adopciones.css'
 })
 export class Adopciones implements OnInit {
-  activeTab: string = 'publicaciones';
-  loading: boolean = false;
+  activeTab: string = 'disponibles'; 
+  loading: boolean = false; 
+  loadingAvailable: boolean = false; 
+  loadingRequests = false; // <--- Loader para "Mis Solicitudes"
   
-  // Listas de publicaciones separadas por estado
+  availablePublications: Publication[] = []; 
+
+  // Listas de "Mis Publicaciones"
   activePublications: Publication[] = [];
   pausedPublications: Publication[] = [];
   pendingPublications: Publication[] = [];
   adoptedPublications: Publication[] = [];
   deletedPublications: Publication[] = [];
 
-  // --- MODIFICADO: Variables para controlar los modales de confirmación ---
+  // --- INICIO: Lógica "Mis Solicitudes" ---
+  currentUserId: string | null = null;
+  
+  // Listas para "Mis Solicitudes"
+  pendingReceivedRequests: AdoptionRequest[] = []; // "Solicitudes recibidas" (Pendientes)
+  sentRequests: AdoptionRequest[] = []; // "Solicitudes enviadas" (Pendientes, Rechazadas, Canceladas)
+  acceptedRequests: AdoptionRequest[] = []; // "Solicitudes aceptadas" (Aceptadas)
+
+  // Estado para los modales de Aceptar/Rechazar/Cancelar
+  showAcceptModal = false;
+  requestToAccept: AdoptionRequest | null = null;
+  
+  showRejectModal = false;
+  requestToReject: AdoptionRequest | null = null;
+  
+  showCancelModal = false; // Para el modal de "Cancelar" (enviadas)
+  requestToCancel: AdoptionRequest | null = null;
+
+  modalError = ''; // Error para los modales de solicitud
+  // --- FIN: Lógica "Mis Solicitudes" ---
+
+  
   showDeleteConfirmModal = false;
-  publicationToDelete: Publication | null = null; // <-- Ahora es un objeto
+  publicationToDelete: Publication | null = null; 
   
   showPauseConfirmModal = false;
   publicationToPauseId: string | null = null;
 
   showActivateConfirmModal = false;
   publicationToActivateId: string | null = null;
-  // --- FIN MODIFICADO ---
   
   constructor(
     private publicationService: PublicationService,
+    private adoptionRequestService: AdoptionRequestService, // <--- INYECTAR
+    private authService: AuthService, // <--- INYECTAR
     private router: Router
-  ) { }
+  ) {
+    this.currentUserId = this.authService.getUser()?.id || null;
+  }
 
   ngOnInit(): void {
     console.log('Componente Adopciones inicializado');
-    this.loadPublications();
+    this.loadAvailablePublications(); 
+    this.loadPublications(); 
+    this.loadAdoptionRequests(); // <--- Cargar solicitudes
   }
 
-  // Cargar todas las publicaciones y filtrarlas por estado
-  loadPublications(): void {
-    console.log('Iniciando carga de publicaciones...');
-    this.loading = true;
-    this.publicationService.getAllPublications().subscribe({
+  loadAvailablePublications(): void {
+    console.log('Iniciando carga de MASCOTAS DISPONIBLES...');
+    this.loadingAvailable = true;
+    this.publicationService.getAvailablePublications().subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor:', response);
+        if (response.status === 'success' && response.data) {
+          this.availablePublications = response.data;
+          console.log('Mascotas Disponibles cargadas:', this.availablePublications.length);
+        } else {
+          this.availablePublications = [];
+        }
+        this.loadingAvailable = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar publicaciones disponibles:', error);
+        this.loadingAvailable = false;
+      }
+    });
+  }
+
+  loadPublications(): void {
+    console.log('Iniciando carga de MIS PUBLICACIONES...');
+    this.loading = true;
+    this.publicationService.getAllPublications().subscribe({ 
+      next: (response) => {
+        console.log('Respuesta de "Mis Publicaciones":', response);
         if (response.status === 'success' && response.data) {
           console.log('Publicaciones recibidas:', response.data);
           this.filterPublications(response.data);
@@ -61,15 +113,186 @@ export class Adopciones implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar publicaciones:', error);
-        console.error('Detalles del error:', error.message);
-        console.error('Status:', error.status);
         this.loading = false;
-        alert('Error al cargar las publicaciones: ' + error.message);
+        alert('Error al cargar tus publicaciones: ' + error.message);
       }
     });
   }
 
-  // Filtrar publicaciones según su estado
+  // --- AÑADIR ESTOS MÉTODOS PARA "MIS SOLICITUDES" ---
+
+  loadAdoptionRequests(): void {
+    this.loadingRequests = true;
+    
+    // Cargamos ambas listas en paralelo
+    forkJoin({
+      received: this.adoptionRequestService.getReceivedRequests(),
+      sent: this.adoptionRequestService.getSentRequests()
+    }).subscribe({
+      next: ({ received, sent }) => {
+        this.filterAdoptionRequests(received, sent);
+        this.loadingRequests = false;
+      },
+      error: (err) => {
+        console.error("Error cargando solicitudes", err);
+        this.loadingRequests = false;
+        alert("No se pudieron cargar tus solicitudes.");
+      }
+    });
+  }
+
+  filterAdoptionRequests(received: AdoptionRequest[], sent: AdoptionRequest[]): void {
+    // 1. "Solicitudes recibidas" (Solo las pendientes)
+    this.pendingReceivedRequests = received.filter(req => req.status === Status.PENDIENTE);
+    
+    // 2. "Solicitudes enviadas" (Todo menos las Aceptadas)
+    this.sentRequests = sent.filter(req => req.status !== Status.ACEPTADO);
+
+    // 3. "Solicitudes aceptadas" (Tanto recibidas como enviadas que estén ACEPTADAS)
+    const acceptedReceived = received.filter(req => req.status === Status.ACEPTADO);
+    const acceptedSent = sent.filter(req => req.status === Status.ACEPTADO);
+    this.acceptedRequests = [...acceptedReceived, ...acceptedSent];
+  }
+
+  // --- Manejadores de Modales (Aceptar, Rechazar, Cancelar) ---
+
+  // Abrir modal ACEPTAR
+  onAccept(request: AdoptionRequest): void {
+    this.modalError = '';
+    this.requestToAccept = request;
+    this.showAcceptModal = true;
+  }
+
+  // Abrir modal RECHAZAR
+  onReject(request: AdoptionRequest): void {
+    this.modalError = '';
+    this.requestToReject = request;
+    this.showRejectModal = true;
+  }
+
+  // Abrir modal CANCELAR (solicitud enviada)
+  onCancel(request: AdoptionRequest): void {
+    this.modalError = '';
+    this.requestToCancel = request;
+    this.showCancelModal = true;
+  }
+
+  closeModals(): void {
+    this.showAcceptModal = false;
+    this.requestToAccept = null;
+    this.showRejectModal = false;
+    this.requestToReject = null;
+    this.showCancelModal = false;
+    this.requestToCancel = null;
+    this.modalError = '';
+  }
+
+  // --- Acciones de Confirmación (llaman al backend) ---
+
+  confirmAccept(): void {
+    if (!this.requestToAccept) return;
+    this.loadingRequests = true; // Usamos el loader general de la pestaña
+    
+    this.adoptionRequestService.acceptRequest(this.requestToAccept.id).subscribe({
+      next: () => {
+        this.loadAdoptionRequests(); // Recargamos las listas
+        this.closeModals();
+        // ¡Importante! Recargamos también las publicaciones,
+        // porque la mascota aceptada ahora está "ADOPTADO".
+        this.loadAvailablePublications(); 
+        this.loadPublications();
+      },
+      error: (err) => {
+        this.modalError = err.error?.message || "Error al aceptar la solicitud.";
+        this.loadingRequests = false;
+      }
+    });
+  }
+
+  confirmReject(): void {
+    if (!this.requestToReject) return;
+    this.loadingRequests = true;
+
+    this.adoptionRequestService.rejectRequest(this.requestToReject.id).subscribe({
+      next: () => {
+        this.loadAdoptionRequests(); // Recargamos las listas
+        this.closeModals();
+      },
+      error: (err) => {
+        this.modalError = err.error?.message || "Error al rechazar la solicitud.";
+        this.loadingRequests = false;
+      }
+    });
+  }
+
+  confirmCancel(): void {
+    if (!this.requestToCancel) return;
+    this.loadingRequests = true;
+
+    this.adoptionRequestService.cancelRequest(this.requestToCancel.id).subscribe({
+      next: () => {
+        this.loadAdoptionRequests(); // Recargamos las listas
+        this.closeModals();
+      },
+      error: (err) => {
+        this.modalError = err.error?.message || "Error al cancelar la solicitud.";
+        this.loadingRequests = false;
+      }
+    });
+  }
+
+  // --- FIN MÉTODOS "MIS SOLICITUDES" ---
+
+  /**
+   * Maneja el clic en el botón "Like" (toggle).
+   * Actualiza la UI "optimistamente" y luego llama al servicio.
+   */
+  onLike(event: MouseEvent, pub: Publication): void {
+    event.stopPropagation(); // Evita que se haga clic en la tarjeta
+    const button = event.currentTarget as HTMLButtonElement;
+    button.disabled = true; // Deshabilita temporalmente
+
+    // 1. Actualización Optimista (UI responde al instante)
+    const originalLikedByMe = pub.likedByMe;
+    const originalLikes = pub.likes;
+
+    if (pub.likedByMe) {
+      // Si ya le dio like -> UNLIKE
+      pub.likes--;
+      pub.likedByMe = false;
+    } else {
+      // Si no le ha dado like -> LIKE
+      pub.likes++;
+      pub.likedByMe = true;
+    }
+
+    // 2. Llamada al servicio
+    this.publicationService.toggleLike(pub.id).subscribe({
+      next: (response) => {
+        // 3. Sincronización con el servidor (sobrescribe por si acaso)
+        // *** ESTA ES LA CORRECCIÓN PARA EL ERROR DE TYPESCRIPT ***
+        if (response.status === 'success' && response.data) {
+          pub.likes = response.data.likes;
+          pub.likedByMe = response.data.likedByMe;
+        } else {
+          // Si la respuesta no es exitosa, revertimos
+          pub.likes = originalLikes;
+          pub.likedByMe = originalLikedByMe;
+        }
+        button.disabled = false; // Rehabilita
+      },
+      error: (err) => {
+        // 4. Rollback en caso de error HTTP
+        console.error("Error al dar like:", err);
+        // Revertimos la actualización optimista
+        pub.likes = originalLikes;
+        pub.likedByMe = originalLikedByMe;
+        button.disabled = false; // Rehabilita
+      }
+    });
+  }
+
+
   filterPublications(publications: Publication[]): void {
     console.log('=== FILTRANDO PUBLICACIONES ===');
     console.log('Total recibidas:', publications.length);
@@ -92,7 +315,6 @@ export class Adopciones implements OnInit {
     console.log('=== FIN FILTRADO ===');
   }
 
-  // Obtener etiqueta legible de la especie
   getSpeciesLabel(species: Species): string {
     const labels: { [key in Species]: string } = {
       [Species.PERRO]: 'Perro',
@@ -104,38 +326,29 @@ export class Adopciones implements OnInit {
     return labels[species] || species;
   }
 
-  // Editar publicación
   editPublication(publication: Publication): void {
-    // Navegar a página de edición con el ID
     this.router.navigate(['/publicaciones/editar', publication.id]);
   }
 
-  // Pausar publicación (MODIFICADO: Abre el modal)
   pausePublication(id: string): void {
     this.publicationToPauseId = id;
     this.showPauseConfirmModal = true;
   }
 
-  // Activar publicación (MODIFICADO: Abre el modal)
   activatePublication(id: string): void {
     this.publicationToActivateId = id;
     this.showActivateConfirmModal = true;
   }
 
-  // Eliminar publicación (MODIFICADO: Abre el modal y pasa el objeto)
   deletePublication(pub: Publication): void {
     this.publicationToDelete = pub;
     this.showDeleteConfirmModal = true;
   }
 
-  // Crear nueva publicación
   createNewPublication(): void {
     this.router.navigate(['/publicaciones/crear']);
   }
 
-  // --- AÑADIDO: Métodos para los modales de confirmación ---
-
-  // Confirmar Pausa
   confirmPause(): void {
     if (!this.publicationToPauseId) return;
     this.loading = true;
@@ -145,7 +358,7 @@ export class Adopciones implements OnInit {
           this.loadPublications();
         }
         this.loading = false;
-        this.closePauseConfirmModal();
+        this.closePauseConfirmModal(); 
       },
       error: (error) => {
         console.error('Error al pausar publicación:', error);
@@ -156,7 +369,6 @@ export class Adopciones implements OnInit {
     });
   }
 
-  // Confirmar Activación
   confirmActivate(): void {
     if (!this.publicationToActivateId) return;
     this.loading = true;
@@ -177,7 +389,6 @@ export class Adopciones implements OnInit {
     });
   }
 
-  // Confirmar Eliminación (MODIFICADO: usa el objeto)
   confirmDelete(): void {
     if (!this.publicationToDelete) return;
     this.loading = true;
@@ -198,7 +409,6 @@ export class Adopciones implements OnInit {
     });
   }
 
-  // Métodos para cerrar los modales
   closeDeleteConfirmModal(): void {
     this.showDeleteConfirmModal = false;
     this.publicationToDelete = null;
@@ -213,5 +423,4 @@ export class Adopciones implements OnInit {
     this.showActivateConfirmModal = false;
     this.publicationToActivateId = null;
   }
-  // --- FIN AÑADIDO ---
 }

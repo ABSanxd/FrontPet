@@ -91,6 +91,7 @@
 /* Contenedor de la imagen */
 .pet-image-container {
   margin-bottom: 0.5rem;
+  position: relative; /* Asegura que los iconos se posicionen sobre la imagen */
 }
 
 /* Imagen de mascota (más pequeña y redondeada) */
@@ -186,6 +187,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.5;
+  line-clamp: 3; 
 }
 
 .texto-truncado {
@@ -495,3 +497,237 @@
   border-color: var(--color-grey) !important;
 }
 /* --- FIN DE ESTILOS DE MODALES --- */
+
+/* --- INICIO: Estilos para "Mascotas Disponibles" (Paso 2) --- */
+
+/* Botón Marrón (del diseño) */
+.btn-brown {
+  background-color: var(--color-brown) !important;
+  border-color: var(--color-brown) !important;
+  color: var(--color-white) !important;
+  border-radius: 20px !important; 
+  font-size: 0.85rem;           
+  padding: 0.4rem 1rem;         
+  font-weight: 600;             
+}
+.btn-brown:hover {
+  background-color: var(--color-brown-dark) !important;
+  border-color: var(--color-brown-dark) !important;
+}
+
+/* Icono de Corazón (arriba derecha) */
+.publication-card .btn-like {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-red);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.publication-card .btn-like:hover {
+  background-color: white;
+  transform: scale(1.1);
+}
+
+/* Estado "Liked" del corazón */
+.publication-card .btn-like.liked {
+  background-color: var(--color-red);
+  color: var(--color-white);
+  transform: scale(1.1); /* Efecto de pulso */
+}
+.publication-card .btn-like:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+
+/* Contador de Likes (abajo izquierda) */
+.publication-card .like-count {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 5;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.publication-card .like-count i {
+  color: var(--color-red);
+}
+
+/* Contador de Shares (abajo derecha) */
+.publication-card .share-count {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 5;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.publication-card .share-count i {
+  color: var(--color-cyan); /* Color cian para diferenciar */
+}
+
+/* --- FIN: Estilos para "Mascotas Disponibles" --- */
+
+
+/* --- INICIO: Estilos "Mis Solicitudes" (Paso 7) --- */
+.request-card {
+  border-radius: 16px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey);
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+.request-card.request-card-accepted {
+  border-left: 5px solid var(--color-green);
+}
+
+.request-card-pet, .request-card-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+.request-card-pet {
+  background-color: #f8f9fa;
+}
+.request-card-pet img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.request-card-pet h5 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-brown-dark);
+  margin: 0;
+}
+
+.request-card-user img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.request-card-user .info {
+  line-height: 1.3;
+}
+.request-card-user .info strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-brown-dark);
+}
+.request-card-user .info span {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.request-card-body {
+  padding: 1rem;
+  padding-top: 0.5rem;
+}
+.request-card-body small {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-badge-enviada {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+}
+.status-badge-enviada.bg-warning {
+  color: var(--color-brown-dark) !important;
+}
+
+/* --- Colores de Header para Modales de Solicitud --- */
+.modal-header-accept {
+  background-color: var(--color-green) !important;
+  color: white;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header-accept h5, .modal-header-accept i {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.modal-header-reject {
+  background-color: var(--color-orange) !important;
+  color: white;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header-reject h5, .modal-header-reject i {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.modal-header-cancel {
+  background-color: var(--color-brown-dark) !important;
+  color: white;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header-cancel h5, .modal-header-cancel i {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* Texto de confirmación en modales */
+.modal-confirm-text-dark {
+  font-size: 1.05rem;
+  color: var(--color-brown-dark);
+  text-align: center;
+  margin-top: 1.5rem;
+  line-height: 1.5;
+}
+.modal-error-text {
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 0.5rem;
+  margin-top: 1rem;
+}
+/* --- FIN: Estilos "Mis Solicitudes" --- */

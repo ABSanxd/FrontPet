@@ -55,7 +55,8 @@
 .photo-upload-box {
   border: 3px dashed var(--color-green); 
   border-radius: 20px;
-  min-height: 250px;
+  /* La altura mínima la quitará el contenedor de previsualización */
+  min-height: 200px; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,6 +93,7 @@
   color: var(--color-green); 
 }
 
+/* Este photo-preview ya no se usa, pero lo dejamos por si acaso */
 .photo-preview {
   width: 100%;
   height: 100%;
@@ -289,8 +291,8 @@
   border-left: none;
 }
 .contact-form-section .form-control-custom:focus {
-  border-left: none;
-  box-shadow: 0 0 0 0.2rem rgba(238, 142, 79, 0.15);
+border-left: none;
+box-shadow: 0 0 0 0.2rem rgba(238, 142, 79, 0.15);
 }
 /* --- FIN ESTILOS SECCIÓN CONTACTO --- */
 
@@ -323,7 +325,7 @@
   max-width: 450px;
   width: 90%;
   box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-  text-align: center;
+text-align: center;
   animation: slideUp 0.3s ease-out;
 }
 
@@ -384,7 +386,73 @@
   border-color: var(--color-grey-dark) !important;
 }
 .modal-actions-cancel .btn-secondary:hover {
-  background-color: var(--color-grey) !important;
+ background-color: var(--color-grey) !important;
   border-color: var(--color-grey) !important;
 }
 /* --- FIN DE ESTILOS AÑADIDOS --- */
+
+/* --- INICIO ESTILOS MULTI-FOTO --- */
+.previews-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  /* Centra las fotos si no llenan el espacio */
+  justify-content: center; 
+}
+
+.preview-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--color-grey);
+  /* Añade una sombra suave */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-remove-img {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  /* Asegura que esté sobre la insignia */
+  z-index: 10; 
+}
+
+.btn-remove-img:hover {
+  background-color: var(--color-red);
+}
+
+.main-photo-badge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 2px 0;
+  z-index: 5; /* Debajo del botón de eliminar */
+}
+/* --- FIN ESTILOS MULTI-FOTO --- */
