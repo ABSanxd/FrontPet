@@ -125,3 +125,139 @@
   font-size: 1.1rem;
   vertical-align: middle;
 }
+
+/* --- ESTILOS PARA LA NUEVA SECCIÓN DE PESTAÑAS --- */
+.pet-tabs-container {
+  width: 100%;
+}
+
+/* Estilo de la barra de pestañas */
+.nav-tabs-pet {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 3px solid #e0e0e0;
+}
+
+.nav-tabs-pet .nav-item {
+  margin-bottom: -3px; /* Compensa el borde inferior */
+}
+
+.nav-link-pet {
+  border: none;
+  background: transparent;
+  color: var(--color-grey-dark);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.nav-link-pet:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--color-brown-dark);
+}
+
+.nav-link-pet.active {
+  color: var(--color-orange-dark);
+  border-bottom-color: var(--color-orange-dark);
+}
+
+.tab-content {
+  background-color: var(--color-white);
+  padding: 2rem;
+  border-radius: 0 16px 16px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+  border-top: none;
+}
+
+/* Estilo de la tarjeta de vacuna (como en la imagen) */
+.vaccine-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #faf9ed;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+}
+.vaccine-card:hover {
+  border-color: var(--color-orange);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.vaccine-info .vaccine-name {
+  font-weight: 700;
+  color: var(--color-brown-dark);
+  font-size: 1.1rem;
+  margin: 0;
+}
+.vaccine-info .vaccine-date {
+  font-size: 0.9rem;
+  color: var(--color-grey-dark);
+}
+
+.vaccine-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.2s ease;
+}
+.btn-icon.btn-edit {
+  background-color: var(--color-orange);
+}
+.btn-icon.btn-edit:hover {
+  background-color: var(--color-orange-dark);
+}
+.btn-icon.btn-delete {
+  background-color: var(--color-red);
+}
+.btn-icon.btn-delete:hover {
+  background-color: var(--color-red-dark);
+}
+
+/* Estilo de la tarjeta "Agregar Vacuna" */
+.add-vaccine-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+  min-height: 85px; /* Altura similar a la vaccine-card */
+  background-color: transparent;
+  border: 2px dashed var(--color-green);
+  border-radius: 12px;
+  color: var(--color-green);
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+.add-vaccine-card:hover {
+  border-color: var(--color-orange-dark);
+  color: var(--color-orange-dark);
+  background-color: rgba(255, 142, 79, 0.05);
+}
+
+.add-icon-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

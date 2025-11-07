@@ -6,6 +6,7 @@
         Volver a mis mascotas
       </a>
     </div>
+
     @if (isLoading) {
       <div class="text-center py-5">
         <div class="spinner-border text-primary-dark" role="status">
@@ -84,6 +85,90 @@
           </button>
         </div>
       </div>
-    }
+
+      <hr class="my-5">
+
+      <div class="pet-tabs-container">
+        <ul class="nav nav-tabs-pet mb-4">
+          <li class="nav-item">
+            <button class="nav-link-pet" [class.active]="activeTab === 'retos'" (click)="activeTab = 'retos'">
+              <i class="bi bi-trophy me-2"></i> Retos
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link-pet" [class.active]="activeTab === 'logros'" (click)="activeTab = 'logros'">
+              <i class="bi bi-award me-2"></i> Logros
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link-pet" [class.active]="activeTab === 'vacunas'" (click)="activeTab = 'vacunas'">
+              <i class="bi bi-shield-check me-2"></i> Vacunas
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          
+          @if (activeTab === 'retos') {
+            <div class="tab-pane-pet active text-center py-5">
+              
+            </div>
+          }
+
+          @if (activeTab === 'logros') {
+            <div class="tab-pane-pet active text-center py-5">
+              
+            </div>
+          }
+
+          @if (activeTab === 'vacunas') {
+            <div class="tab-pane-pet active">
+              @if (isLoadingVaccines) {
+                <div class="text-center py-4">
+                  <div class="spinner-border text-primary-dark" role="status"></div>
+                  <p class="mt-2">Cargando vacunas...</p>
+                </div>
+              } @else {
+                <div class="row g-3">
+                  @for (vaccine of vaccines; track vaccine.id) {
+                    <div class="col-md-6">
+                      <div class="vaccine-card">
+                        <div class="vaccine-info">
+                          <h5 class="vaccine-name">{{ vaccine.name }}</h5>
+                          <span class="vaccine-date">
+                            {{ (getFirstApplicationDate(vaccine) | date:'yyyy-MM-dd') || (vaccine.createdAt | date:'yyyy-MM-dd') }}
+                          </span>
+                        </div>
+                        <div class="vaccine-actions">
+                          <button (click)="onEditVaccine(vaccine.id)" class="btn-icon btn-edit">
+                            <i class="bi bi-pencil-fill"></i>
+                          </button>
+                          <button (click)="onDeleteVaccine(vaccine.id)" class="btn-icon btn-delete">
+                            <i class="bi bi-trash-fill"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  } @empty {
+                    <p class="text-muted text-center col-12">No hay vacunas registradas para {{pet.nombre}}.</p>
+                  }
+                  
+                  <div class="col-md-6">
+                    <button (click)="onAddVaccine()" class="add-vaccine-card">
+                      <span>Agregar Vacuna</span>
+                      <div class="add-icon-sm">
+                        <i class="bi bi-plus-lg"></i>
+                      </div>
+                    </button>
+                  </div>
+
+                </div>
+              }
+            </div>
+          }
+
+        </div>
+      </div>
+      }
   </div>
 </div>

@@ -12,6 +12,7 @@ import { Servicios } from './features/publicidad/servicios';
 import { RegistrarMascota } from './features/mascotas/registrar-mascota/registrar-mascota';
 import { DetallesMascota } from './features/mascotas/detalles-mascota/detalles-mascota';
 import { ResetPassword } from './features/auth/components/reset-password/reset-password';
+import { RegistrarVacuna } from './features/mascotas/registrar-vacuna/registrar-vacuna';
 
 
 export const routes: Routes = [
@@ -52,26 +53,26 @@ export const routes: Routes = [
         component: Perfil,
         canActivate: [authGuard]
     },
-    // --- RUTAS DE MASCOTAS (AHORA ACTIVAS) ---
+
     {
       path: 'mascotas/nueva',
       component: RegistrarMascota,
       canActivate: [authGuard]
     },
     {
-      path: 'mascotas/:id', // <-- RUTA DE DETALLE (NUEVA)
+      path: 'mascotas/:id', 
       component: DetallesMascota, 
       canActivate: [authGuard]
     },
     {
-      path: 'mascotas/:id/editar', // <-- RUTA DE EDICIÓN (NUEVA)
-      component: RegistrarMascota, // Reusamos el formulario de registro
+      path: 'mascotas/:id/editar', 
+      component: RegistrarMascota, 
       canActivate: [authGuard]
     },
 
     {
     path: 'mascotas/:id/editar',
-    component: RegistrarMascota, // <-- Reutilizamos el componente
+    component: RegistrarMascota, 
     canActivate: [authGuard]
     },
 
@@ -80,6 +81,17 @@ export const routes: Routes = [
     component: ResetPassword,
     canActivate: [guestGuard] // Solo usuarios no logueados
   },
+    {
+      path: 'mascotas/:petId/vacunas/nueva',
+      component: RegistrarVacuna,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'mascotas/:petId/vacunas/:vaccineId/editar',
+      component: RegistrarVacuna,
+      canActivate: [authGuard]
+    },
+  
 
     { path: '**', redirectTo: '' }
 
