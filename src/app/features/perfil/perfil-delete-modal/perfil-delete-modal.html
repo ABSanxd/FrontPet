@@ -1,0 +1,23 @@
+@if (showModal) {
+  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6)">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header border-0">
+          <h5 class="modal-title text-danger fw-bold">¿Eliminar cuenta?</h5>
+          <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="mb-3">
+            Esta acción <strong>eliminará tu cuenta</strong> y todos tus datos asociados.<br>
+            <span class="text-danger fw-semibold">No podrás recuperar tu información.</span>
+          </p>
+          <i class="bi bi-exclamation-triangle-fill text-warning fs-1"></i>
+        </div>
+        <div class="modal-footer border-0 d-flex justify-content-center gap-2">
+          <button type="button" class="btn btn-secondary px-4" (click)="onCancel()">Cancelar</button>
+          <button type="button" class="btn btn-danger px-4" (click)="onConfirm()">Eliminar definitivamente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

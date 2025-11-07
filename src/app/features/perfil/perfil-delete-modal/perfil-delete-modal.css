@@ -1,0 +1,20 @@
+.modal-content {
+  border-radius: 16px;
+  border: none;
+}
+
+.modal-title {
+  color: var(--color-red);
+}
+
+.btn-danger {
+  background-color: var(--color-red);
+}
+
+.btn-danger:hover {
+  background-color: var(--color-red-dark);
+}
+
+.btn-secondary {
+  background-color: var(--color-grey-dark);
+}

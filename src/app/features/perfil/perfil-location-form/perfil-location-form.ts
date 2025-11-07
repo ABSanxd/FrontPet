@@ -26,7 +26,7 @@ export class PerfilLocationForm implements OnInit {
   setupUbigeoListeners(): void {
     this.departments$ = this.ubigeoService.getDepartments();
 
-    const initialDepartment = this.profileForm.get('departmente')!.value;
+    const initialDepartment = this.profileForm.get('department')!.value;
     const initialProvince = this.profileForm.get('province')!.value
 
     //cargar provincias
