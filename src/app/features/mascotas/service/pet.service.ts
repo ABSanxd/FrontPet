@@ -1,9 +1,8 @@
-// src/app/features/mascotas/pet.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Pet, PetCreateRequest, PetUpdateRequest } from '../../../models/pet';
+// --- IMPORTS ACTUALIZADOS ---
+import { PetResponseDTO, PetCreateDTO, PetUpdateDTO } from '../../../models/pet';
 import { ApiResponse } from '../../../models/api-response';
 
 @Injectable({
@@ -16,38 +15,35 @@ export class PetService {
 
   constructor(private http: HttpClient) { }
 
-  getAllPetsByUser(): Observable<Pet[]> {
-   
-    return this.http.get<ApiResponse<Pet[]>>(this.apiUrl)
+  // --- TIPO DE RETORNO ACTUALIZADO ---
+  getAllPetsByUser(): Observable<PetResponseDTO[]> {
+    return this.http.get<ApiResponse<PetResponseDTO[]>>(this.apiUrl)
       .pipe(map(response => response.data));
   }
 
-
-  getPetById(id: string): Observable<Pet> {
-   
-    return this.http.get<ApiResponse<Pet>>(`${this.apiUrl}/${id}`)
+  // --- TIPO DE RETORNO ACTUALIZADO ---
+  getPetById(id: string): Observable<PetResponseDTO> {
+    return this.http.get<ApiResponse<PetResponseDTO>>(`${this.apiUrl}/${id}`)
       .pipe(map(response => response.data));
   }
 
-  createPet(pet: PetCreateRequest): Observable<Pet> {
-    return this.http.post<ApiResponse<Pet>>(this.apiUrl, pet)
+  // --- FIRMA ACTUALIZADA ---
+  createPet(pet: PetCreateDTO): Observable<PetResponseDTO> {
+    return this.http.post<ApiResponse<PetResponseDTO>>(this.apiUrl, pet)
       .pipe(map(response => response.data));
   }
 
-  // PUT /api/v1/pets/{id} 
-  updatePet(id: string, pet: PetUpdateRequest): Observable<Pet> {
-    // Quitamos { headers }
-    return this.http.put<ApiResponse<Pet>>(`${this.apiUrl}/${id}`, pet)
+  // --- FIRMA ACTUALIZADA ---
+  updatePet(id: string, pet: PetUpdateDTO): Observable<PetResponseDTO> {
+    return this.http.put<ApiResponse<PetResponseDTO>>(`${this.apiUrl}/${id}`, pet)
       .pipe(map(response => response.data));
   }
 
-  // DELETE /api/v1/pets/{id} 
   deletePet(id: string): Observable<void> {
     return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`)
       .pipe(map(() => undefined));
   }
 
-  // GET /api/v1/pets/count
   countActivePets(): Observable<number> {
     return this.http.get<ApiResponse<number>>(`${this.apiUrl}/count`)
       .pipe(map(response => response.data));

@@ -1,0 +1,102 @@
+<div class="register-container">
+  <div class="container py-5">
+    
+    <header class="text-center mb-4">
+      <h1 class="register-title">
+        <i class="bi bi-syringe me-3"></i>
+        {{ isEditMode ? 'Editar Vacuna' : 'Registra nueva vacuna' }}
+      </h1>
+    </header>
+
+    <div class="register-card">
+      <form [formGroup]="vaccineForm" (ngSubmit)="onSubmit()" novalidate>
+        
+        <div class="form-group mb-4">
+          <label for="name" class="form-label">Nombre de la vacuna</label>
+          <input type="text" class="form-control-custom" id="name" placeholder="Ej: Rabia, Parvovirus"
+                 formControlName="name" 
+                 [class.is-invalid]="vaccineForm.get('name')?.touched && vaccineForm.get('name')?.invalid">
+          @if (vaccineForm.get('name')?.touched && vaccineForm.get('name')?.errors?.['required']) {
+            <div class="invalid-feedback d-block">El nombre de la vacuna es obligatorio.</div>
+          }
+        </div>
+
+        <h5 class="form-label mb-3">
+          {{ doses.length > 1 ? 'Dosis programadas' : 'Fecha primera aplicación' }}
+        </h5> 
+
+        <div formArrayName="doses">
+          @for (dose of doses.controls; track $index; let i = $index) {
+            
+            @if (i > 0) {
+              <label [for]="'doseDate' + i" class="form-label mt-2">Fecha aplicación (Refuerzo)</label>
+            }
+
+            <div [formGroupName]="i" class="dose-row mb-3">
+              <div class="input-group-custom">
+                <span class="input-group-text-custom"><i class="bi bi-calendar3"></i></span>
+                <input 
+                  type="date" class="form-control-custom date-input" 
+                  [id]="'doseDate' + i"
+                  formControlName="applicationDate"
+                  [class.is-invalid]="dose.get('applicationDate')?.touched && dose.get('applicationDate')?.invalid">
+              </div>
+
+              @if (i === 0 && !isEditMode) { 
+                <button type="button" (click)="addDose()" class="btn btn-add-dose">
+                    <i class="bi bi-plus-lg me-2"></i> Añadir dosis
+                </button>
+              } @else if (i > 0) { 
+                <button type="button" (click)="removeDose(i)" class="btn btn-remove-dose">
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+              } @else if (isEditMode) {
+                <div style="width: 48px; flex-shrink: 0;"></div>
+              }
+            </div>
+
+            @if (dose.get('applicationDate')?.touched && dose.get('applicationDate')?.errors?.['required']) {
+              <div class="invalid-feedback d-block mb-2" style="margin-top: -0.75rem;">
+                La fecha de aplicación es obligatoria.
+              </div>
+            }
+          }
+        </div>
+
+        @if (isEditMode) {
+          <div class="text-center mb-4">
+            <button type="button" (click)="addDose()" class="btn btn-add-dose">
+                <i class="bi bi-plus-lg me-2"></i> Añadir nueva dosis de refuerzo
+            </button>
+          </div>
+        }
+
+        <div class="row mt-5">
+          <div class="col-12 text-center d-flex justify-content-center gap-3">
+            
+            @if (error) {
+              <p class="text-danger mb-3">{{ error }}</p>
+            }
+
+            <button type="submit" class="btn btn-orange btn-lg" [disabled]="isLoading || vaccineForm.invalid || doses.length === 0">
+              @if (isLoading) {
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span>Guardando...</span>
+              } @else {
+                <span><i class="bi bi-check-lg me-2"></i> 
+                  {{ isEditMode ? 'Actualizar vacuna' : 'Guardar vacuna' }}
+                </span>
+              }
+            </button>
+            
+            <a [routerLink]="['/mascotas', petId]" class="btn btn-light-grey btn-lg">
+              Cancelar
+            </a>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>

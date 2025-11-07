@@ -125,29 +125,6 @@
   font-size: 0.95rem;
 }
 
-/* Form controls personalizados */
-.form-control-custom {
-  border: 2px solid var(--color-grey); 
-  border-radius: 12px;
-  padding: 12px 18px;
-  font-size: 0.95rem;
-  transition: all 0.3s;
-}
-
-.form-control-custom:focus {
-  border-color: var(--color-orange); 
-  box-shadow: 0 0 0 0.2rem rgba(238, 142, 79, 0.15); 
-  outline: none;
-}
-
-.form-control-custom::placeholder {
-  color: var(--color-grey); 
-}
-
-.form-control-custom.is-invalid {
-  border-color: var(--color-red); 
-}
-
 /* Botón registrar */
 .btn-register {
   background-color: var(--color-orange); 

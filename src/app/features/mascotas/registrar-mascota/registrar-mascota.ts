@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PetService } from '../service/pet.service';
 import { Species } from '../../../models/enums/species.enum';
-import { PetCreateRequest, PetUpdateRequest } from '../../../models/pet';
+import { PetCreateDTO, PetUpdateDTO } from '../../../models/pet';
 
 @Component({
   selector: 'app-registrar-mascota',
@@ -23,49 +23,51 @@ export class RegistrarMascota implements OnInit {
   
   isEditMode = false;
   currentPetId: string | null = null;
+
+  maxDate: string;
   
   constructor(
     private fb: FormBuilder,
     private petService: PetService,
     private router: Router,
     private route: ActivatedRoute 
-  ) {}
+  ) {
+    this.maxDate = new Date().toISOString().split('T')[0];
+  }
 
   ngOnInit(): void {
     this.petForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       especie: ['', Validators.required],
       breed: ['', Validators.maxLength(100)],
-      petAge: [null, [Validators.min(0), Validators.max(100)]],
+      
+      birthDate: [null], 
+
       petWeight: [null, [Validators.min(0.1), Validators.max(999.99)]],
       photo: [null]
     });
 
-    // --- LÓGICA DE EDICIÓN ---
-    //Leemos el ID de la URL
     this.currentPetId = this.route.snapshot.paramMap.get('id');
 
-    //Si hay un ID, estamos en modo "Editar"
     if (this.currentPetId) {
       this.isEditMode = true;
       this.loadPetData(this.currentPetId);
     }
   }
 
-  // Cargar los datos de la mascota
   loadPetData(id: string): void {
     this.isLoading = true;
     this.petService.getPetById(id).subscribe({
       next: (pet) => {
-        // Rellenamos el formulario con los datos de la mascota
         this.petForm.patchValue({
           nombre: pet.nombre,
           especie: pet.especie,
           breed: pet.breed,
-          petAge: pet.petAge,
+          
+          birthDate: pet.birthDate, 
           petWeight: pet.petWeight
         });
-        //Guardamos la foto existente para la vista previa
+        
         if (pet.photo) {
           this.previewUrl = pet.photo;
         }
@@ -83,7 +85,6 @@ export class RegistrarMascota implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      this.petForm.patchValue({ photo: file.name }); 
       const reader = new FileReader();
       reader.onload = () => {
         this.previewUrl = reader.result;
@@ -92,7 +93,6 @@ export class RegistrarMascota implements OnInit {
     }
   }
 
-  // Maneja tanto para registrar como para editar ---
   onSubmit(): void {
     this.petForm.markAllAsTouched();
     
@@ -104,18 +104,21 @@ export class RegistrarMascota implements OnInit {
     this.isLoading = true;
     this.error = '';
 
-    const petData: PetCreateRequest | PetUpdateRequest = {
+
+    const petData: PetCreateDTO | PetUpdateDTO = {
       nombre: this.petForm.value.nombre,
       especie: this.petForm.value.especie,
       breed: this.petForm.value.breed || undefined,
-      petAge: this.petForm.value.petAge || undefined,
-      petWeight: this.petForm.value.petWeight || undefined,
+      
+     
+      birthDate: this.petForm.value.birthDate || undefined,
 
-      photo: undefined 
+      petWeight: this.petForm.value.petWeight || undefined,
+      photo: this.previewUrl as string | undefined 
     };
 
     if (this.isEditMode && this.currentPetId) {
-      // --- MODO EDITAR ---
+
       this.petService.updatePet(this.currentPetId, petData).subscribe({
         next: (updatedPet) => {
           this.isLoading = false;
@@ -129,11 +132,11 @@ export class RegistrarMascota implements OnInit {
       });
 
     } else {
-      // --- MODO REGISTRAR ---
-      this.petService.createPet(petData as PetCreateRequest).subscribe({
+     
+      this.petService.createPet(petData as PetCreateDTO).subscribe({
         next: (newPet) => {
           this.isLoading = false;
-          this.router.navigate(['/mascotas']);
+          this.router.navigate(['/inicio']);
         },
         error: (err) => {
           this.isLoading = false;

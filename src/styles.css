@@ -3,6 +3,53 @@
 @import './styles/_typography.css';
 
 html,
+.form-control-custom {
+  display: block;
+  width: 100%;
+  border: 2px solid #E0E0E0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-brown-dark);
+  background-color: var(--color-white);
+  background-clip: padding-box;
+  transition: all 0.3s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Ajuste para <select> (combobox) */
+.form-select.form-control-custom {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23581611' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 12px;
+}
+
+/* Efecto :focus */
+.form-control-custom:focus {
+  border-color: #FF9F5A; /* Naranja de Publicación */
+  box-shadow: 0 0 0 0.2rem rgba(255, 159, 90, 0.15);
+  outline: none;
+}
+
+.form-control-custom::placeholder {
+  color: #CCC;
+}
+
+.form-control-custom.is-invalid {
+  border-color: #dc3545;
+}
+
+.form-control-custom:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #e0e0e0;
+}
+
 body {
   height: 100%;
   margin: 0;

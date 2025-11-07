@@ -45,5 +45,5 @@ export class PopupService {
   resetearRotacion(): void {
     if (!this.isBrowser) return;
     localStorage.removeItem(this.STORAGE_KEY);
-  }
+  }
 }

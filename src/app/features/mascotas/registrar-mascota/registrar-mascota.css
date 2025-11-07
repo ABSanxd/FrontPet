@@ -41,27 +41,6 @@
   z-index: 10;
 }
 
-.form-label {
-  color: var(--color-brown-dark);
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
-}
-
-.form-control, .form-select {
-  border-radius: 8px;
-  border: 1px solid var(--color-grey);
-  padding: 0.6rem 1rem;
-  box-shadow: none !important;
-  color: var(--color-brown-dark);
-}
-.form-control:focus, .form-select:focus {
-  border-color: var(--color-orange);
-}
-.form-control.is-invalid, .form-select.is-invalid {
-  border-color: var(--color-red);
-}
-
 .image-uploader {
   border: 2px dashed var(--color-green);
   border-radius: 12px;
@@ -139,7 +118,7 @@
     padding: 2rem;
   }
   .decorative-dog {
-    display: none; /* Ocultamos el perro en pantallas medianas */
+    display: none; 
   }
 }
 
@@ -156,4 +135,6 @@
   .image-uploader {
     height: 200px;
   }
+
+  
 }

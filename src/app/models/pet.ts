@@ -2,7 +2,7 @@ import { Status } from "./enums/status.enum";
 import { PetLevel } from "./enums/pet-level.enum";
 import { Species } from "./enums/species.enum";
 
-export interface Pet {
+export interface PetResponseDTO {
   id: string;
   userId: string;
   nombre: string;
@@ -10,7 +10,11 @@ export interface Pet {
   nivel: PetLevel;
   petXp: number;
   breed?: string;
-  petAge?: number;
+  
+  ageYears?: number;  
+  ageMonths?: number; 
+  birthDate?: string;
+
   petWeight?: number;
   photo?: string;
   status: Status;
@@ -18,21 +22,24 @@ export interface Pet {
   updatedIn?: string; 
 }
 
-export interface PetCreateRequest {
+export interface PetCreateDTO {
   nombre: string;
   especie: Species;
   breed?: string;
-  petAge?: number;
+  
+  birthDate?: string; 
+  
   petWeight?: number;
   photo?: string;
 }
 
-
-export interface PetUpdateRequest {
+export interface PetUpdateDTO {
   nombre?: string;
   especie?: Species;
   breed?: string;
-  petAge?: number;
+
+  birthDate?: string;
+
   petWeight?: number;
   photo?: string;
 }

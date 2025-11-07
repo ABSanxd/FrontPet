@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PetService } from '../service/pet.service'; 
-import { Pet } from '../../../models/pet';
+import { PetResponseDTO } from '../../../models/pet';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { PetLevel } from '../../../models/enums/pet-level.enum';
 
@@ -14,12 +14,12 @@ import { PetLevel } from '../../../models/enums/pet-level.enum';
 })
 export class ListarMascotas implements OnInit {
 
-  pets: Pet[] = [];
+  pets: PetResponseDTO[] = [];
   userName: string = '';
   isLoading = true;
   error = '';
   
-  readonly addPetImg = 'assets/img/img-nueva-publicacion-01.png';
+  readonly addPetImg = 'assets/animalitos.svg';
 
   constructor(
     private petService: PetService,
@@ -55,7 +55,6 @@ export class ListarMascotas implements OnInit {
     });
   }
 
-// Helper para dar color a los niveles
   getPetLevelClass(level: PetLevel): string {
     switch(level) {
       case PetLevel.ALFA:
@@ -68,7 +67,6 @@ export class ListarMascotas implements OnInit {
     }
   }
 
-  // Helper para manejar imágenes rotas
   onImageError(event: any): void {
     event.target.src = 'assets/pet-placeholder.png'; 
   }
