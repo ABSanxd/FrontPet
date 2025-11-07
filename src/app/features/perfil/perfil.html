@@ -44,22 +44,28 @@
             <button 
               (click)="onSaveChanges()" 
               [disabled]="profileForm.pristine || profileForm.invalid" 
-              class="btn btn-success">
+              class="btn btn-orange">
               Guardar Cambios
             </button>
             <button 
               (click)="toggleEditMode(false)" 
-              class="btn btn-secondary">
+              class="btn btn-grey">
               Cancelar
             </button>
           </div>
         }
 
         <button 
-          (click)="onDeleteAccount()" 
+          (click)="openDeleteModal()" 
           class="btn btn-red w-100">
           Eliminar Cuenta
         </button>
+
+        <app-perfil-delete-modal 
+          [showModal]="showDeleteModal"
+          (confirm)="confirmDeleteAccount()"
+          (cancel)="closeDeteleteModal()">
+        </app-perfil-delete-modal>
 
       </div>
     } @else {

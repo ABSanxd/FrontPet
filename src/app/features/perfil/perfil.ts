@@ -11,6 +11,7 @@ import { PerfilPasswordChange } from './perfil-password-change/perfil-password-c
 import { PerfilLocationForm } from './perfil-location-form/perfil-location-form';
 import { PerfilInfoCard } from './perfil-info-card/perfil-info-card';
 import { PerfilPetsInfo } from './perfil-pets-info/perfil-pets-info';
+import { PerfilDeleteModal } from './perfil-delete-modal/perfil-delete-modal';
 @Component({
   selector: 'app-perfil',
   imports: [
@@ -21,6 +22,7 @@ import { PerfilPetsInfo } from './perfil-pets-info/perfil-pets-info';
     PerfilLocationForm,
     PerfilPasswordChange,
     PerfilPetsInfo,
+    PerfilDeleteModal,
   ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
@@ -35,6 +37,8 @@ export class Perfil implements OnInit {
   public errorMessage: string | null = null;
   public successMessage: string | null = null;
   public showPasswordModal: boolean = false;
+
+  public showDeleteModal: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -60,9 +64,15 @@ export class Perfil implements OnInit {
           [Validators.required, Validators.minLength(2)],
         ],
         email: [{ value: '', disabled: true }],
-        department: [{ value: '', disabled: !this.isEditing }],
-        province: [{ value: '', disabled: !this.isEditing }],
-        district: [{ value: '', disabled: !this.isEditing }],
+        department: [{ value: '', disabled: !this.isEditing },
+          [Validators.required],
+        ],
+        province: [{ value: '', disabled: !this.isEditing },
+          [Validators.required],
+        ],
+        district: [{ value: '', disabled: !this.isEditing }
+          , [Validators.required]
+        ],
         newPassword: ['', [Validators.minLength(8)]],
         confirmNewPassword: [''],
       },
@@ -103,6 +113,12 @@ export class Perfil implements OnInit {
 
   toggleEditMode(enable: boolean): void {
     this.isEditing = enable;
+
+    if(!enable){
+      this.showPasswordModal = false;
+      this.errorMessage = null;
+      this.successMessage = null;
+    }
     Object.keys(this.profileForm.controls).forEach((key) => {
       if (key !== 'email' && key !== 'newPassword' && key !== 'confirmNewPassword') {
         this.isEditing ? this.profileForm.get(key)!.enable() : this.profileForm.get(key)!.disable();
@@ -134,19 +150,7 @@ export class Perfil implements OnInit {
     });
   }
 
-  onDeleteAccount(): void {
-    if (!this.currentUserId || !confirm('¿Estás seguro de que deseas eliminar tu cuenta?')) return;
-    this.userService.deleteUser(this.currentUserId).subscribe({
-      next: () => {
-        console.log('Cuenta Eliminada');
-        this.authService.logout();
-      },
-      error: (err) => {
-        this.errorMessage = 'Error al eliminar la cuenta: ' + err;
-      },
-    });
-  }
-
+  
   openPasswordChange(): void {
     this.showPasswordModal = !this.showPasswordModal;
     this.errorMessage = null;
@@ -197,5 +201,26 @@ export class Perfil implements OnInit {
           'Error al cambiar la contraseña: ' + (err.error?.message || 'Error de conexión');
       },
     });
+  }
+
+  openDeleteModal():void{
+    this.showDeleteModal = true;
+  }
+
+  closeDeteleteModal():void{
+    this.showDeleteModal = false;
+  }
+
+  confirmDeleteAccount():void{
+    if(!this.currentUserId) return;
+    this.userService.deleteUser (this.currentUserId).subscribe({
+      next:()=>{
+        console.log('cuenta eliminada');
+        this.authService.logout();
+      },
+      error: (err)=>{
+        this.errorMessage = 'Error al eliminar la cuenta' +err;
+      }
+    })
   }
 }
