@@ -49,6 +49,7 @@ export class Adopciones implements OnInit {
   requestToCancel: AdoptionRequest | null = null;
 
   modalError = ''; // Error para los modales de solicitud
+  isModalLoading = false; // <-- MODIFICACIÓN: Loader para botones de modal
   // --- FIN: Lógica "Mis Solicitudes" ---
 
   
@@ -185,13 +186,15 @@ export class Adopciones implements OnInit {
     this.showCancelModal = false;
     this.requestToCancel = null;
     this.modalError = '';
+    this.isModalLoading = false; // <-- MODIFICACIÓN
   }
 
   // --- Acciones de Confirmación (llaman al backend) ---
 
   confirmAccept(): void {
     if (!this.requestToAccept) return;
-    this.loadingRequests = true; // Usamos el loader general de la pestaña
+    this.isModalLoading = true; // <-- MODIFICACIÓN
+    this.modalError = '';
     
     this.adoptionRequestService.acceptRequest(this.requestToAccept.id).subscribe({
       next: () => {
@@ -204,14 +207,15 @@ export class Adopciones implements OnInit {
       },
       error: (err) => {
         this.modalError = err.error?.message || "Error al aceptar la solicitud.";
-        this.loadingRequests = false;
+        this.isModalLoading = false; // <-- MODIFICACIÓN
       }
     });
   }
 
   confirmReject(): void {
     if (!this.requestToReject) return;
-    this.loadingRequests = true;
+    this.isModalLoading = true; // <-- MODIFICACIÓN
+    this.modalError = '';
 
     this.adoptionRequestService.rejectRequest(this.requestToReject.id).subscribe({
       next: () => {
@@ -220,14 +224,15 @@ export class Adopciones implements OnInit {
       },
       error: (err) => {
         this.modalError = err.error?.message || "Error al rechazar la solicitud.";
-        this.loadingRequests = false;
+        this.isModalLoading = false; // <-- MODIFICACIÓN
       }
     });
   }
 
   confirmCancel(): void {
     if (!this.requestToCancel) return;
-    this.loadingRequests = true;
+    this.isModalLoading = true; // <-- MODIFICACIÓN
+    this.modalError = '';
 
     this.adoptionRequestService.cancelRequest(this.requestToCancel.id).subscribe({
       next: () => {
@@ -236,7 +241,7 @@ export class Adopciones implements OnInit {
       },
       error: (err) => {
         this.modalError = err.error?.message || "Error al cancelar la solicitud.";
-        this.loadingRequests = false;
+        this.isModalLoading = false; // <-- MODIFICACIÓN
       }
     });
   }

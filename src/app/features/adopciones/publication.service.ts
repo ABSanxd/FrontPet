@@ -76,6 +76,7 @@ export class PublicationService {
 
   // Da Like o Unlike a una publicación
   toggleLike(id: string): Observable<ApiResponse<Publication>> {
+    // Aseguramos que se use PATCH
     return this.http.patch<ApiResponse<Publication>>(`${this.apiUrl}/${id}/like`, {});
   }
 

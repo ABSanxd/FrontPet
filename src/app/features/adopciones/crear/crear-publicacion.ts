@@ -48,6 +48,7 @@ export class CrearPublicacion implements OnInit {
   photoError: string | null = null; 
   showCancelModal = false; 
   showSuccessModal = false; 
+  showUpdateSuccessModal = false; // <-- MODIFICACIÓN
 
   showContactForm = false;
 
@@ -426,8 +427,8 @@ export class CrearPublicacion implements OnInit {
     this.publicationService.updatePublication(this.publicationId, dto).subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          alert('¡Publicación actualizada exitosamente!');
-          this.router.navigate(['/adopciones']);
+          // alert('¡Publicación actualizada exitosamente!'); // <-- REEMPLAZADO
+          this.showUpdateSuccessModal = true; // <-- MODIFICACIÓN
         } else {
           alert('Error al actualizar la publicación: ' + (response.message || 'Error desconocido'));
         }
@@ -468,6 +469,12 @@ export class CrearPublicacion implements OnInit {
 
   closeSuccessModal(): void {
     this.showSuccessModal = false;
+    this.router.navigate(['/adopciones']);
+  }
+
+  // --- MÉTODO AÑADIDO ---
+  closeUpdateSuccessModal(): void {
+    this.showUpdateSuccessModal = false;
     this.router.navigate(['/adopciones']);
   }
 }

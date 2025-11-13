@@ -63,7 +63,6 @@
                 <i class="bi bi-heart-fill"></i> {{ pub.likes }}
               </div>
 
-              <!-- Contador de Shares (NUEVO) -->
               <div class="share-count">
                 <i class="bi bi-share-fill"></i> {{ pub.shared }}
               </div>
@@ -444,16 +443,22 @@
         }
       </div>
       <div class="modal-actions-cancel">
-        <button (click)="closeModals()" class="btn btn-secondary">
+        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading">
           <i class="bi bi-x-lg"></i> No, cancelar
         </button>
-        <button (click)="confirmAccept()" class="btn btn-green">
-          <i class="bi bi-check-lg"></i> Sí, aceptar
+        <button (click)="confirmAccept()" class="btn btn-green" [disabled]="isModalLoading">
+          @if (isModalLoading) {
+            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+            Aceptando...
+          } @else {
+            <i class="bi bi-check-lg"></i> Sí, aceptar
+          }
         </button>
       </div>
     </div>
   </div>
 }
+
 @if (showRejectModal && requestToReject) {
   <div class="modal-overlay-cancel" (click)="closeModals()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
@@ -483,15 +488,22 @@
         }
       </div>
       <div class="modal-actions-cancel">
-        <button (click)="closeModals()" class="btn btn-secondary">
+        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading">
           <i class="bi bi-x-lg"></i> No, volver
         </button>
-        <button (click)="confirmReject()" class="btn btn-orange"> <i class="bi bi-check-lg"></i> Sí, rechazar
+        <button (click)="confirmReject()" class="btn btn-orange" [disabled]="isModalLoading">
+           @if (isModalLoading) {
+            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+            Rechazando...
+          } @else {
+            <i class="bi bi-check-lg"></i> Sí, rechazar
+          }
         </button>
       </div>
     </div>
   </div>
 }
+
 @if (showCancelModal && requestToCancel) {
   <div class="modal-overlay-cancel" (click)="closeModals()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
@@ -515,15 +527,22 @@
         }
       </div>
       <div class="modal-actions-cancel">
-        <button (click)="closeModals()" class="btn btn-secondary">
+        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading">
           <i class="bi bi-x-lg"></i> No, volver
         </button>
-        <button (click)="confirmCancel()" class="btn btn-danger"> <i class="bi bi-check-lg"></i> Sí, cancelar
+        <button (click)="confirmCancel()" class="btn btn-danger" [disabled]="isModalLoading">
+           @if (isModalLoading) {
+            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+            Cancelando...
+          } @else {
+            <i class="bi bi-check-lg"></i> Sí, cancelar
+          }
         </button>
       </div>
     </div>
   </div>
 }
+
 <div *ngIf="loading && !loadingRequests" class="loading-overlay">
   <div class="spinner-border text-success" role="status">
     <span class="visually-hidden">Cargando...</span>
@@ -565,6 +584,7 @@
     </div>
   </div>
 }
+
 @if (showPauseConfirmModal) {
   <div class="modal-overlay-cancel" (click)="closePauseConfirmModal()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
@@ -578,6 +598,7 @@
     </div>
   </div>
 }
+
 @if (showActivateConfirmModal) {
   <div class="modal-overlay-cancel" (click)="closeActivateConfirmModal()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">

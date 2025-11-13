@@ -299,4 +299,16 @@
     </div>
   }
 
+  @if (showUpdateSuccessModal) {
+    <div class="modal-overlay-cancel" (click)="closeUpdateSuccessModal()">
+      <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
+        <h5>¡Éxito!</h5>
+        <p>¡Publicación actualizada exitosamente!</p>
+        <div class="modal-actions-cancel">
+          <button (click)="closeUpdateSuccessModal()" class="btn btn-green">Aceptar</button>
+        </div>
+      </div>
+    </div>
+  }
+
 </div>
