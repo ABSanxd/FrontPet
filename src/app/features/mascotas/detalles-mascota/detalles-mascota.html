@@ -1,5 +1,5 @@
-<div class="detail-container py-4"> <div class="container">
-
+<div class="detail-container py-4">
+  <div class="container">
     <div class="mb-3">
       <a routerLink="/inicio" class="btn-back">
         <i class="bi bi-arrow-left me-2"></i>
@@ -8,167 +8,170 @@
     </div>
 
     @if (isLoading) {
-      <div class="text-center py-5">
-        <div class="spinner-border text-primary-dark" role="status">
-          <span class="visually-hidden">Cargando...</span>
-        </div>
-        <p class="mt-2">Cargando datos de tu mascota...</p>
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary-dark" role="status">
+        <span class="visually-hidden">Cargando...</span>
       </div>
-    }
-
-    @if (!isLoading && error) {
-      <div class="alert alert-danger" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        {{ error }}
-      </div>
-    }
-
-    @if (pet) {
-      <div class="row g-4 align-items-center">
-        
-        <div class="col-lg-3 col-md-4">
-          <div class="pet-image-wrapper">
-            <img 
-              [src]="pet.photo || 'assets/img-pet-placeholder.png'" 
-              [alt]="pet.nombre"
-              (error)="onImageError($event)"
-            >
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-4"> 
-          <div class="pet-info">
-            <h1>¡Hola, soy {{ pet.nombre }}!</h1>
-            <ul>
-              <li><strong>Especie:</strong> {{ pet.especie | titlecase }}</li>
-              <li><strong>Raza:</strong> {{ pet.breed || 'No especificada' }}</li>
-              <li><strong>Edad:</strong> {{ getEdadFormateada() }}</li>
-              <li><strong>Inicio de aventura:</strong> {{ pet.createdAt | date:'yyyy-MM-dd' }}</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="col-lg-5 col-md-4">
-          <div class="level-badge-wrapper">
-            <img [src]="getPetLevelImage(pet.nivel)" alt="Medalla de nivel {{pet.nivel}}">
-            
-            <div class="level-info">
-              <span class="level-label">Nivel:</span>
-              <span class="level-name">{{ pet.nivel | titlecase }}</span>
-            </div>
-
-            <div class="progress" 
-                 role="progressbar" 
-                 [attr.aria-valuenow]="pet.petXp" 
-                 aria-valuemin="0" 
-                 [attr.aria-valuemax]="getMaxXPForLevel(pet.nivel)">
-              <div 
-                class="progress-bar" 
-                [style.width.%]="getPetXPPercentage(pet.petXp, pet.nivel)"
-              ></div>
-            </div>
-            <div class="xp-text">
-              XP: {{ pet.petXp }} / {{ getMaxXPForLevel(pet.nivel) }}
-            </div>
-
-          </div>
+      <p class="mt-2">Cargando datos de tu mascota...</p>
+    </div>
+    } @if (!isLoading && error) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ error }}
+    </div>
+    } @if (pet) {
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-3 col-md-4">
+        <div class="pet-image-wrapper">
+          <img
+            [src]="pet.photo || 'assets/img-pet-placeholder.png'"
+            [alt]="pet.nombre"
+            (error)="onImageError($event)"
+          />
         </div>
       </div>
 
-      <div class="row mt-4"> <div class="col-12 text-center d-flex justify-content-center gap-3">
-          <a [routerLink]="['/mascotas', pet.id, 'editar']" class="btn btn-orange">
-            <i class="bi bi-pencil-fill me-2"></i> Editar
-          </a>
-          
-          <button (click)="onDeletePet()" class="btn btn-red" [disabled]="isLoading">
-            <i class="bi bi-trash-fill me-2"></i> Eliminar
+      <div class="col-lg-4 col-md-4">
+        <div class="pet-info">
+          <h1>¡Hola, soy {{ pet.nombre }}!</h1>
+          <ul>
+            <li><strong>Especie:</strong> {{ pet.especie | titlecase }}</li>
+            <li><strong>Raza:</strong> {{ pet.breed || 'No especificada' }}</li>
+            <li><strong>Edad:</strong> {{ getEdadFormateada() }}</li>
+            <li><strong>Inicio de aventura:</strong> {{ pet.createdAt | date : 'yyyy-MM-dd' }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-5 col-md-4">
+        <div class="level-badge-wrapper">
+          <img [src]="getPetLevelImage(pet.nivel)" alt="Medalla de nivel {{ pet.nivel }}" />
+
+          <div class="level-info">
+            <span class="level-label">Nivel:</span>
+            <span class="level-name">{{ pet.nivel | titlecase }}</span>
+          </div>
+
+          <div
+            class="progress"
+            role="progressbar"
+            [attr.aria-valuenow]="pet.petXp"
+            aria-valuemin="0"
+            [attr.aria-valuemax]="getMaxXPForLevel(pet.nivel)"
+          >
+            <div
+              class="progress-bar"
+              [style.width.%]="getPetXPPercentage(pet.petXp, pet.nivel)"
+            ></div>
+          </div>
+          <div class="xp-text">XP: {{ pet.petXp }} / {{ getMaxXPForLevel(pet.nivel) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-12 text-center d-flex justify-content-center gap-3">
+        <a [routerLink]="['/mascotas', pet.id, 'editar']" class="btn btn-orange">
+          <i class="bi bi-pencil-fill me-2"></i> Editar
+        </a>
+
+        <button (click)="onDeletePet()" class="btn btn-red" [disabled]="isLoading">
+          <i class="bi bi-trash-fill me-2"></i> Eliminar
+        </button>
+      </div>
+    </div>
+
+    <hr class="my-5" />
+
+    <div class="pet-tabs-container">
+      <ul class="nav nav-tabs-pet mb-4">
+        <li class="nav-item">
+          <button
+            class="nav-link-pet"
+            [class.active]="activeTab === 'retos'"
+            (click)="activeTab = 'retos'"
+          >
+            <i class="bi bi-trophy me-2"></i> Retos
           </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link-pet"
+            [class.active]="activeTab === 'logros'"
+            (click)="activeTab = 'logros'"
+          >
+            <i class="bi bi-award me-2"></i> Logros
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link-pet"
+            [class.active]="activeTab === 'vacunas'"
+            (click)="activeTab = 'vacunas'"
+          >
+            <i class="bi bi-shield-check me-2"></i> Vacunas
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        @if (activeTab === 'retos') {
+        <div class="tab-pane-pet active text-center py-5"></div>
+        } @if (activeTab === 'logros') {
+        <div class="tab-pane-pet active">
+           <app-pet-achievements [petId]="petId"></app-pet-achievements>
         </div>
-      </div>
-
-      <hr class="my-5">
-
-      <div class="pet-tabs-container">
-        <ul class="nav nav-tabs-pet mb-4">
-          <li class="nav-item">
-            <button class="nav-link-pet" [class.active]="activeTab === 'retos'" (click)="activeTab = 'retos'">
-              <i class="bi bi-trophy me-2"></i> Retos
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link-pet" [class.active]="activeTab === 'logros'" (click)="activeTab = 'logros'">
-              <i class="bi bi-award me-2"></i> Logros
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link-pet" [class.active]="activeTab === 'vacunas'" (click)="activeTab = 'vacunas'">
-              <i class="bi bi-shield-check me-2"></i> Vacunas
-            </button>
-          </li>
-        </ul>
-
-        <div class="tab-content">
-          
-          @if (activeTab === 'retos') {
-            <div class="tab-pane-pet active text-center py-5">
-              
-            </div>
-          }
-
-          @if (activeTab === 'logros') {
-            <div class="tab-pane-pet active text-center py-5">
-              
-            </div>
-          }
-
-          @if (activeTab === 'vacunas') {
-            <div class="tab-pane-pet active">
-              @if (isLoadingVaccines) {
-                <div class="text-center py-4">
-                  <div class="spinner-border text-primary-dark" role="status"></div>
-                  <p class="mt-2">Cargando vacunas...</p>
+        } @if (activeTab === 'vacunas') {
+        <div class="tab-pane-pet active">
+          @if (isLoadingVaccines) {
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary-dark" role="status"></div>
+            <p class="mt-2">Cargando vacunas...</p>
+          </div>
+          } @else {
+          <div class="row g-3">
+            @for (vaccine of vaccines; track vaccine.id) {
+            <div class="col-md-6">
+              <div class="vaccine-card">
+                <div class="vaccine-info">
+                  <h5 class="vaccine-name">{{ vaccine.name }}</h5>
+                  <span class="vaccine-date">
+                    {{
+                      (getFirstApplicationDate(vaccine) | date : 'yyyy-MM-dd') ||
+                        (vaccine.createdAt | date : 'yyyy-MM-dd')
+                    }}
+                  </span>
                 </div>
-              } @else {
-                <div class="row g-3">
-                  @for (vaccine of vaccines; track vaccine.id) {
-                    <div class="col-md-6">
-                      <div class="vaccine-card">
-                        <div class="vaccine-info">
-                          <h5 class="vaccine-name">{{ vaccine.name }}</h5>
-                          <span class="vaccine-date">
-                            {{ (getFirstApplicationDate(vaccine) | date:'yyyy-MM-dd') || (vaccine.createdAt | date:'yyyy-MM-dd') }}
-                          </span>
-                        </div>
-                        <div class="vaccine-actions">
-                          <button (click)="onEditVaccine(vaccine.id)" class="btn-icon btn-edit">
-                            <i class="bi bi-pencil-fill"></i>
-                          </button>
-                          <button (click)="onDeleteVaccine(vaccine.id)" class="btn-icon btn-delete">
-                            <i class="bi bi-trash-fill"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  } @empty {
-                    <p class="text-muted text-center col-12">No hay vacunas registradas para {{pet.nombre}}.</p>
-                  }
-                  
-                  <div class="col-md-6">
-                    <button (click)="onAddVaccine()" class="add-vaccine-card">
-                      <span>Agregar Vacuna</span>
-                      <div class="add-icon-sm">
-                        <i class="bi bi-plus-lg"></i>
-                      </div>
-                    </button>
-                  </div>
-
+                <div class="vaccine-actions">
+                  <button (click)="onEditVaccine(vaccine.id)" class="btn-icon btn-edit">
+                    <i class="bi bi-pencil-fill"></i>
+                  </button>
+                  <button (click)="onDeleteVaccine(vaccine.id)" class="btn-icon btn-delete">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
                 </div>
-              }
+              </div>
             </div>
-          }
+            } @empty {
+            <p class="text-muted text-center col-12">
+              No hay vacunas registradas para {{ pet.nombre }}.
+            </p>
+            }
 
+            <div class="col-md-6">
+              <button (click)="onAddVaccine()" class="add-vaccine-card">
+                <span>Agregar Vacuna</span>
+                <div class="add-icon-sm">
+                  <i class="bi bi-plus-lg"></i>
+                </div>
+              </button>
+            </div>
+          </div>
+          }
         </div>
+        }
       </div>
-      }
+    </div>
+    }
   </div>
 </div>

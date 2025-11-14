@@ -10,5 +10,10 @@ export enum Status {
   // (Estados para AdoptionRequest)
   ACEPTADO = 'ACEPTADO',
   RECHAZADO = 'RECHAZADO',
-  CANCELADO = 'CANCELADO'
+  CANCELADO = 'CANCELADO',
+
+  //PARA LOGROS
+  EXPIRADO = 'EXPIRADO',
+  EN_PROGRESO = 'EN_PROGRESO',
+  COMPLETADO = 'COMPLETADO'
 }
