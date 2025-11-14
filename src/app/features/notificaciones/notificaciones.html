@@ -1,0 +1,46 @@
+<div class="container py-4">
+
+    <h2 class="fw-bold mb-3">Notificaciones</h2>
+
+    @if (loading) {
+        <p>Cargando notificaciones...</p>
+    }
+
+    @if (error) {
+        <p class="text-danger">{{ error }}</p>
+    }
+
+    @if (!loading && notifs.length === 0) {
+        <p>No tienes notificaciones.</p>
+    }
+
+    <div class="list-group">
+
+        @for (item of notifs; track item.id) {
+
+            <div class="list-group-item d-flex justify-content-between align-items-start"
+                 [class.bg-light]="item.status === 'ENVIADO'">
+
+                <div>
+                    <h5 class="mb-1">{{ item.title }}</h5>
+                    <p class="mb-1">{{ item.message }}</p>
+
+                    <small class="text-muted">
+                        {{ item.createdAt | date:'medium' }}
+                    </small>
+                </div>
+
+                @if (item.status === 'ENVIADO') {
+                    <button class="btn btn-sm btn-primary"
+                            (click)="marcarComoLeida(item.id)">
+                        Marcar como leída
+                    </button>
+                }
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
