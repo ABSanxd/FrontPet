@@ -7,10 +7,10 @@ import { PetLevel } from '../../../models/enums/pet-level.enum';
 import { VaccineService } from '../service/vaccine.service';
 import { VaccineResponseDTO } from '../../../models/vaccine';
 import { PetAchievements } from '../pet-achievements/pet-achievements';
-
+import { PetChallenges } from '../pet-challenges/pet-challenges';
 @Component({
   selector: 'app-detalles-mascota',
-  imports: [CommonModule, RouterLink, DatePipe, TitleCasePipe, PetAchievements],
+  imports: [CommonModule, RouterLink, DatePipe, TitleCasePipe, PetAchievements, PetChallenges],
   templateUrl: './detalles-mascota.html',
   styleUrl: './detalles-mascota.css'
 })
@@ -41,6 +41,7 @@ export class DetallesMascota implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
     const petId = this.route.snapshot.paramMap.get('id');
 
     if (!petId) {
@@ -180,4 +181,5 @@ export class DetallesMascota implements OnInit {
       });
     }
   }
+  
 }
