@@ -2,7 +2,6 @@
 @import './styles/_buttons.css';
 @import './styles/_typography.css';
 
-html,
 .form-control-custom {
   display: block;
   width: 100%;

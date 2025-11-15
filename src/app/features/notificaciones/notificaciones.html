@@ -1,57 +1,57 @@
-<div class="container py-4">
+<div class="notifications-container">
 
-    <h2 class="fw-bold mb-4">
-        <i class="bi bi-bell-fill me-2"></i> Notificaciones
-    </h2>
+  <h2 class="fw-bold mb-4">
+      <i class="bi bi-bell-fill"></i>
+      Notificaciones
+  </h2>
 
-    @if (loading) {
-    <div class="alert alert-info">Cargando notificaciones...</div>
-    }
-
-    @if (error) {
-    <div class="alert alert-danger">{{ error }}</div>
-    }
-
-    @if (!loading && notifs.length === 0) {
-    <div class="alert alert-secondary">No tienes notificaciones.</div>
-    }
-
-    <div class="list-group">
-
-        @for (item of notifs; track item.id) {
-
-        <div class="list-group-item d-flex justify-content-between align-items-start py-3">
-
-            <div>
-                <h5 class="mb-1 fw-semibold">
-                    {{ item.title }}
-                    @if (item.status === 'ENVIADO') {
-                    <span class="badge bg-primary ms-2">Nueva</span>
-                    }
-                </h5>
-
-                <p class="mb-1 text-muted">{{ item.message }}</p>
-
-                <small class="text-muted">
-                    <i class="bi bi-clock me-1"></i> {{ item.createdAt | date:'medium' }}
-                </small>
-            </div>
-
-            <div class="ms-3">
-
-                @if (item.actionUrl) {
-                <a [routerLink]="item.actionUrl" class="btn btn-sm btn-outline-primary mb-2 w-100">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Abrir
-                </a>
-                }
-
-                @if (item.status === 'ENVIADO') {
-                <button class="btn btn-sm btn-primary w-100" (click)="marcarComoLeida(item.id)">
-                    <i class="bi bi-check2-circle me-1"></i> Marcar leída
-                </button>
-                }
-            </div>
-        </div>
-        }
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner-border" role="status"></div>
+      <p>Cargando notificaciones...</p>
     </div>
+  }
+
+  <!-- Error -->
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  <!-- Empty -->
+  @if (!loading && notifs.length === 0) {
+    <div class="alert alert-secondary">No tienes notificaciones.</div>
+  }
+
+  <div class="list-group">
+    @for (item of notifs; track item.id) {
+      <div 
+        class="list-group-item notification-item" 
+        [class.unread]="item.status === 'ENVIADO'" 
+        [class.read]="item.status === 'LEIDO'"
+        (click)="openNotification(item)"
+      >
+        <!-- Contenido principal -->
+        <div class="notif-content">
+          <h5>{{ item.title }}</h5>
+          <p>{{ item.message }}</p>
+          <small class="text-muted">
+            <i class="bi bi-clock me-1"></i> {{ item.createdAt | date:'medium' }}
+          </small>
+        </div>
+
+        <!-- Badge “Nueva” -->
+        @if (item.status === 'ENVIADO') {
+          <span class="badge bg-yellow">
+            <i class="bi bi-star-fill"></i> Nueva
+          </span>
+        }
+
+        <!-- Icono de acción (solo visual) -->
+        @if (item.actionUrl) {
+          <i class="bi bi-box-arrow-up-right action-icon"></i>
+        }
+      </div>
+    }
+  </div>
 </div>

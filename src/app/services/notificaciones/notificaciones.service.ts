@@ -11,7 +11,7 @@ export class NotificacionesService {
 
   private baseUrl = 'http://localhost:8080/api/v1/notifications';
   public refresh$ = new Subject<void>();
-  public newNotification$ = new Subject<NotificationResponse>(); // 👈 agregado
+  public newNotification$ = new Subject<NotificationResponse>();
 
   constructor(
     private http: HttpClient,
@@ -41,15 +41,16 @@ export class NotificacionesService {
 
   private connectToStream() {
     const token = localStorage.getItem("token");
+    if (!token) {
+      return; // salir si no hay token
+    }
+
     const source = new EventSource(`${this.baseUrl}/stream?token=${token}`);
 
     source.onmessage = (event) => {
-      console.log("Nueva notificación SSE:", event.data);
-
       const notif: NotificationResponse = JSON.parse(event.data);
-      this.newNotification$.next(notif);  // 👈 ahora sí existe
-
-      this.refresh$.next(); // opcional
+      this.newNotification$.next(notif);
+      this.refresh$.next();
     };
 
     source.onerror = (error) => {

@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { NotificacionesService } from '../../services/notificaciones/notificaciones.service';
 import { CommonModule } from '@angular/common';
 import { NotificationResponse } from '../../models/notification';
-import { RouterLink } from '@angular/router';
 import { Status } from '../../models/enums/status.enum';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notificaciones',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './notificaciones.html',
   styleUrl: './notificaciones.css'
 })
@@ -16,7 +16,11 @@ export class Notificaciones {
   notifs: NotificationResponse[] = [];
   error: string | null = null;
 
-  constructor(private notificationsService: NotificacionesService) { }
+
+  constructor(
+    private notificationsService: NotificacionesService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.loadNotifications();
@@ -55,4 +59,31 @@ export class Notificaciones {
       );
     });
   }
+
+  openNotification(item: NotificationResponse) {
+    // Marcar como leída
+    if (item.status === Status.ENVIADO) {
+      this.notificationsService.markAsRead(item.id).subscribe(() => {
+        item.status = Status.LEIDO;
+      });
+    }
+
+    if (!item.actionUrl) return; // si no hay URL, no hacemos nada
+
+    const path = item.actionUrl.trim(); // quitamos espacios
+
+    if (path.startsWith('http')) {
+      // URL externa
+      window.location.href = path;
+    } else {
+      // Ruta interna SPA
+      let internalPath = path.startsWith('/') ? path : '/' + path;
+      console.log('Intentando navegar a:', internalPath);
+      this.router.navigateByUrl(internalPath)
+        .then(success => {
+          if (!success) console.warn('No se pudo navegar a', internalPath);
+        });
+    }
+  }
+
 }
