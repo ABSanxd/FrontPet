@@ -6,16 +6,18 @@ import { PetResponseDTO } from '../../../models/pet';
 import { PetLevel } from '../../../models/enums/pet-level.enum';
 import { VaccineService } from '../service/vaccine.service';
 import { VaccineResponseDTO } from '../../../models/vaccine';
+import { PetAchievements } from '../pet-achievements/pet-achievements';
 
 @Component({
   selector: 'app-detalles-mascota',
-  imports: [CommonModule, RouterLink, DatePipe, TitleCasePipe],
+  imports: [CommonModule, RouterLink, DatePipe, TitleCasePipe, PetAchievements],
   templateUrl: './detalles-mascota.html',
   styleUrl: './detalles-mascota.css'
 })
 export class DetallesMascota implements OnInit {
 
   pet: PetResponseDTO | null = null;
+  petId: string = '';
   isLoading = true;
   error = '';
 
@@ -46,7 +48,7 @@ export class DetallesMascota implements OnInit {
       this.isLoading = false;
       return;
     }
-
+    this.petId = petId;
     this.loadPetDetails(petId);
     this.loadVaccines(petId); 
   }
