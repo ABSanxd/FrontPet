@@ -1,0 +1,149 @@
+
+<div class="challenges-container">
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary-dark" role="status">
+        <span class="visually-hidden">Cargando retos...</span>
+      </div>
+      <p class="mt-2">Cargando retos disponibles...</p>
+    </div>
+  }
+
+  @if (!isLoading && error) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ error }}
+      <button class="btn btn-sm btn-outline-danger ms-3" (click)="loadChallenges()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="frequency-tabs mb-4">
+      <button 
+        class="frequency-tab"
+        [class.active]="selectedFrequency === Frequency.DIARIO"
+        (click)="setFrequency(Frequency.DIARIO)"
+      >
+        <i class="bi bi-calendar-day me-2"></i>
+        Diarios
+      </button>
+      <button 
+        class="frequency-tab"
+        [class.active]="selectedFrequency === Frequency.SEMANAL"
+        (click)="setFrequency(Frequency.SEMANAL)"
+      >
+        <i class="bi bi-calendar-week me-2"></i>
+        Semanales
+      </button>
+      <button 
+        class="frequency-tab"
+        [class.active]="selectedFrequency === Frequency.MENSUAL"
+        (click)="setFrequency(Frequency.MENSUAL)"
+      >
+        <i class="bi bi-calendar-month me-2"></i>
+        Mensuales
+      </button>
+    </div>
+
+    <div class="challenges-grid">
+      @for (challenge of filteredChallenges; track challenge.id) {
+        <div 
+          class="challenge-card" 
+          [class]="getCategoryClass(challenge.category)"
+          [class.completed]="isChallengeCompletedToday(challenge.id)"
+        >
+          <div class="challenge-icon">
+            <i [class]="'bi ' + getCategoryIcon(challenge.category)"></i>
+          </div>
+
+          <div class="challenge-content">
+            <h5 class="challenge-title">{{ challenge.name }}</h5>
+            <p class="challenge-description">{{ challenge.description }}</p>
+            
+            <div class="challenge-points">
+              <span class="points-badge">{{ challenge.points }} XP</span>
+            </div>
+          </div>
+
+          <div class="challenge-action">
+            @if (isChallengeCompletedToday(challenge.id)) {
+              <button class="btn btn-green btn-completed" disabled>
+                <i class="bi bi-check-circle-fill me-2"></i>
+                REALIZADO
+              </button>
+            } @else {
+              <button 
+                class="btn btn-realizar" 
+                (click)="openConfirmModal(challenge)"
+              >
+                REALIZAR
+              </button>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <i class="bi bi-inbox empty-icon"></i>
+          <p class="empty-text">
+            No hay retos {{ selectedFrequency.toLowerCase() }}s disponibles en este momento.
+          </p>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (showModal && selectedChallenge) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header">
+        <div class="modal-icon" [class]="getCategoryClass(selectedChallenge.category)">
+          <i [class]="'bi ' + getCategoryIcon(selectedChallenge.category)"></i>
+        </div>
+        <h3 class="modal-title">{{ selectedChallenge.name }}</h3>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-description">{{ selectedChallenge.description }}</p>
+        
+        <div class="modal-rewards">
+          <div class="reward-item">
+            <i class="bi bi-star-fill"></i>
+            <span>+{{ selectedChallenge.points }} XP</span>
+          </div>
+        </div>
+
+        <p class="modal-question">¿Completaste este reto?</p>
+      </div>
+
+      <div class="modal-footer">
+        <button 
+          class="btn-cancel" 
+          (click)="closeModal()"
+          [disabled]="isSubmitting"
+        >
+          Cancelar
+        </button>
+        <button 
+          class="btn-confirm" 
+          (click)="confirmCompleteChallenge()"
+          [disabled]="isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Completando...
+          } @else {
+            <i class="bi bi-check-circle me-2"></i>
+            Sí, completar
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

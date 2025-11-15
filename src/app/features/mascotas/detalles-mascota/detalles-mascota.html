@@ -116,7 +116,8 @@
 
       <div class="tab-content">
         @if (activeTab === 'retos') {
-        <div class="tab-pane-pet active text-center py-5"></div>
+        <div class="tab-pane-pet active text-center py-2"></div>
+           <app-pet-challenges [petId]="petId"></app-pet-challenges>
         } @if (activeTab === 'logros') {
         <div class="tab-pane-pet active">
            <app-pet-achievements [petId]="petId"></app-pet-achievements>
