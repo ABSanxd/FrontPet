@@ -1,46 +1,57 @@
 <div class="container py-4">
 
-    <h2 class="fw-bold mb-3">Notificaciones</h2>
+    <h2 class="fw-bold mb-4">
+        <i class="bi bi-bell-fill me-2"></i> Notificaciones
+    </h2>
 
     @if (loading) {
-        <p>Cargando notificaciones...</p>
+    <div class="alert alert-info">Cargando notificaciones...</div>
     }
 
     @if (error) {
-        <p class="text-danger">{{ error }}</p>
+    <div class="alert alert-danger">{{ error }}</div>
     }
 
     @if (!loading && notifs.length === 0) {
-        <p>No tienes notificaciones.</p>
+    <div class="alert alert-secondary">No tienes notificaciones.</div>
     }
 
     <div class="list-group">
 
         @for (item of notifs; track item.id) {
 
-            <div class="list-group-item d-flex justify-content-between align-items-start"
-                 [class.bg-light]="item.status === 'ENVIADO'">
+        <div class="list-group-item d-flex justify-content-between align-items-start py-3">
 
-                <div>
-                    <h5 class="mb-1">{{ item.title }}</h5>
-                    <p class="mb-1">{{ item.message }}</p>
+            <div>
+                <h5 class="mb-1 fw-semibold">
+                    {{ item.title }}
+                    @if (item.status === 'ENVIADO') {
+                    <span class="badge bg-primary ms-2">Nueva</span>
+                    }
+                </h5>
 
-                    <small class="text-muted">
-                        {{ item.createdAt | date:'medium' }}
-                    </small>
-                </div>
+                <p class="mb-1 text-muted">{{ item.message }}</p>
 
-                @if (item.status === 'ENVIADO') {
-                    <button class="btn btn-sm btn-primary"
-                            (click)="marcarComoLeida(item.id)">
-                        Marcar como leída
-                    </button>
-                }
-
+                <small class="text-muted">
+                    <i class="bi bi-clock me-1"></i> {{ item.createdAt | date:'medium' }}
+                </small>
             </div>
 
+            <div class="ms-3">
+
+                @if (item.actionUrl) {
+                <a [routerLink]="item.actionUrl" class="btn btn-sm btn-outline-primary mb-2 w-100">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Abrir
+                </a>
+                }
+
+                @if (item.status === 'ENVIADO') {
+                <button class="btn btn-sm btn-primary w-100" (click)="marcarComoLeida(item.id)">
+                    <i class="bi bi-check2-circle me-1"></i> Marcar leída
+                </button>
+                }
+            </div>
+        </div>
         }
-
     </div>
-
 </div>

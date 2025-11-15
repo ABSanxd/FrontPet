@@ -19,13 +19,28 @@ export class Header {
     private router: Router,
     private notifService: NotificacionesService
   ) { }
-  
+
   ngOnInit() {
     if (this.auth.isAuthenticated()) {
-      this.notifService.getMyNotifications().subscribe(res => {
-        this.unreadCount = res.data.filter((n: any) => n.status === 'ENVIADO').length;
+      this.loadUnread();
+
+      // cuando se lea una notif
+      this.notifService.refresh$.subscribe(() => {
+        this.loadUnread();
+      });
+
+      // cuando llegue una nueva notif (real-time)
+      this.notifService.newNotification$.subscribe(() => {
+        this.loadUnread();
       });
     }
+  }
+
+
+  loadUnread() {
+    this.notifService.getMyNotifications().subscribe(res => {
+      this.unreadCount = res.filter(n => n.status === 'ENVIADO').length;
+    });
   }
 
   logout() {

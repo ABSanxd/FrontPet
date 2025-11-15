@@ -5,10 +5,9 @@ export enum Status {
   INACTIVO = 'INACTIVO',
   ELIMINADO = 'ELIMINADO',
   PAUSADO = 'PAUSADO',
-
-  // --- AÑADIR ESTOS ESTADOS ---
-  // (Estados para AdoptionRequest)
   ACEPTADO = 'ACEPTADO',
   RECHAZADO = 'RECHAZADO',
-  CANCELADO = 'CANCELADO'
+  CANCELADO = 'CANCELADO',
+  ENVIADO = 'ENVIADO',
+  LEIDO = 'LEIDO'
 }
