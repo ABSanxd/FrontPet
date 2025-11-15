@@ -1,30 +1,35 @@
 <div class="achievements-container">
-  
   <!-- Header con filtros -->
   <div class="achievements-header">
     <h3 class="achievements-title">
       <i class="bi bi-trophy-fill"></i>
-      Logros de {{ completedAchievements.length }} / {{ allAchievements.length }}
+      Logros
+      <span class="count-badge"
+        >{{ completedAchievements.length }}/{{ allAchievements.length }}</span
+      >
     </h3>
-    
+
     <div class="filter-buttons">
-      <button 
+      <button
         class="btn-filter"
         [class.active]="selectedView === 'all'"
-        (click)="selectedView = 'all'">
+        (click)="selectedView = 'all'"
+      >
         Todos ({{ allAchievements.length }})
       </button>
-      <button 
+      <button
         class="btn-filter"
         [class.active]="selectedView === 'completed'"
-        (click)="selectedView = 'completed'">
+        (click)="selectedView = 'completed'"
+      >
         <i class="bi bi-check-circle-fill"></i>
         Completados ({{ completedAchievements.length }})
       </button>
-      <button 
+      <button
         class="btn-filter"
         [class.active]="selectedView === 'inProgress'"
-        (click)="selectedView = 'inProgress'">
+        (click)="selectedView = 'inProgress'"
+      >
         <i class="bi bi-hourglass-split"></i>
         En Progreso ({{ inProgressAchievements.length }})
       </button>
@@ -33,154 +38,180 @@
 
   <!-- Loading -->
   @if (isLoading) {
-    <div class="loading-state">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
-      <p>Cargando logros...</p>
+  <div class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
     </div>
+    <p>Cargando logros...</p>
+  </div>
   }
 
   <!-- Error -->
   @if (error && !isLoading) {
-    <div class="alert alert-danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill"></i>
-      {{ error }}
-    </div>
+  <div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    {{ error }}
+  </div>
   }
 
   <!-- Lista de logros -->
   @if (!isLoading && !error) {
-    <div class="achievements-grid">
-      
-      @for (achievement of getAchievementsToShow(); track achievement.achievementId) {
-        <div 
-          class="achievement-card"
-          [class.completed]="achievement.completed"
-          [class.locked]="!achievement.completed && getTotalProgress(achievement) === 0">
-          
-          <!-- Icono/Badge superior -->
-          <div class="achievement-icon-container">
-            <div class="achievement-icon">
-              @if (achievement.completed) {
-                <i class="bi bi-trophy-fill"></i>
-              } @else if (getTotalProgress(achievement) === 0) {
-                <i class="bi bi-lock-fill"></i>
-              } @else {
-                <i class="bi bi-hourglass-split"></i>
-              }
-            </div>
-            
-            <!-- Badge de período -->
-            <span class="period-badge" [ngClass]="getPeriodBadgeClass(achievement.validationPeriod)">
-              {{ getPeriodLabel(achievement.validationPeriod) }}
-            </span>
-          </div>
-
-          <!-- Contenido -->
-          <div class="achievement-content">
-            <h4 class="achievement-name">{{ achievement.achievementName }}</h4>
-            <p class="achievement-description">{{ achievement.achievementDescription }}</p>
-            
-            <!-- Frase del logro (en cursiva) -->
-            @if (achievement.achievementPhrase) {
-              <p class="achievement-phrase">"{{ achievement.achievementPhrase }}"</p>
-            }
-            
-            <!-- Badge de repetible -->
-            @if (achievement.repeatable) {
-              <span class="type-badge">
-                <i class="bi bi-arrow-repeat"></i> Repetible
-              </span>
-            }
-
-            <!-- Período activo -->
-            @if (achievement.periodStart && achievement.periodEnd) {
-              <div class="period-dates">
-                <i class="bi bi-calendar-range"></i>
-                {{ achievement.periodStart| date : 'dd/MM/yyyy'}} - {{ achievement.periodEnd |date : 'dd/MM/yyyy' }}
-              </div>
-            }
-
-            <!-- Barra de progreso -->
-            @if (!achievement.completed || achievement.repeatable) {
-              <div class="progress-section">
-                <div class="progress-header">
-                  <span class="progress-label">Progreso</span>
-                  <span class="progress-percentage">{{ getTotalProgress(achievement) }}%</span>
-                </div>
-                <div class="progress">
-                  <div 
-                    class="progress-bar" 
-                    [ngClass]="getProgressBarClass(getTotalProgress(achievement))"
-                    [style.width.%]="getTotalProgress(achievement)"
-                    role="progressbar"
-                    [attr.aria-valuenow]="getTotalProgress(achievement)"
-                    aria-valuemin="0"
-                    aria-valuemax="100">
-                  </div>
-                </div>
-              </div>
-            }
-
-            <!-- Requisitos (Retos) -->
-            @if (achievement.requirements && achievement.requirements.length > 0) {
-              <div class="requirements-section">
-                <p class="requirements-title">
-                  <i class="bi bi-list-check"></i> 
-                  Requisitos:
-                </p>
-                <ul class="requirements-list">
-                  @for (req of achievement.requirements; track req.requirementId) {
-                    <li 
-                      class="requirement-item"
-                      [class.completed]="req.completed">
-                      <i class="bi" 
-                        [class.bi-check-circle-fill]="req.completed"
-                        [class.bi-circle]="!req.completed"></i>
-                      <div class="requirement-info">
-                        <span class="requirement-name">{{ req.challengeName }}</span>
-                        @if (req.challengeCategory) {
-                          <span class="requirement-category">• {{ req.challengeCategory }}</span>
-                        }
-                      </div>
-                      <span class="requirement-count">
-                        {{ req.currentProgress }}/{{ req.totalRequired }}
-                      </span>
-                      <!-- Mini barra de progreso -->
-                      <div class="requirement-progress-mini">
-                        <div 
-                          class="requirement-progress-bar"
-                          [style.width.%]="req.progressPercentage">
-                        </div>
-                      </div>
-                    </li>
-                  }
-                </ul>
-              </div>
-            }
-          </div>
-
-        </div>
+  <div class="achievements-grid">
+    @for (achievement of getAchievementsToShow(); track achievement.achievementId) {
+    <div
+      class="achievement-card"
+      [class.completed]="achievement.completed"
+      [class.locked]="!achievement.completed && getTotalProgress(achievement) === 0"
+      [class.in-progress]="!achievement.completed && getTotalProgress(achievement) > 0"
+    >
+      <!-- Badge de completado flotante -->
+      @if (achievement.completed) {
+      <div class="completed-badge">
+        <i class="bi bi-stars"></i>
+        ¡Logrado!
+      </div>
       }
 
-      <!-- Empty state -->
-      @if (getAchievementsToShow().length === 0) {
-        <div class="empty-state">
-          <i class="bi bi-trophy"></i>
-          <p>
-            @if (selectedView === 'completed') {
-              No hay logros completados aún
-            } @else if (selectedView === 'inProgress') {
-              No hay logros en progreso
+      <!-- Header con icono circular y progreso -->
+      <div class="achievement-header">
+        <!-- Progreso circular -->
+        <div class="circular-progress-container">
+          <svg class="circular-progress" width="120" height="120">
+            <!-- Background circle -->
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#e0e0e0" stroke-width="8" />
+            <!-- Progress circle -->
+            <circle
+              cx="60"
+              cy="60"
+              r="52"
+              fill="none"
+              [attr.stroke]="getProgressColor(getTotalProgress(achievement))"
+              stroke-width="8"
+              stroke-linecap="round"
+              [attr.stroke-dasharray]="326.73"
+              [attr.stroke-dashoffset]="326.73 - (326.73 * getTotalProgress(achievement)) / 100"
+              class="progress-ring"
+            />
+          </svg>
+
+          <!-- Icono central -->
+          <div class="icon-center">
+            @if (achievement.completed) {
+            <img
+              src="../assets/trofeoMascota.png"
+              alt="Logro completado"
+              class="achievement-icon-img completed-icon"
+            />
+            } @else if (getTotalProgress(achievement) === 0) {
+            <img
+              src="../assets/candadoLogro.png"
+              alt="Logro bloqueado"
+              class="achievement-icon-img locked-icon"
+            />
             } @else {
-              No hay logros disponibles
+            <div class="progress-text">{{ getTotalProgress(achievement) }}%</div>
             }
-          </p>
+          </div>
         </div>
-      }
+      </div>
 
+      <!-- Contenido -->
+      <div class="achievement-content">
+        <h4 class="achievement-name">{{ achievement.achievementName }}</h4>
+
+        <!-- Mensaje dinámico según estado -->
+        @if (achievement.completed) {
+        <!-- Solo mostrar la frase cuando está completado -->
+        @if (achievement.achievementPhrase) {
+        <p class="achievement-phrase completed-phrase">
+          <i class="bi bi-star-fill"></i>
+          "{{ achievement.achievementPhrase }}"
+        </p>
+        } } @else {
+        <!-- Mostrar descripción motivadora cuando no está completado -->
+        <p class="achievement-description">{{ achievement.achievementDescription }}</p>
+        @if (achievement.periodEnd) {
+        <div class="period-info">
+          <i class="bi bi-calendar-event"></i>
+          <span>Este logro acaba el {{ formatDate(achievement.periodEnd) }}</span>
+        </div>
+        } }
+
+        <!-- Requisitos (colapsables en completados) -->
+        @if (achievement.requirements && achievement.requirements.length > 0) {
+        <div
+          class="requirements-section"
+          [class.collapsed]="
+            achievement.completed && !expandedAchievements[achievement.achievementId]
+          "
+        >
+          <!-- Header de requisitos con toggle -->
+          <div class="requirements-header" (click)="toggleRequirements(achievement.achievementId)">
+            <span class="requirements-title">
+              <i class="bi bi-list-check"></i>
+              Requisitos ({{ getCompletedRequirements(achievement) }}/{{
+                achievement.requirements.length
+              }})
+            </span>
+            @if (achievement.completed) {
+            <i
+              class="bi toggle-icon"
+              [class.bi-chevron-down]="!expandedAchievements[achievement.achievementId]"
+              [class.bi-chevron-up]="expandedAchievements[achievement.achievementId]"
+            ></i>
+            }
+          </div>
+
+          <!-- Lista de requisitos -->
+          @if (!achievement.completed || expandedAchievements[achievement.achievementId]) {
+          <ul class="requirements-list">
+            @for (req of achievement.requirements; track req.requirementId) {
+            <li class="requirement-item" [class.completed]="req.completed">
+              <div class="requirement-header">
+                <i
+                  class="bi requirement-icon"
+                  [class.bi-check-circle-fill]="req.completed"
+                  [class.bi-circle]="!req.completed"
+                ></i>
+
+                <div class="requirement-info">
+                  <span class="requirement-name">{{ req.challengeName }}</span>
+                </div>
+                <span class="requirement-count">
+                  {{ req.currentProgress }}/{{ req.totalRequired }}
+                </span>
+              </div>
+
+              <!-- Mini barra de progreso -->
+              <div class="requirement-progress-mini">
+                <div
+                  class="requirement-progress-bar"
+                  [class.completed-bar]="req.completed"
+                  [style.width.%]="req.progressPercentage"
+                ></div>
+              </div>
+            </li>
+            }
+          </ul>
+          }
+        </div>
+        }
+      </div>
     </div>
-  }
+    }
 
+    <!-- Empty state -->
+    @if (getAchievementsToShow().length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-trophy"></i>
+      <p>
+        @if (selectedView === 'completed') { ¡Aún no has completado ningún logro! } @else if
+        (selectedView === 'inProgress') { No tienes logros en progreso } @else { No hay logros
+        disponibles }
+      </p>
+      <small>¡Completa retos para desbloquear logros!</small>
+    </div>
+    }
+  </div>
+  }
 </div>
