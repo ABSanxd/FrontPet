@@ -26,11 +26,11 @@ export class DetallesMascota implements OnInit {
   isLoadingVaccines = false;
 
   private levelXpThresholds: Record<PetLevel, number> = {
-    [PetLevel.NOVATO]: 5000,
-    [PetLevel.EXPLORADOR]: 10000,
-    [PetLevel.CAZADOR]: 20000,
-    [PetLevel.MAESTRO]: 50000,
-    [PetLevel.ALFA]: Infinity 
+    [PetLevel.NOVATO]: 100,
+    [PetLevel.EXPLORADOR]: 350,
+    [PetLevel.CAZADOR]: 500,
+    [PetLevel.MAESTRO]: 1000,
+    [PetLevel.ALFA]: 2000 
   };
 
   constructor(

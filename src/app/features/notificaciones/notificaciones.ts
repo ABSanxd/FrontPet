@@ -15,7 +15,9 @@ export class Notificaciones {
   loading = true;
   notifs: NotificationResponse[] = [];
   error: string | null = null;
-
+  page = 0;
+  size = 10;
+  totalPages = 1;
 
   constructor(
     private notificationsService: NotificacionesService,
@@ -25,9 +27,12 @@ export class Notificaciones {
   ngOnInit() {
     this.loadNotifications();
 
-    // cuando llegue una notificaciòn real-time
+    // cuando llegue una notificación real-time
     this.notificationsService.newNotification$.subscribe((notif: NotificationResponse) => {
-      this.notifs.unshift(notif);
+      // solo agregamos si estamos en la primera página
+      if (this.page === 0) {
+        this.notifs.unshift(notif);
+      }
     });
 
     // cuando se cambie el estado (leída)
@@ -36,11 +41,26 @@ export class Notificaciones {
     });
   }
 
+  // loadNotifications() {
+  //   this.notificationsService.getMyNotifications()
+  //     .subscribe({
+  //       next: (res) => {
+  //         this.notifs = res;
+  //         this.loading = false;
+  //       },
+  //       error: () => {
+  //         this.error = 'No se pudieron cargar las notificaciones.';
+  //         this.loading = false;
+  //       }
+  //     });
+  // }
+
   loadNotifications() {
-    this.notificationsService.getMyNotifications()
+    this.notificationsService.getMyNotifications(this.page, this.size)
       .subscribe({
         next: (res) => {
-          this.notifs = res;
+          this.notifs = res.content;
+          this.totalPages = res.totalPages;
           this.loading = false;
         },
         error: () => {
@@ -49,8 +69,19 @@ export class Notificaciones {
         }
       });
   }
+  nextPage() {
+    if (this.page + 1 < this.totalPages) {
+      this.page++;
+      this.loadNotifications();
+    }
+  }
 
-
+  previousPage() {
+    if (this.page > 0) {
+      this.page--;
+      this.loadNotifications();
+    }
+  }
 
   marcarComoLeida(id: string) {
     this.notificationsService.markAsRead(id).subscribe(() => {

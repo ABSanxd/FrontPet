@@ -54,4 +54,28 @@
       </div>
     }
   </div>
+
+  <!-- Controles de paginación -->
+  @if (!loading && notifs.length > 0) {
+    <div class="pagination-container">
+      
+      <button 
+        class="pagination-btn"
+        [disabled]="page === 0"
+        (click)="previousPage()">
+        <i class="bi bi-chevron-left"></i> Anterior
+      </button>
+
+      <span class="pagination-info">
+        Página {{ page + 1 }} de {{ totalPages }}
+      </span>
+
+      <button 
+        class="pagination-btn"
+        [disabled]="page + 1 >= totalPages"
+        (click)="nextPage()">
+        Siguiente <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  }
 </div>

@@ -38,8 +38,8 @@ export class Header {
 
 
   loadUnread() {
-    this.notifService.getMyNotifications().subscribe(res => {
-      this.unreadCount = res.filter(n => n.status === 'ENVIADO').length;
+    this.notifService.getMyNotifications(0, 50).subscribe(res => {
+      this.unreadCount = res.content.filter(n => n.status === 'ENVIADO').length;
     });
   }
 

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Observable, Subject, map, tap } from 'rxjs';
-import { NotificationResponse } from '../../models/notification';
+import { NotificationPage, NotificationResponse } from '../../models/notification';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +24,14 @@ export class NotificacionesService {
     }
   }
 
-  getMyNotifications(): Observable<NotificationResponse[]> {
+  getMyNotifications(page: number = 0, size: number = 10): Observable<NotificationPage> {
     return this.http
-      .get<{ status: string, data: NotificationResponse[] }>(`${this.baseUrl}/mine`)
+      .get<{ status: string, data: NotificationPage }>(
+        `${this.baseUrl}/mine?page=${page}&size=${size}`
+      )
       .pipe(map(res => res.data));
   }
+
 
   markAsRead(id: string) {
     return this.http

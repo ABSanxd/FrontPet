@@ -12,3 +12,13 @@ export interface NotificationResponse {
   createdAt: string;
   actionUrl?: string;
 }
+
+export interface NotificationPage {
+  content: NotificationResponse[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+}

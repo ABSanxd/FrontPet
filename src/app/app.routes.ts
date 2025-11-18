@@ -63,7 +63,7 @@ export const routes: Routes = [
   },
   {
     path: 'notificaciones',
-    component: Notificaciones, // lo crearemos ahora
+    component: Notificaciones,
     canActivate: [authGuard]
   },
 
@@ -104,7 +104,6 @@ export const routes: Routes = [
     component: RegistrarVacuna,
     canActivate: [authGuard]
   },
-
 
   { path: '**', redirectTo: '' }
 
