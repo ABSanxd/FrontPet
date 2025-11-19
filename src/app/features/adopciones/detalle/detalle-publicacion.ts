@@ -63,7 +63,6 @@ export class DetallePublicacion implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error al cargar detalle de publicación:', err);
         this.error = 'No se pudo encontrar la publicación.';
         this.isLoading = false;
       }
@@ -111,15 +110,11 @@ export class DetallePublicacion implements OnInit {
         } else {
           this.modalError = 'Error al enviar la solicitud. Inténtalo de nuevo.';
         }
-        console.error('Error al crear solicitud:', err);
       }
     });
   }
 
-  /**
-   * Se activa al hacer clic en "Compartir".
-   * Copia la URL al portapapeles y llama al servicio para incrementar el contador.
-   */
+
   onShare(): void {
     if (!this.publication) return;
 
@@ -136,15 +131,12 @@ export class DetallePublicacion implements OnInit {
             this.publication!.shared = response.data.shared; 
           }
         },
-        error: (err) => {
-          console.error("Error al registrar 'share':", err);
-        }
+        error: (err) => {}
       });
       
       this.showShareModal = true;
 
     }).catch(err => {
-      console.error('Error al copiar al portapapeles:', err);
       alert("No se pudo copiar el enlace. Intenta hacerlo manually.");
     });
   }

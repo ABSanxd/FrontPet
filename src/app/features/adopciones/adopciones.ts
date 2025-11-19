@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common'; // <--- Añadir DatePipe
+import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { PublicationService } from './publication.service';
-import { Publication, AdoptionRequest } from '../../models/publication'; // <--- Añadir AdoptionRequest
+import { Publication, AdoptionRequest } from '../../models/publication';
 import { Species } from '../../models/enums/species.enum';
 import { Status } from '../../models/enums/status.enum';
-import { AdoptionRequestService } from './adoption-request.service'; // <--- AÑADIR NUEVO SERVICIO
-import { AuthService } from '../../core/services/auth/auth.service'; // <--- AÑADIR AUTHSERVICE
-import { forkJoin } from 'rxjs'; // <--- AÑADIR forkJoin
+import { AdoptionRequestService } from './adoption-request.service';
+import { AuthService } from '../../core/services/auth/auth.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-adopciones',
-  imports: [CommonModule, RouterLink, DatePipe], // <--- Añadir DatePipe
+  imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './adopciones.html',
   styleUrl: './adopciones.css'
 })
@@ -19,24 +19,23 @@ export class Adopciones implements OnInit {
   activeTab: string = 'disponibles'; 
   loading: boolean = false; 
   loadingAvailable: boolean = false; 
-  loadingRequests = false; // <--- Loader para "Mis Solicitudes"
+  loadingRequests = false;
   
   availablePublications: Publication[] = []; 
 
-  // Listas de "Mis Publicaciones"
+  // Listas de Mis Publicaciones
   activePublications: Publication[] = [];
   pausedPublications: Publication[] = [];
   pendingPublications: Publication[] = [];
   adoptedPublications: Publication[] = [];
   deletedPublications: Publication[] = [];
 
-  // --- INICIO: Lógica "Mis Solicitudes" ---
   currentUserId: string | null = null;
   
-  // Listas para "Mis Solicitudes"
-  pendingReceivedRequests: AdoptionRequest[] = []; // "Solicitudes recibidas" (Pendientes)
-  sentRequests: AdoptionRequest[] = []; // "Solicitudes enviadas" (Pendientes, Rechazadas, Canceladas)
-  acceptedRequests: AdoptionRequest[] = []; // "Solicitudes aceptadas" (Aceptadas)
+  // Listas para Mis Solicitudes
+  pendingReceivedRequests: AdoptionRequest[] = []; // Solicitudes recibidas
+  sentRequests: AdoptionRequest[] = []; // Solicitudes enviadas
+  acceptedRequests: AdoptionRequest[] = []; // Solicitudes aceptadas
 
   // Estado para los modales de Aceptar/Rechazar/Cancelar
   showAcceptModal = false;
@@ -45,12 +44,12 @@ export class Adopciones implements OnInit {
   showRejectModal = false;
   requestToReject: AdoptionRequest | null = null;
   
-  showCancelModal = false; // Para el modal de "Cancelar" (enviadas)
+  showCancelModal = false; // Para el modal de Cancelar
   requestToCancel: AdoptionRequest | null = null;
 
   modalError = ''; // Error para los modales de solicitud
-  isModalLoading = false; // <-- MODIFICACIÓN: Loader para botones de modal
-  // --- FIN: Lógica "Mis Solicitudes" ---
+  isModalLoading = false; 
+
 
   
   showDeleteConfirmModal = false;
@@ -64,63 +63,51 @@ export class Adopciones implements OnInit {
   
   constructor(
     private publicationService: PublicationService,
-    private adoptionRequestService: AdoptionRequestService, // <--- INYECTAR
-    private authService: AuthService, // <--- INYECTAR
+    private adoptionRequestService: AdoptionRequestService,
+    private authService: AuthService,
     private router: Router
   ) {
     this.currentUserId = this.authService.getUser()?.id || null;
   }
 
   ngOnInit(): void {
-    console.log('Componente Adopciones inicializado');
-    this.loadAvailablePublications(); 
-    this.loadPublications(); 
-    this.loadAdoptionRequests(); // <--- Cargar solicitudes
+    this.loadAvailablePublications();
+    this.loadPublications();
+    this.loadAdoptionRequests();
   }
 
   loadAvailablePublications(): void {
-    console.log('Iniciando carga de MASCOTAS DISPONIBLES...');
     this.loadingAvailable = true;
     this.publicationService.getAvailablePublications().subscribe({
       next: (response) => {
         if (response.status === 'success' && response.data) {
           this.availablePublications = response.data;
-          console.log('Mascotas Disponibles cargadas:', this.availablePublications.length);
         } else {
           this.availablePublications = [];
         }
         this.loadingAvailable = false;
       },
       error: (error) => {
-        console.error('Error al cargar publicaciones disponibles:', error);
         this.loadingAvailable = false;
       }
     });
   }
 
   loadPublications(): void {
-    console.log('Iniciando carga de MIS PUBLICACIONES...');
     this.loading = true;
-    this.publicationService.getAllPublications().subscribe({ 
+    this.publicationService.getAllPublications().subscribe({
       next: (response) => {
-        console.log('Respuesta de "Mis Publicaciones":', response);
         if (response.status === 'success' && response.data) {
-          console.log('Publicaciones recibidas:', response.data);
           this.filterPublications(response.data);
-        } else {
-          console.warn('Respuesta sin datos o no exitosa');
         }
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error al cargar publicaciones:', error);
         this.loading = false;
         alert('Error al cargar tus publicaciones: ' + error.message);
       }
     });
   }
-
-  // --- AÑADIR ESTOS MÉTODOS PARA "MIS SOLICITUDES" ---
 
   loadAdoptionRequests(): void {
     this.loadingRequests = true;
@@ -135,7 +122,6 @@ export class Adopciones implements OnInit {
         this.loadingRequests = false;
       },
       error: (err) => {
-        console.error("Error cargando solicitudes", err);
         this.loadingRequests = false;
         alert("No se pudieron cargar tus solicitudes.");
       }
@@ -143,19 +129,18 @@ export class Adopciones implements OnInit {
   }
 
   filterAdoptionRequests(received: AdoptionRequest[], sent: AdoptionRequest[]): void {
-    // 1. "Solicitudes recibidas" (Solo las pendientes)
+    // Solicitudes recibidas
     this.pendingReceivedRequests = received.filter(req => req.status === Status.PENDIENTE);
     
-    // 2. "Solicitudes enviadas" (Todo menos las Aceptadas)
+    // Solicitudes enviadas
     this.sentRequests = sent.filter(req => req.status !== Status.ACEPTADO);
 
-    // 3. "Solicitudes aceptadas" (Tanto recibidas como enviadas que estén ACEPTADAS)
+    // Solicitudes aceptadas
     const acceptedReceived = received.filter(req => req.status === Status.ACEPTADO);
     const acceptedSent = sent.filter(req => req.status === Status.ACEPTADO);
     this.acceptedRequests = [...acceptedReceived, ...acceptedSent];
   }
 
-  // --- Manejadores de Modales (Aceptar, Rechazar, Cancelar) ---
 
   // Abrir modal ACEPTAR
   onAccept(request: AdoptionRequest): void {
@@ -186,35 +171,31 @@ export class Adopciones implements OnInit {
     this.showCancelModal = false;
     this.requestToCancel = null;
     this.modalError = '';
-    this.isModalLoading = false; // <-- MODIFICACIÓN
+    this.isModalLoading = false;
   }
-
-  // --- Acciones de Confirmación (llaman al backend) ---
 
   confirmAccept(): void {
     if (!this.requestToAccept) return;
-    this.isModalLoading = true; // <-- MODIFICACIÓN
+    this.isModalLoading = true;
     this.modalError = '';
     
     this.adoptionRequestService.acceptRequest(this.requestToAccept.id).subscribe({
       next: () => {
         this.loadAdoptionRequests(); // Recargamos las listas
         this.closeModals();
-        // ¡Importante! Recargamos también las publicaciones,
-        // porque la mascota aceptada ahora está "ADOPTADO".
-        this.loadAvailablePublications(); 
+        this.loadAvailablePublications();
         this.loadPublications();
       },
       error: (err) => {
         this.modalError = err.error?.message || "Error al aceptar la solicitud.";
-        this.isModalLoading = false; // <-- MODIFICACIÓN
+        this.isModalLoading = false;
       }
     });
   }
 
   confirmReject(): void {
     if (!this.requestToReject) return;
-    this.isModalLoading = true; // <-- MODIFICACIÓN
+    this.isModalLoading = true; 
     this.modalError = '';
 
     this.adoptionRequestService.rejectRequest(this.requestToReject.id).subscribe({
@@ -224,14 +205,14 @@ export class Adopciones implements OnInit {
       },
       error: (err) => {
         this.modalError = err.error?.message || "Error al rechazar la solicitud.";
-        this.isModalLoading = false; // <-- MODIFICACIÓN
+        this.isModalLoading = false; 
       }
     });
   }
 
   confirmCancel(): void {
     if (!this.requestToCancel) return;
-    this.isModalLoading = true; // <-- MODIFICACIÓN
+    this.isModalLoading = true; 
     this.modalError = '';
 
     this.adoptionRequestService.cancelRequest(this.requestToCancel.id).subscribe({
@@ -241,23 +222,18 @@ export class Adopciones implements OnInit {
       },
       error: (err) => {
         this.modalError = err.error?.message || "Error al cancelar la solicitud.";
-        this.isModalLoading = false; // <-- MODIFICACIÓN
+        this.isModalLoading = false; 
       }
     });
   }
 
-  // --- FIN MÉTODOS "MIS SOLICITUDES" ---
 
-  /**
-   * Maneja el clic en el botón "Like" (toggle).
-   * Actualiza la UI "optimistamente" y luego llama al servicio.
-   */
   onLike(event: MouseEvent, pub: Publication): void {
     event.stopPropagation(); // Evita que se haga clic en la tarjeta
     const button = event.currentTarget as HTMLButtonElement;
     button.disabled = true; // Deshabilita temporalmente
 
-    // 1. Actualización Optimista (UI responde al instante)
+    // Actualización Optimista
     const originalLikedByMe = pub.likedByMe;
     const originalLikes = pub.likes;
 
@@ -271,11 +247,10 @@ export class Adopciones implements OnInit {
       pub.likedByMe = true;
     }
 
-    // 2. Llamada al servicio
+    // Llamada al servicio
     this.publicationService.toggleLike(pub.id).subscribe({
       next: (response) => {
-        // 3. Sincronización con el servidor (sobrescribe por si acaso)
-        // *** ESTA ES LA CORRECCIÓN PARA EL ERROR DE TYPESCRIPT ***
+        // Sincronización con el servidor
         if (response.status === 'success' && response.data) {
           pub.likes = response.data.likes;
           pub.likedByMe = response.data.likedByMe;
@@ -287,8 +262,7 @@ export class Adopciones implements OnInit {
         button.disabled = false; // Rehabilita
       },
       error: (err) => {
-        // 4. Rollback en caso de error HTTP
-        console.error("Error al dar like:", err);
+        // Rollback en caso de error HTTP
         // Revertimos la actualización optimista
         pub.likes = originalLikes;
         pub.likedByMe = originalLikedByMe;
@@ -299,25 +273,11 @@ export class Adopciones implements OnInit {
 
 
   filterPublications(publications: Publication[]): void {
-    console.log('=== FILTRANDO PUBLICACIONES ===');
-    console.log('Total recibidas:', publications.length);
-    console.log('Primera publicación:', publications[0]);
-    console.log('Status de la primera:', publications[0]?.status);
-    console.log('Comparando con Status.PENDIENTE:', Status.PENDIENTE);
-    console.log('¿Son iguales?', publications[0]?.status === Status.PENDIENTE);
-    
     this.activePublications = publications.filter(pub => pub.status === Status.ACTIVO);
     this.pausedPublications = publications.filter(pub => pub.status === Status.PAUSADO);
     this.pendingPublications = publications.filter(pub => pub.status === Status.PENDIENTE);
     this.adoptedPublications = publications.filter(pub => pub.status === Status.ADOPTADO);
     this.deletedPublications = publications.filter(pub => pub.status === Status.ELIMINADO);
-    
-    console.log('Activas:', this.activePublications.length);
-    console.log('Pausadas:', this.pausedPublications.length);
-    console.log('Pendientes:', this.pendingPublications.length);
-    console.log('Adoptadas:', this.adoptedPublications.length);
-    console.log('Eliminadas:', this.deletedPublications.length);
-    console.log('=== FIN FILTRADO ===');
   }
 
   getSpeciesLabel(species: Species): string {
@@ -366,7 +326,6 @@ export class Adopciones implements OnInit {
         this.closePauseConfirmModal(); 
       },
       error: (error) => {
-        console.error('Error al pausar publicación:', error);
         this.loading = false;
         alert('Error al pausar la publicación');
         this.closePauseConfirmModal();
@@ -386,7 +345,6 @@ export class Adopciones implements OnInit {
         this.closeActivateConfirmModal();
       },
       error: (error) => {
-        console.error('Error al activar publicación:', error);
         this.loading = false;
         alert('Error al activar la publicación');
         this.closeActivateConfirmModal();
@@ -406,7 +364,6 @@ export class Adopciones implements OnInit {
         this.closeDeleteConfirmModal();
       },
       error: (error) => {
-        console.error('Error al eliminar publicación:', error);
         this.loading = false;
         alert('Error al eliminar la publicación');
         this.closeDeleteConfirmModal();

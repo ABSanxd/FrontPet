@@ -30,17 +30,13 @@ export interface Publication {
   shared: number;
   likes: number;
 
-  // --- INICIO DE CAMBIOS ---
-  likedByMe: boolean; // <-- AÑADIR ESTA LÍNEA
-  // --- FIN DE CAMBIOS ---
+  likedByMe: boolean;
 
   user?: {
     id: string;
     name: string;
   };
 }
-
-// ... (Resto del archivo CreatePublicationDTO, UpdatePublicationDTO, etc. sin cambios) ...
 export interface CreatePublicationDTO {
   tempName: string;
   species: Species;
@@ -76,8 +72,6 @@ export interface ApiResponse<T> {
   message?: string;
   code?: number;
 }
-
-// --- INTERFACES PARA ADOPTION REQUEST ---
 
 export interface AdoptionRequestCreateDTO {
   publicationId: string;

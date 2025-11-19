@@ -7,7 +7,7 @@ import { UbigeoService } from '../../../services/ubigeo/ubigeo.service';
 import { Species } from '../../../models/enums/species.enum';
 import { CreatePublicationDTO, Publication, UpdatePublicationDTO } from '../../../models/publication';
 
-// --- Validador personalizado (sin cambios) ---
+// --- Validador personalizado ---
 export const atLeastOneContactValidator: ValidatorFn = (
   control: AbstractControl
 ): ValidationErrors | null => {
@@ -24,7 +24,6 @@ export const atLeastOneContactValidator: ValidatorFn = (
   }
   return { atLeastOneContact: true }; // Inválido
 };
-// --- Fin Validador ---
 
 @Component({
   selector: 'app-crear-publicacion',
@@ -38,17 +37,17 @@ export class CrearPublicacion implements OnInit {
   loading = false;
   especies = Object.values(Species);
   
-  // --- INICIO DE CAMBIOS DE FOTOS ---
+ 
   photoPreviews: string[] = [];
   photosBase64: string[] = []; // Esta es la lista que enviaremos al backend
-  // --- FIN DE CAMBIOS DE FOTOS ---
+
 
   isEditMode = false;
   publicationId: string = '';
   photoError: string | null = null; 
   showCancelModal = false; 
   showSuccessModal = false; 
-  showUpdateSuccessModal = false; // <-- MODIFICACIÓN
+  showUpdateSuccessModal = false; 
 
   showContactForm = false;
 
@@ -97,14 +96,14 @@ export class CrearPublicacion implements OnInit {
     // Cargar departamentos
     this.loadDepartments();
 
-    // Escuchar cambios en departamento
+    // Escuchar s en departamento
     this.publicationForm.get('department')?.valueChanges.subscribe(dep => {
       if (dep) {
         this.onDepartmentChange();
       }
     });
 
-    // Escuchar cambios en provincia
+    // Escuchar s en provincia
     this.publicationForm.get('province')?.valueChanges.subscribe(prov => {
       if (prov) {
         this.onProvinceChange();
@@ -117,7 +116,7 @@ export class CrearPublicacion implements OnInit {
       next: (deps: string[]) => {
         this.departments = deps;
       },
-      error: (err: any) => console.error('Error cargando departamentos:', err)
+      error: (err: any) => {}
     });
   }
 
@@ -136,7 +135,7 @@ export class CrearPublicacion implements OnInit {
       next: (provs: string[]) => {
         this.provinces = provs;
       },
-      error: (err: any) => console.error('Error cargando provincias:', err)
+      error: (err: any) => {}
     });
   }
 
@@ -155,7 +154,7 @@ export class CrearPublicacion implements OnInit {
       next: (dists: string[]) => {
         this.districts = dists;
       },
-      error: (err: any) => console.error('Error cargando distritos:', err)
+      error: (err: any) => {}
     });
   }
 
@@ -173,7 +172,6 @@ export class CrearPublicacion implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error al cargar publicación:', error);
         alert('Error al cargar la publicación');
         this.router.navigate(['/adopciones']);
         this.loading = false;
@@ -204,12 +202,10 @@ export class CrearPublicacion implements OnInit {
       this.setFormValues(publication);
     }
 
-    // --- CAMBIO DE FOTOS ---
     // @ts-ignore
     this.photosBase64 = [...publication.photos];
     // @ts-ignore
     this.photoPreviews = [...publication.photos];
-    // --- FIN CAMBIO DE FOTOS ---
   }
 
   // Método auxiliar para setear valores
@@ -315,7 +311,6 @@ export class CrearPublicacion implements OnInit {
     this.photosBase64.splice(index, 1);
     this.photoPreviews.splice(index, 1);
   }
-  // --- FIN LÓGICA MÚLTIPLES FOTOS ---
 
   triggerFileInput(): void {
     document.getElementById('fileInput')?.click();
@@ -335,12 +330,10 @@ export class CrearPublicacion implements OnInit {
   onSubmit(): void {
     this.photoError = null; 
 
-    // --- CAMBIO AQUÍ ---
     if (this.photosBase64.length === 0) {
       this.photoError = 'Por favor, sube al menos una foto de la mascota.';
       return;
     }
-    // --- FIN CAMBIO ---
 
     if (this.publicationForm.invalid) {
       Object.keys(this.publicationForm.controls).forEach(key => {
@@ -382,9 +375,7 @@ export class CrearPublicacion implements OnInit {
       tempName: this.publicationForm.value.tempName,
       species: this.publicationForm.value.species as Species,
       approxAge: this.publicationForm.value.approxAge,
-      // --- CAMBIO AQUÍ ---
       photos: this.photosBase64,
-      // --- FIN CAMBIO ---
       description: this.publicationForm.value.description,
       contact: this.buildContactPayload(),
       department: this.publicationForm.value.department,
@@ -402,7 +393,6 @@ export class CrearPublicacion implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error al crear publicación:', error);
         alert('Error al crear la publicación: ' + (error.error?.message || error.message));
         this.loading = false;
       }
@@ -414,9 +404,7 @@ export class CrearPublicacion implements OnInit {
       tempName: this.publicationForm.value.tempName,
       species: this.publicationForm.value.species as Species,
       approxAge: this.publicationForm.value.approxAge,
-      // --- CAMBIO AQUÍ ---
       photos: this.photosBase64,
-      // --- FIN CAMBIO ---
       description: this.publicationForm.value.description,
       contact: this.buildContactPayload(),
       department: this.publicationForm.value.department,
@@ -427,28 +415,21 @@ export class CrearPublicacion implements OnInit {
     this.publicationService.updatePublication(this.publicationId, dto).subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          // alert('¡Publicación actualizada exitosamente!'); // <-- REEMPLAZADO
-          this.showUpdateSuccessModal = true; // <-- MODIFICACIÓN
+          this.showUpdateSuccessModal = true; 
         } else {
           alert('Error al actualizar la publicación: ' + (response.message || 'Error desconocido'));
         }
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error al actualizar publicación:', error);
         alert('Error al actualizar la publicación: ' + (error.error?.message || error.message));
         this.loading = false;
       }
     });
   }
-
-  // --- Lógica de Modales (sin cambios) ---
-  
   onCancel(): void {
     const hasChanges = this.publicationForm.dirty;
-    // --- CAMBIO AQUÍ ---
     const hasNewPhoto = !this.isEditMode && this.photosBase64.length > 0;
-    // --- FIN CAMBIO ---
     const hasChangesEditMode = this.isEditMode && this.publicationForm.dirty;
 
     if (hasChanges || hasNewPhoto || hasChangesEditMode) {

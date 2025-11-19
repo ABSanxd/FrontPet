@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
 import { 
   Publication, 
   CreatePublicationDTO, 
@@ -20,31 +19,13 @@ export class PublicationService {
 
   // Obtiene las publicaciones disponibles para adoptar (las de otros usuarios)
   getAvailablePublications(): Observable<ApiResponse<Publication[]>> {
-    console.log('Servicio: Llamando a', `${this.apiUrl}?view=available`);
-    return this.http.get<ApiResponse<Publication[]>>(`${this.apiUrl}?view=available`).pipe(
-      tap(response => {
-        console.log('Servicio: Respuesta de "available" recibida', response);
-      }),
-      catchError(error => {
-        console.error('Servicio: Error en "available"', error);
-        throw error;
-      })
-    );
+    return this.http.get<ApiResponse<Publication[]>>(`${this.apiUrl}?view=available`);
   }
 
   // Ahora obtiene solo las publicaciones del usuario (para "Mis Publicaciones")
   getAllPublications(): Observable<ApiResponse<Publication[]>> {
-    console.log('Servicio: Llamando a', `${this.apiUrl}?view=mine`);
     // Usamos el parámetro ?view=mine que definimos en el backend
-    return this.http.get<ApiResponse<Publication[]>>(`${this.apiUrl}?view=mine`).pipe(
-      tap(response => {
-        console.log('Servicio: Respuesta de "mine" recibida', response);
-      }),
-      catchError(error => {
-        console.error('Servicio: Error en "mine"', error);
-        throw error;
-      })
-    );
+    return this.http.get<ApiResponse<Publication[]>>(`${this.apiUrl}?view=mine`);
   }
 
   // Obtener una publicación por ID
@@ -72,8 +53,6 @@ export class PublicationService {
     return this.updatePublication(id, { status });
   }
 
-  // --- INICIO DE CAMBIOS ---
-
   // Da Like o Unlike a una publicación
   toggleLike(id: string): Observable<ApiResponse<Publication>> {
     // Aseguramos que se use PATCH
@@ -84,5 +63,4 @@ export class PublicationService {
   sharePublication(id: string): Observable<ApiResponse<Publication>> {
     return this.http.patch<ApiResponse<Publication>>(`${this.apiUrl}/${id}/share`, {});
   }
-  // --- FIN DE CAMBIOS ---
 }

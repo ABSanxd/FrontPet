@@ -25,15 +25,10 @@
     }
 
     @if (publication) {
-      <!-- --- INICIO DE NUEVA ESTRUCTURA --- -->
       <div class="row justify-content-center">
-        <!-- Columna principal que centra la tarjeta -->
         <div class="col-lg-9 col-md-10">
           
-          <!-- Tarjeta única que contiene TODO -->
           <div class="pet-info-card"> 
-            
-            <!-- 1. Imagen (Carrusel) -->
             <div id="petCarousel" class="carousel slide" data-bs-ride="carousel">
               
               <div class="carousel-indicators">
@@ -77,9 +72,9 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Siguiente</span>
               </button>
-            </div> <!-- Fin .carousel -->
+            </div> 
 
-            <!-- 2. Contenido de Información (dentro de la misma tarjeta) -->
+            <!-- Contenido de Información (dentro de la misma tarjeta) -->
             <div class="pet-info"> 
 
               <div class="pet-title-wrapper">
@@ -163,7 +158,7 @@
                   <i class="bi bi-envelope-heart-fill me-2"></i>
                   Enviar Solicitud de Adopción
                 </button>
-                <!-- Botón de Compartir (NUEVO) -->
+                <!-- Botón de Compartir -->
                 <button class="btn btn-share w-100 mt-2" (click)="onShare()">
                   <i class="bi bi-share-fill me-2"></i>
                   Compartir Publicación
@@ -174,8 +169,8 @@
                   Esta es tu publicación. No puedes adoptarla.
                 </div>
               }
-            </div> <!-- Fin .pet-info -->
-          </div> <!-- Fin .pet-info-card -->
+            </div>
+          </div>
         </div>
       </div>
     }
