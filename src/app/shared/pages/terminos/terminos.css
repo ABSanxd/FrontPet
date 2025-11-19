@@ -1,0 +1,63 @@
+/* Contenedor sin tarjeta */
+.terms-container {
+  padding: 1rem 1.2rem;
+}
+
+/* Título */
+.title-terms {
+  color: var(--color-brown-dark);
+  font-size: 1.55rem;
+}
+
+/* Animación suave del escudo */
+.security-anim {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Flotación suave */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Subtítulos */
+.section-title {
+  margin-top: 1.7rem;
+  margin-bottom: .4rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-brown-dark);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+/* Íconos */
+.section-title i {
+  font-size: 0.95rem;
+  color: var(--color-orange-dark);
+}
+
+/* Texto */
+p {
+  font-size: 0.91rem;
+  line-height: 1.55;
+  color: #444;
+}
+
+/* Aparición suave */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.7s ease forwards;
+}
+
+.fade-in-delayed {
+  opacity: 0;
+  animation: fadeIn 0.7s ease forwards;
+  animation-delay: .15s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

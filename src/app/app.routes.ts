@@ -15,6 +15,7 @@ import { ResetPassword } from './features/auth/components/reset-password/reset-p
 import { RegistrarVacuna } from './features/mascotas/registrar-vacuna/registrar-vacuna';
 import { DetallePublicacion } from './features/adopciones/detalle/detalle-publicacion';
 import { Notificaciones } from './features/notificaciones/notificaciones';
+import { Terminos } from './shared/pages/terminos/terminos';
 
 
 export const routes: Routes = [
@@ -42,7 +43,7 @@ export const routes: Routes = [
 
   {
     path: 'publicaciones/:id/detalle',
-    component: DetallePublicacion, 
+    component: DetallePublicacion,
     canActivate: [authGuard]
   },
 
@@ -103,6 +104,10 @@ export const routes: Routes = [
     path: 'mascotas/:petId/vacunas/:vaccineId/editar',
     component: RegistrarVacuna,
     canActivate: [authGuard]
+  },
+  {
+    path: 'terminos',
+    component: Terminos
   },
 
   { path: '**', redirectTo: '' }
