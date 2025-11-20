@@ -1,5 +1,31 @@
 
 <div class="challenges-container">
+
+  @if (showSuccessToast) {
+  <div class="success-toast-overlay">
+    
+    <!-- Confeti animado (múltiples piezas) -->
+    <div class="confetti-container">
+      @for (i of confettiPieces; track $index) {
+        <div class="confetti" [style.left.%]="getRandomPosition()"
+             [style.animation-delay.s]="getRandomDelay()"
+             [style.background-color]="getRandomColor()"></div>
+      }
+    </div>
+
+    <!-- Toast central -->
+    <div class="success-toast">
+      <!-- Estrella grande y animada -->
+      <i class="bi bi-star-fill success-star-icon"></i>
+      <h4>¡Reto completado!</h4>
+      <p class="xp-earned">{{ successMessage }}</p>
+      
+      <!-- Emoji celebración -->
+      <div class="celebration-emoji">🎉</div>
+    </div>
+  </div>
+}
+
   @if (isLoading) {
     <div class="text-center py-5">
       <div class="spinner-border text-primary-dark" role="status">
@@ -80,6 +106,9 @@
               >
                 REALIZAR
               </button>
+
+
+               
             }
           </div>
         </div>

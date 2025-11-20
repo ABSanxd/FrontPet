@@ -100,9 +100,10 @@
   position: relative;
   overflow: visible;
   cursor: pointer;
+  min-height: 450px; 
 }
 
-/* Bordes decorativos tipo blonda */
+/* Bordes decorativos */
 .achievement-card::before,
 .achievement-card::after {
   content: '';
@@ -195,7 +196,7 @@
 .achievement-icon-wrapper {
   position: relative;
   margin-bottom: 1.5rem;
-  margin-top: 0.5rem;
+  margin-top: 1.3rem;
 }
 
 .achievement-icon {
@@ -243,7 +244,7 @@
 /* Badge de veces completadas */
 .times-badge {
   position: absolute;
-  top: -10px;
+  top: -5px;
   right: -10px;
   background: linear-gradient(135deg, var(--color-red) 0%, #e74c3c 100%);
   color: white;
@@ -262,7 +263,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 4px 12px rgba(238, 79, 79, 0.5);
   }
@@ -293,7 +295,8 @@
 }
 
 @keyframes starRotate {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1) rotate(0deg);
   }
   25% {
@@ -310,6 +313,7 @@
   flex-direction: column;
   gap: 0.6rem;
   width: 100%;
+  flex: 1; 
 }
 
 .achievement-name {
@@ -339,15 +343,15 @@
 
 /* Footer */
 .achievement-footer {
-  justify-content: center;
-  align-items: center;
-    margin-top: 1rem;
+   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: auto;
   padding-top: 1rem;
   border-top: 2px dashed rgba(0, 0, 0, 0.1);
   font-size: 0.9rem;
-
 }
-
 .achievement-points {
   color: #e08c06;
   font-weight: 800;
@@ -364,14 +368,22 @@
 }
 
 @keyframes starTwinkle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.2); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
 }
 
 .achievement-date {
   color: #2a2a2a;
   font-size: 0.8rem;
   font-weight: 600;
+   margin-top: 0.3rem; 
 }
 
 /* Empty State */
@@ -391,8 +403,13 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .empty-state p {
@@ -421,7 +438,7 @@
   }
 
   .achievement-card {
-    padding: 1.5rem 1.25rem;
+     min-height: 400px;
   }
 
   .achievement-icon {

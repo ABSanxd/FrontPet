@@ -31,11 +31,8 @@ export class UserAchievements {
     // ADOPTANTES
     'Corazón de oro': '../assets/user-achievements/adopter/corazon-oro.png',
     'Familia creciente': '../assets/user-achievements/adopter/familia-creciente.png',
-    'Familia Creciente': '../assets/user-achievements/adopter/familia-creciente.png',
     'Ángel guardián': '../assets/user-achievements/adopter/angel-guardian.png',
-    'Angel guardián': '../assets/user-achievements/adopter/angel-guardian.png',
     'Héroe pets': '../assets/user-achievements/adopter/heroe-pets.png',
-    'Heroe pets': '../assets/user-achievements/adopter/heroe-pets.png',
   };
 
   constructor(private achievementService: UserAchievementService) {}
@@ -96,12 +93,12 @@ export class UserAchievements {
     // Fallback: imagen genérica según tipo
     if (achievement.achievementType === 'USUARIO_RESCATISTA') {
       return achievement.repeatable 
-        ? '../assets/user-achievements/rescuer/default-rescuer.png'
-        : '../assets/user-achievements/rescuer/default-rescuer-special.png';
+        ? '../assets/user-achievements/rescuer/mano-amiga.png'
+        : '../assets/user-achievements/rescuer/mano-amiga.png';
     } else {
       return achievement.repeatable 
-        ? '../assets/user-achievements/adopter/default-adopter.png'
-        : '../assets/user-achievements/adopter/default-adopter-special.png';
+        ? '../assets/user-achievements/adopter/heroe-pets.png'
+        : '../assets/user-achievements/adopter/heroe-pets.png';
     }
   }
 

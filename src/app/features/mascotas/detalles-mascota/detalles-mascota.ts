@@ -181,5 +181,19 @@ export class DetallesMascota implements OnInit {
       });
     }
   }
+
+  onChallengeCompleted(pointsEarned: number): void {
+  if (this.pet) {
+    // Actualizar el XP localmente
+    this.pet.petXp += pointsEarned;
+    
+    // verificar si subió de nivel
+    const maxXP = this.getMaxXPForLevel(this.pet.nivel);
+    if (this.pet.petXp >= maxXP) {
+      // Si quieres manejar el cambio de nivel, podrías recargar los datos
+      this.loadPetDetails(this.pet.id);
+    }
+  }
+}
   
 }

@@ -116,11 +116,15 @@
 
       <div class="tab-content">
         @if (activeTab === 'retos') {
-        <div class="tab-pane-pet active text-center py-2"></div>
-           <app-pet-challenges [petId]="petId"></app-pet-challenges>
+        <div class="tab-pane-pet active text-center py-2">
+          <app-pet-challenges
+            [petId]="petId"
+            (challengeCompleted)="onChallengeCompleted($event)"
+          ></app-pet-challenges>
+        </div>
         } @if (activeTab === 'logros') {
         <div class="tab-pane-pet active">
-           <app-pet-achievements [petId]="petId"></app-pet-achievements>
+          <app-pet-achievements [petId]="petId"></app-pet-achievements>
         </div>
         } @if (activeTab === 'vacunas') {
         <div class="tab-pane-pet active">
