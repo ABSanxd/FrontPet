@@ -31,7 +31,6 @@ export class App {
 
     this.actualizarVisibilidad();
 
-    // Escuchar s de ruta
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.actualizarVisibilidad();
     });

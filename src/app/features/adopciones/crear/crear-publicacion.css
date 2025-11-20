@@ -225,7 +225,7 @@
   border-color: var(--color-red-dark) !important;
 }
 
-/* --- INICIO ESTILOS SECCIÓN CONTACTO --- */
+
 .btn-toggle-contact {
   background: var(--color-green);
   color: var(--color-white);
@@ -271,7 +271,6 @@
   border-left: none;
   box-shadow: 0 0 0 0.2rem rgba(238, 142, 79, 0.15);
 }
-/* --- FIN ESTILOS SECCIÓN CONTACTO --- */
 
 /* --- ESTILOS AÑADIDOS PARA EL MODAL DE CANCELAR --- */
 .modal-overlay-cancel {
@@ -375,9 +374,7 @@
   background-color: var(--color-grey) !important;
   border-color: var(--color-grey) !important;
 }
-/* --- FIN DE ESTILOS AÑADIDOS --- */
 
-/* --- INICIO ESTILOS MULTI-FOTO --- */
 .previews-container {
   display: flex;
   flex-wrap: wrap;
@@ -441,4 +438,3 @@
   padding: 2px 0;
   z-index: 5; /* Debajo del botón de eliminar */
 }
-/* --- FIN ESTILOS MULTI-FOTO --- */

@@ -92,7 +92,7 @@ export const routes: Routes = [
   {
     path: 'reset-password',
     component: ResetPassword,
-    canActivate: [guestGuard] // Solo usuarios no logueados
+    canActivate: [guestGuard] 
   },
   {
     path: 'mascotas/:petId/vacunas/nueva',

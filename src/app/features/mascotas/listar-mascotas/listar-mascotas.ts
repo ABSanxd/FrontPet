@@ -35,7 +35,6 @@ export class ListarMascotas implements OnInit {
     [PetLevel.MAESTRO]: { min: 501, max: 1000 },
     [PetLevel.ALFA]: { min: 1001, max: 2000 },
   };
-  // **** FIN DE CÓDIGO AÑADIDO (SE MANTIENE) ****
 
   constructor(
     private petService: PetService,
