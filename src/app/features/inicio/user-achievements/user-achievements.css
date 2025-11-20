@@ -339,13 +339,13 @@
 
 /* Footer */
 .achievement-footer {
-  display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-top: 1rem;
+    margin-top: 1rem;
   padding-top: 1rem;
   border-top: 2px dashed rgba(0, 0, 0, 0.1);
   font-size: 0.9rem;
+
 }
 
 .achievement-points {
