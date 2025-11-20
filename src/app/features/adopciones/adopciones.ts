@@ -1,27 +1,45 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common'; 
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms'; 
+
 import { PublicationService } from './publication.service';
 import { Publication, AdoptionRequest } from '../../models/publication';
 import { Species } from '../../models/enums/species.enum';
 import { Status } from '../../models/enums/status.enum';
 import { AdoptionRequestService } from './adoption-request.service';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { UbigeoService } from '../../services/ubigeo/ubigeo.service'; 
 import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-adopciones',
-  imports: [CommonModule, RouterLink, DatePipe],
+  imports: [CommonModule, RouterLink, DatePipe, FormsModule, TitleCasePipe], 
   templateUrl: './adopciones.html',
   styleUrl: './adopciones.css'
 })
 export class Adopciones implements OnInit {
   activeTab: string = 'disponibles'; 
+  
   loading: boolean = false; 
   loadingAvailable: boolean = false; 
   loadingRequests = false;
   
-  availablePublications: Publication[] = []; 
+  allAvailablePublications: Publication[] = []; // Copia original completa
+  availablePublications: Publication[] = [];    // Lista filtrada que se ve en pantalla
+
+  // Campos del filtro
+  searchText: string = '';
+  selectedSpecies: string = '';
+  selectedDepartment: string = '';
+  selectedProvince: string = '';
+  selectedDistrict: string = '';
+
+  // Listas para los selects
+  speciesList = Object.values(Species);
+  departments: string[] = [];
+  provinces: string[] = [];
+  districts: string[] = [];
 
   // Listas de Mis Publicaciones
   activePublications: Publication[] = [];
@@ -33,37 +51,31 @@ export class Adopciones implements OnInit {
   currentUserId: string | null = null;
   
   // Listas para Mis Solicitudes
-  pendingReceivedRequests: AdoptionRequest[] = []; // Solicitudes recibidas
-  sentRequests: AdoptionRequest[] = []; // Solicitudes enviadas
-  acceptedRequests: AdoptionRequest[] = []; // Solicitudes aceptadas
+  pendingReceivedRequests: AdoptionRequest[] = [];
+  sentRequests: AdoptionRequest[] = []; 
+  acceptedRequests: AdoptionRequest[] = [];
 
-  // Estado para los modales de Aceptar/Rechazar/Cancelar
+  // Modales
   showAcceptModal = false;
   requestToAccept: AdoptionRequest | null = null;
-  
   showRejectModal = false;
   requestToReject: AdoptionRequest | null = null;
-  
-  showCancelModal = false; // Para el modal de Cancelar
+  showCancelModal = false;
   requestToCancel: AdoptionRequest | null = null;
-
-  modalError = ''; // Error para los modales de solicitud
+  modalError = '';
   isModalLoading = false; 
-
-
   
   showDeleteConfirmModal = false;
   publicationToDelete: Publication | null = null; 
-  
   showPauseConfirmModal = false;
   publicationToPauseId: string | null = null;
-
   showActivateConfirmModal = false;
   publicationToActivateId: string | null = null;
   
   constructor(
     private publicationService: PublicationService,
     private adoptionRequestService: AdoptionRequestService,
+    private ubigeoService: UbigeoService, // <--- Inyectado
     private authService: AuthService,
     private router: Router
   ) {
@@ -74,6 +86,70 @@ export class Adopciones implements OnInit {
     this.loadAvailablePublications();
     this.loadPublications();
     this.loadAdoptionRequests();
+    this.loadDepartments(); // Cargar departamentos al inicio
+  }
+
+  // FILTROS Y UBIGEO
+
+  loadDepartments(): void {
+    this.ubigeoService.getDepartments().subscribe({
+      next: (deps) => this.departments = deps,
+      error: () => console.error('Error al cargar departamentos')
+    });
+  }
+
+  onDepartmentChange(): void {
+    this.selectedProvince = '';
+    this.selectedDistrict = '';
+    this.provinces = [];
+    this.districts = [];
+    this.applyFilters(); // Aplicar filtro al cambiar
+
+    if (this.selectedDepartment) {
+      this.ubigeoService.getProvinces(this.selectedDepartment).subscribe(provs => {
+        this.provinces = provs;
+      });
+    }
+  }
+
+  onProvinceChange(): void {
+    this.selectedDistrict = '';
+    this.districts = [];
+    this.applyFilters(); 
+
+    if (this.selectedDepartment && this.selectedProvince) {
+      this.ubigeoService.getDistricts(this.selectedDepartment, this.selectedProvince).subscribe(dists => {
+        this.districts = dists;
+      });
+    }
+  }
+
+  // Función principal de filtrado
+  applyFilters(): void {
+    this.availablePublications = this.allAvailablePublications.filter(pub => {
+      // Filtro de Nombre
+      const matchText = !this.searchText ||
+                        pub.tempName.toLowerCase().includes(this.searchText.toLowerCase());
+
+      // Filtro Especie
+      const matchSpecies = !this.selectedSpecies ||
+                           pub.species === this.selectedSpecies;
+
+      // Filtros Ubicación 
+      const matchDep = !this.selectedDepartment || pub.department === this.selectedDepartment;
+      const matchProv = !this.selectedProvince || pub.province === this.selectedProvince;
+      const matchDist = !this.selectedDistrict || pub.district === this.selectedDistrict;
+
+      return matchText && matchSpecies && matchDep && matchProv && matchDist;
+    });
+  }
+  
+  // Método para limpiar filtros
+  clearFilters(): void {
+    this.searchText = '';
+    this.selectedSpecies = '';
+    this.selectedDepartment = '';
+    this.onDepartmentChange(); // Esto limpia prov/dist y reaplica filtros
   }
 
   loadAvailablePublications(): void {
@@ -81,14 +157,21 @@ export class Adopciones implements OnInit {
     this.publicationService.getAvailablePublications().subscribe({
       next: (response) => {
         if (response.status === 'success' && response.data) {
+          // Guardamos en AMBAS listas
+          this.allAvailablePublications = response.data;
           this.availablePublications = response.data;
+          // Aplicamos filtros por si había alguno seleccionado
+          this.applyFilters();
         } else {
+          this.allAvailablePublications = [];
           this.availablePublications = [];
         }
         this.loadingAvailable = false;
       },
       error: (error) => {
         this.loadingAvailable = false;
+        this.allAvailablePublications = [];
+        this.availablePublications = [];
       }
     });
   }
@@ -111,8 +194,6 @@ export class Adopciones implements OnInit {
 
   loadAdoptionRequests(): void {
     this.loadingRequests = true;
-    
-    // Cargamos ambas listas en paralelo
     forkJoin({
       received: this.adoptionRequestService.getReceivedRequests(),
       sent: this.adoptionRequestService.getSentRequests()
@@ -129,34 +210,25 @@ export class Adopciones implements OnInit {
   }
 
   filterAdoptionRequests(received: AdoptionRequest[], sent: AdoptionRequest[]): void {
-    // Solicitudes recibidas
     this.pendingReceivedRequests = received.filter(req => req.status === Status.PENDIENTE);
-    
-    // Solicitudes enviadas
     this.sentRequests = sent.filter(req => req.status !== Status.ACEPTADO);
-
-    // Solicitudes aceptadas
     const acceptedReceived = received.filter(req => req.status === Status.ACEPTADO);
     const acceptedSent = sent.filter(req => req.status === Status.ACEPTADO);
     this.acceptedRequests = [...acceptedReceived, ...acceptedSent];
   }
 
-
-  // Abrir modal ACEPTAR
   onAccept(request: AdoptionRequest): void {
     this.modalError = '';
     this.requestToAccept = request;
     this.showAcceptModal = true;
   }
 
-  // Abrir modal RECHAZAR
   onReject(request: AdoptionRequest): void {
     this.modalError = '';
     this.requestToReject = request;
     this.showRejectModal = true;
   }
 
-  // Abrir modal CANCELAR (solicitud enviada)
   onCancel(request: AdoptionRequest): void {
     this.modalError = '';
     this.requestToCancel = request;
@@ -181,7 +253,7 @@ export class Adopciones implements OnInit {
     
     this.adoptionRequestService.acceptRequest(this.requestToAccept.id).subscribe({
       next: () => {
-        this.loadAdoptionRequests(); // Recargamos las listas
+        this.loadAdoptionRequests(); 
         this.closeModals();
         this.loadAvailablePublications();
         this.loadPublications();
@@ -200,7 +272,7 @@ export class Adopciones implements OnInit {
 
     this.adoptionRequestService.rejectRequest(this.requestToReject.id).subscribe({
       next: () => {
-        this.loadAdoptionRequests(); // Recargamos las listas
+        this.loadAdoptionRequests();
         this.closeModals();
       },
       error: (err) => {
@@ -217,7 +289,7 @@ export class Adopciones implements OnInit {
 
     this.adoptionRequestService.cancelRequest(this.requestToCancel.id).subscribe({
       next: () => {
-        this.loadAdoptionRequests(); // Recargamos las listas
+        this.loadAdoptionRequests();
         this.closeModals();
       },
       error: (err) => {
@@ -227,50 +299,40 @@ export class Adopciones implements OnInit {
     });
   }
 
-
   onLike(event: MouseEvent, pub: Publication): void {
-    event.stopPropagation(); // Evita que se haga clic en la tarjeta
+    event.stopPropagation();
     const button = event.currentTarget as HTMLButtonElement;
-    button.disabled = true; // Deshabilita temporalmente
+    button.disabled = true;
 
-    // Actualización Optimista
     const originalLikedByMe = pub.likedByMe;
     const originalLikes = pub.likes;
 
     if (pub.likedByMe) {
-      // Si ya le dio like -> UNLIKE
       pub.likes--;
       pub.likedByMe = false;
     } else {
-      // Si no le ha dado like -> LIKE
       pub.likes++;
       pub.likedByMe = true;
     }
 
-    // Llamada al servicio
     this.publicationService.toggleLike(pub.id).subscribe({
       next: (response) => {
-        // Sincronización con el servidor
         if (response.status === 'success' && response.data) {
           pub.likes = response.data.likes;
           pub.likedByMe = response.data.likedByMe;
         } else {
-          // Si la respuesta no es exitosa, revertimos
           pub.likes = originalLikes;
           pub.likedByMe = originalLikedByMe;
         }
-        button.disabled = false; // Rehabilita
+        button.disabled = false;
       },
       error: (err) => {
-        // Rollback en caso de error HTTP
-        // Revertimos la actualización optimista
         pub.likes = originalLikes;
         pub.likedByMe = originalLikedByMe;
-        button.disabled = false; // Rehabilita
+        button.disabled = false;
       }
     });
   }
-
 
   filterPublications(publications: Publication[]): void {
     this.activePublications = publications.filter(pub => pub.status === Status.ACTIVO);
@@ -280,13 +342,13 @@ export class Adopciones implements OnInit {
     this.deletedPublications = publications.filter(pub => pub.status === Status.ELIMINADO);
   }
 
-  getSpeciesLabel(species: Species): string {
-    const labels: { [key in Species]: string } = {
-      [Species.PERRO]: 'Perro',
-      [Species.GATO]: 'Gato',
-      [Species.AVE]: 'Ave',
-      [Species.CONEJO]: 'Conejo',
-      [Species.OTRO]: 'Otro'
+  getSpeciesLabel(species: string): string {
+    const labels: { [key: string]: string } = {
+      'PERRO': 'Perro',
+      'GATO': 'Gato',
+      'AVE': 'Ave',
+      'CONEJO': 'Conejo',
+      'OTRO': 'Otro'
     };
     return labels[species] || species;
   }

@@ -2,14 +2,14 @@
   background-color: var(--color-background);
   padding: 1rem 0;
   border-bottom: 2px solid var(--color-grey);
-  width: 100%; /* Ocupa todo el ancho */
+  width: 100%; 
 }
 
 .nav-pills {
-  gap: 1.5rem; /* Espacio entre botones */
+  gap: 1.5rem;
 }
 
-/* Tabs personalizados (Estilo de la imagen) */
+/* Tabs personalizados */
 .nav-pills .nav-link {
   color: var(--color-cyan) !important;
   font-weight: 600;
@@ -22,26 +22,53 @@
 }
 
 .nav-pills .nav-link:hover {
-  /* Estilo hover (como el activo) */
   background-color: var(--color-cyan) !important;
   color: var(--color-white) !important;
   border-color: var(--color-cyan) !important;
 }
 
 .nav-pills .nav-link.active {
-  /* Estilo activo (como en la imagen) */
   background-color: var(--color-cyan) !important;
   color: var(--color-white) !important;
   border-color: var(--color-cyan) !important;
 }
 
-
-/* Título */
 .text-dark-green {
   color: var(--color-brown-dark);
 }
 
-/* --- ESTILOS DE TARJETA --- */
+/*BARRA DE FILTROS*/
+.filter-bar {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+}
+
+.filter-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-brown-dark);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+}
+
+.filter-bar .form-control,
+.filter-bar .form-select {
+  font-size: 0.9rem;
+  border-radius: 8px;
+  border-color: #ced4da;
+}
+.filter-bar .form-control:focus,
+.filter-bar .form-select:focus {
+  border-color: var(--color-orange);
+  box-shadow: 0 0 0 0.2rem rgba(238, 142, 79, 0.15);
+}
+.filter-bar .input-group-text {
+  border-radius: 8px 0 0 8px;
+  border-color: #ced4da;
+}
+
+
+/* TARJETA  */
 .publication-card {
   border-radius: 25px;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -711,4 +738,3 @@
   padding: 0.5rem;
   margin-top: 1rem;
 }
-/* --- FIN: Estilos "Mis Solicitudes" --- */

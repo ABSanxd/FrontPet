@@ -243,6 +243,18 @@
               </div>
             }
 
+            <div class="modal-alert-warning mb-4 text-start">
+              <strong class="d-block mb-2" style="color: var(--color-brown-dark);">
+                <i class="bi bi-shield-exclamation me-2"></i>Declaración de Responsabilidad:
+              </strong>
+              <ul class="mb-0 small text-muted">
+                <li>Declaras que toda la información y fotos proporcionadas son verídicas y actuales.</li>
+                <li>Asumes la responsabilidad legal sobre el contenido de esta publicación.</li>
+                <li>Te comprometes a garantizar el bienestar de la mascota hasta concretar su adopción.</li>
+                <li>Aceptas los términos y condiciones de la comunidad Woof!.</li>
+              </ul>
+            </div>
+
             <div class="text-center">
               <button 
                 type="submit" 
@@ -278,7 +290,7 @@
     <div class="modal-overlay-cancel" (click)="closeCancelModal()">
       <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
         <h5>Confirmar cancelación</h5>
-        <p>¿Estás seguro de que deseas cancelar? Se perderán los s no guardados.</p>
+        <p>¿Estás seguro de que deseas cancelar? Se perderán los cambios no guardados.</p>
         <div class="modal-actions-cancel">
           <button (click)="closeCancelModal()" class="btn btn-secondary">No, seguir editando</button>
           <button (click)="confirmCancel()" class="btn btn-danger">Sí, cancelar</button>
