@@ -1,0 +1,392 @@
+/* src/app/components/user-achievements/user-achievements.component.css */
+
+.achievements-section {
+  background: linear-gradient(135deg, #faf9ed 0%, #f5f4e8 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+/* Header */
+.achievements-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.achievements-title {
+  color: #581611;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-count {
+  background: linear-gradient(135deg, #EE8E4F 0%, #f39c12 100%);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Loading & Error */
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+  color: #581611;
+}
+
+.loading-state .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #A5B463 !important;
+}
+
+/* Tabs */
+.achievements-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #ddd;
+  background: white;
+  color: #666;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.tab-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #A5B463 0%, #8fbd3f 100%);
+  color: white;
+  border-color: #A5B463;
+  box-shadow: 0 4px 12px rgba(165, 180, 99, 0.3);
+}
+
+.tab-rescuer.active {
+  background: linear-gradient(135deg, #1E8C88 0%, #16a085 100%);
+  border-color: #1E8C88;
+  box-shadow: 0 4px 12px rgba(30, 140, 136, 0.3);
+}
+
+.tab-adopter.active {
+  background: linear-gradient(135deg, #EE8E4F 0%, #f39c12 100%);
+  border-color: #EE8E4F;
+  box-shadow: 0 4px 12px rgba(238, 142, 79, 0.3);
+}
+
+/* Type Badge Corner */
+.type-badge-corner {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.badge-rescuer {
+  background: linear-gradient(135deg, #1E8C88 0%, #16a085 100%);
+  color: white;
+}
+
+.badge-adopter {
+  background: linear-gradient(135deg, #EE8E4F 0%, #f39c12 100%);
+  color: white;
+}
+
+/* Special Badge (estrella para logros únicos) */
+.special-badge {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #581611;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
+  border: 2px solid white;
+  animation: shine 2s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(10deg);
+  }
+}
+
+/* Achievement Card */
+.achievement-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.achievement-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.achievement-card:hover::before {
+  opacity: 1;
+}
+
+/* Tipos de logros */
+
+/* Rescatista - Repetible (Huellita azul) */
+.achievement-rescuer-standard {
+  border-color: #1E8C88;
+}
+
+.achievement-rescuer-standard::before {
+  background: linear-gradient(90deg, #1E8C88, #16a085);
+}
+
+/* Rescatista - Especial (Medalla celeste estrella) */
+.achievement-rescuer-special {
+  border-color: #5dade2;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+}
+
+.achievement-rescuer-special::before {
+  background: linear-gradient(90deg, #5dade2, #42a5f5);
+}
+
+/* Adoptante - Repetible (Medalla amarilla/roja) */
+.achievement-adopter-standard {
+  border-color: #f39c12;
+}
+
+.achievement-adopter-standard::before {
+  background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+/* Adoptante - Especial (Medalla celeste estrella) */
+.achievement-adopter-special {
+  border-color: #A5B463;
+  background: linear-gradient(135deg, #fffbea 0%, #fff9e6 100%);
+}
+
+.achievement-adopter-special::before {
+  background: linear-gradient(90deg, #ffd700, #A5B463);
+}
+
+/* Icon Wrapper */
+.achievement-icon-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+  
+}
+
+.achievement-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  animation: bounceIn 0.6s ease-out;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Badge de veces completadas */
+.times-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #EE8E4F 0%, #e74c3c 100%);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Content */
+.achievement-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.achievement-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #581611;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.achievement-phrase {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.achievement-description {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0.25rem 0 0 0;
+  line-height: 1.3;
+}
+
+/* Footer */
+.achievement-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.85rem;
+}
+
+.achievement-points {
+  color: #f39c12;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.achievement-points i {
+  color: #ffd700;
+}
+
+.achievement-date {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #999;
+}
+
+.empty-state i {
+  font-size: 5rem;
+  color: #ddd;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.empty-state p {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: #666;
+}
+
+.empty-state small {
+  font-size: 0.95rem;
+  color: #aaa;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .achievements-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .achievement-card {
+    padding: 1.25rem;
+  }
+
+  .achievement-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .achievements-section {
+    padding: 1.5rem;
+  }
+}

@@ -1,0 +1,147 @@
+<!-- src/app/components/user-achievements/user-achievements.component.html -->
+
+<div class="achievements-section">
+  
+  <!-- Header -->
+  <div class="achievements-header">
+    <h3 class="achievements-title">
+      🏆 Mis Logros
+      @if (!isLoading && allAchievements.length > 0) {
+        <span class="badge-count">{{ allAchievements.length }}</span>
+      }
+    </h3>
+  </div>
+
+  <!-- Tabs de filtrado -->
+  @if (!isLoading && !error && allAchievements.length > 0) {
+    <div class="achievements-tabs">
+      <button 
+        class="tab-button"
+        [class.active]="selectedTab === 'all'"
+        (click)="selectedTab = 'all'">
+        <i class="bi bi-trophy-fill"></i>
+        Todos ({{ allAchievements.length }})
+      </button>
+      <button 
+        class="tab-button tab-rescuer"
+        [class.active]="selectedTab === 'rescuer'"
+        (click)="selectedTab = 'rescuer'">
+        <i class="bi bi-heart-fill"></i>
+        Rescatista ({{ rescuerAchievements.length }})
+      </button>
+      <button 
+        class="tab-button tab-adopter"
+        [class.active]="selectedTab === 'adopter'"
+        (click)="selectedTab = 'adopter'">
+        <i class="bi bi-house-heart-fill"></i>
+        Adoptante ({{ adopterAchievements.length }})
+      </button>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p>Cargando tus logros...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error && !isLoading) {
+    <div class="alert alert-warning" role="alert">
+      <i class="bi bi-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+  }
+
+  <!-- Lista de logros -->
+  @if (!isLoading && !error && allAchievements.length > 0) {
+    <div class="achievements-grid">
+      
+      @for (achievement of getAchievementsToShow(); track achievement.id) {
+        <div 
+          class="achievement-card"
+          [ngClass]="getAchievementClass(achievement)">
+          
+          <!-- Badge de tipo en la esquina -->
+          <div class="type-badge-corner">
+            @if (achievement.achievementType === 'USUARIO_RESCATISTA') {
+              <span class="type-badge badge-rescuer">
+                <i class="bi bi-heart-fill"></i>
+                Rescatista
+              </span>
+            } @else {
+              <span class="type-badge badge-adopter">
+                <i class="bi bi-house-heart-fill"></i>
+                Adoptante
+              </span>
+            }
+          </div>
+
+          <!-- Icono del logro (imagen específica) -->
+          <div class="achievement-icon-wrapper">
+            <img 
+              [src]="getAchievementIcon(achievement)" 
+              [alt]="achievement.achievementName"
+              class="achievement-icon"
+              (error)="$event.target.src='assets/images/achievements/default.png'">
+            
+            <!-- Badge de veces completadas -->
+            @if (achievement.repeatable && achievement.timesCompleted > 1) {
+              <span class="times-badge">x{{ achievement.timesCompleted }}</span>
+            }
+
+            <!-- Badge especial para logros únicos -->
+            @if (!achievement.repeatable) {
+              <span class="special-badge">
+                <i class="bi bi-star-fill"></i>
+              </span>
+            }
+          </div>
+
+          <!-- Contenido -->
+          <div class="achievement-content">
+            <h5 class="achievement-name">{{ achievement.achievementName }}</h5>
+            <p class="achievement-phrase">"{{ achievement.achievementPhrase }}"</p>
+            <p class="achievement-description">{{ achievement.achievementDescription }}</p>
+            
+            <!-- Info adicional -->
+            <div class="achievement-footer">
+              <span class="achievement-points">
+                <i class="bi bi-star-fill"></i>
+                +{{ achievement.achievementPoints }} XP
+              </span>
+              <span class="achievement-date">
+                {{ formatDate(achievement.completedAt) }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!isLoading && !error && allAchievements.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-trophy"></i>
+      <p>Aún no tienes logros</p>
+      <small>¡Adopta o rescata mascotas para desbloquear logros!</small>
+    </div>
+  }
+
+  <!-- Empty state por filtro -->
+  @if (!isLoading && !error && getAchievementsToShow().length === 0 && allAchievements.length > 0) {
+    <div class="empty-state">
+      <i class="bi bi-filter-circle"></i>
+      <p>No tienes logros de este tipo</p>
+      <small>Cambia de categoría para ver otros logros</small>
+    </div>
+  }
+
+</div>
