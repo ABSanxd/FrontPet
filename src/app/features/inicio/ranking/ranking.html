@@ -1,0 +1,56 @@
+<div class="card leaderboard-card h-100 border-0">
+  <div class="card-header bg-white border-0 pt-4 pb-2">
+    <h4 class="fw-bold text-center header-title">
+      <i class="bi bi-trophy-fill text-warning me-2"></i>
+      Top Woofers
+    </h4>
+    <p class="text-center text-muted small mb-0">Los dueños más dedicados</p>
+  </div>
+
+  <div class="card-body p-0">
+    
+    @if (isLoading) {
+      <div class="text-center py-4">
+        <div class="spinner-border text-warning spinner-border-sm" role="status"></div>
+      </div>
+    } @else {
+      <div class="list-group list-group-flush">
+        @for (user of topUsers; track user.id; let i = $index) {
+          <div class="list-group-item d-flex align-items-center px-4 py-3 border-0 item-row"
+               [class.highlight-user]="user.id === currentUserId">
+            
+            <div class="rank-badge me-3 fw-bold shadow-sm" [ngClass]="getRankClass(i)">
+              {{ i + 1 }}
+            </div>
+
+            <div class="avatar-circle me-3 shadow-sm">
+              {{ user.name.charAt(0) | uppercase }}
+            </div>
+
+            <div class="flex-grow-1 overflow-hidden">
+              <h6 class="mb-0 fw-bold text-truncate name-text">
+                {{ user.name }}
+              </h6>
+              <small class="text-muted level-text">
+                {{ user.userLevel }}
+              </small>
+            </div>
+
+            <div class="text-end">
+              <span class="badge rounded-pill bg-light text-dark border xp-badge">
+                {{ user.userXp }} XP
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+  
+  <div class="card-footer bg-light border-0 p-3 text-center mt-auto">
+    <small class="text-muted fst-italic">
+      <i class="bi bi-info-circle me-1"></i>
+      ¡Completa retos para subir!
+    </small>
+  </div>
+</div>

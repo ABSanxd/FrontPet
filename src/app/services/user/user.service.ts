@@ -42,4 +42,10 @@ export class UserService {
     return this.http.delete<{ status: string, data: null }>(`${this.apiUrl}/${id}`)
       .pipe(map(() => { }));
   }
+  // Obtener el ranking de usuarios
+  getLeaderboard(): Observable<UserResponseDTO[]> {
+    return this.http.get<{ status: string, data: UserResponseDTO[] }>(`${this.apiUrl}/leaderboard`)
+      .pipe(map(res => res.data));
+  }
 }
+

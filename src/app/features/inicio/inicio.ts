@@ -7,10 +7,11 @@ import { PopupService } from '../../services/pop_up/popup.service';
 import { AdvertisementService } from '../../services/advertisement/advertisement.service';
 import { take } from 'rxjs';
 import { ListarMascotas } from '../mascotas/listar-mascotas/listar-mascotas';
+import { Ranking } from './ranking/ranking';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule,ListarMascotas], 
+  imports: [CommonModule,ListarMascotas, Ranking], 
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
