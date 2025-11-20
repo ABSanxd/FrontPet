@@ -20,7 +20,8 @@ export class ListarMascotas implements OnInit {
 
   readonly addPetImg = 'assets/animalitos.svg'; 
 
-
+// Agregamos esta propiedad para definir el límite
+  readonly MAX_PETS = 2;
   protected readonly PetLevel = PetLevel;
 
   // Umbrales de XP basados en tu lógica de backend (PetService.java)
@@ -121,5 +122,9 @@ export class ListarMascotas implements OnInit {
     const maxXP = this.levelXpThresholds[level]?.max;
     if (level === PetLevel.ALFA) return `${xp} XP (NIVEL MÁXIMO)`;
     return `${xp} / ${maxXP} XP`;
+  }
+  // Helper para saber si mostrar el botón
+  get canAddPet(): boolean {
+    return this.pets.length < this.MAX_PETS;
   }
 }

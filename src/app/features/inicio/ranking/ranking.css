@@ -1,0 +1,71 @@
+.leaderboard-card {
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(88, 22, 17, 0.08);
+  overflow: hidden;
+}
+
+.header-title {
+  color: var(--color-brown-dark);
+}
+
+.item-row {
+  transition: background-color 0.2s, transform 0.2s;
+  margin: 4px 10px;
+  border-radius: 12px;
+}
+
+.item-row:hover {
+  background-color: #faf9ed; /* Tu color de fondo beige claro */
+  transform: translateX(5px);
+}
+
+/* Resaltar al usuario actual */
+.highlight-user {
+  background-color: rgba(165, 180, 99, 0.15); /* Tu verde con opacidad */
+  border: 1px solid var(--color-green);
+}
+
+/* Badges de Posición */
+.rank-badge {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.95rem;
+}
+
+.rank-gold { background: linear-gradient(135deg, #FFD700, #FDB931); color: #fff; }
+.rank-silver { background: linear-gradient(135deg, #E0E0E0, #BDBDBD); color: #fff; }
+.rank-bronze { background: linear-gradient(135deg, #CD7F32, #A0522D); color: #fff; }
+.rank-default { background-color: #f0f0f0; color: #666; font-size: 0.85rem; width: 28px; height: 28px; }
+
+/* Avatar */
+.avatar-circle {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--color-cyan), #156764);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.name-text {
+  color: var(--color-brown-dark);
+  font-size: 0.95rem;
+}
+
+.level-text {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.xp-badge {
+  font-weight: 600;
+  color: var(--color-brown) !important;
+}

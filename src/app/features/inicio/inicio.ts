@@ -9,10 +9,11 @@ import { take } from 'rxjs';
 import { ListarMascotas } from '../mascotas/listar-mascotas/listar-mascotas';
 import { UserAchievements } from './user-achievements/user-achievements';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { Ranking } from './ranking/ranking';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule, ListarMascotas, UserAchievements],
+  imports: [CommonModule, ListarMascotas, Ranking, UserAchievements],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
