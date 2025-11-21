@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChallengeResponseDTO } from '../../../models/challenge';
 import { PetChallengeResponseDTO } from '../../../models/pet-challenge';
@@ -6,6 +6,10 @@ import { Category } from '../../../models/enums/category.enum';
 import { Frequency } from '../../../models/enums/frequency.enum';
 import { ChallengeService } from '../../../services/challenge/challenge.service';
 import { PetChallengeService } from '../../../services/pet-challenge/pet-challenge.service';
+import { PopupService } from '../../../services/pop_up/popup.service';
+import { AdvertisementService } from '../../../services/advertisement/advertisement.service';
+import { ZoneAd } from '../../../models/enums/zoneAd.enum';
+import { take } from 'rxjs';
 @Component({
   selector: 'app-pet-challenges',
   imports: [CommonModule],
@@ -14,6 +18,7 @@ import { PetChallengeService } from '../../../services/pet-challenge/pet-challen
 })
 export class PetChallenges implements OnInit {
   @Input() petId!: string;
+  @Output() challengeCompleted = new EventEmitter<number>();
 
   isLoading = false;
   error: string | null = null;
@@ -30,9 +35,19 @@ export class PetChallenges implements OnInit {
   Frequency = Frequency;
   Category = Category;
 
+  protected readonly ZoneAd = ZoneAd;
+
+  // propiedades para el Toast de Éxito
+  showSuccessToast: boolean = false;
+  successMessage: string = '';
+
+  confettiPieces: number[] = Array(50).fill(0);
+
   constructor(
     private challengeService: ChallengeService,
-    private petChallengeService: PetChallengeService
+    private petChallengeService: PetChallengeService,
+    private popupService: PopupService,
+    private advertisementService: AdvertisementService
   ) {}
 
   ngOnInit(): void {
@@ -68,9 +83,9 @@ export class PetChallenges implements OnInit {
 
   get filteredChallenges(): ChallengeResponseDTO[] {
     const filtered = this.allChallenges.filter(
-      challenge => challenge.frequency === this.selectedFrequency
+      (challenge) => challenge.frequency === this.selectedFrequency
     );
-     return filtered.sort((a, b) => {
+    return filtered.sort((a, b) => {
       const aCompleted = this.isChallengeCompletedToday(a.id);
       const bCompleted = this.isChallengeCompletedToday(b.id);
 
@@ -82,8 +97,6 @@ export class PetChallenges implements OnInit {
       return 0;
     });
   }
-
-  
 
   setFrequency(frequency: Frequency): void {
     this.selectedFrequency = frequency;
@@ -119,7 +132,18 @@ export class PetChallenges implements OnInit {
         this.closeModal();
         this.isSubmitting = false;
 
-        alert(`¡Reto completado! +${pointsEarned} XP ganados`);
+        this.challengeCompleted.emit(pointsEarned);
+
+        this.successMessage = `+${pointsEarned} XP ganados!`;
+        this.showSuccessToast = true;
+
+        // Ocultar el toast después de 3 segundos
+        setTimeout(() => {
+          this.showSuccessToast = false;
+        }, 3000);
+        setTimeout(() => {
+          this.mostrarPopupDespuesDeReto();
+        }, 3000);
       },
       error: (err) => {
         console.error('Error al completar reto:', err);
@@ -156,5 +180,31 @@ export class PetChallenges implements OnInit {
       [Category.ALIMENTACION]: 'category-alimentacion',
     };
     return classes[category] || '';
+  }
+
+  mostrarPopupDespuesDeReto() {
+    this.advertisementService
+      .getByZone(ZoneAd.POP_UP)
+      .pipe(take(1))
+      .subscribe({
+        next: (popups) => {
+          if (popups.length > 0) {
+            this.popupService.mostrarSiguienteDeRotacion(popups);
+          }
+        },
+      });
+  }
+  // Métodos para randomizar el confeti
+  getRandomPosition(): number {
+    return Math.random() * 100;
+  }
+
+  getRandomDelay(): number {
+    return Math.random() * 0.5;
+  }
+
+  getRandomColor(): string {
+    const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#fd79a8'];
+    return colors[Math.floor(Math.random() * colors.length)];
   }
 }
