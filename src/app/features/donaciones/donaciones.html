@@ -1,15 +1,51 @@
-<div class="container mt-4 bg-primary">
-  <div class="row">
-    <div class="col-lg-9 col-md-8">
-      <h1 class="mb-4">Bienvenido al sitio de Mascotitas!</h1>
+<div class="donation-section">
 
-      <p>
-        Aquí iría el contenido principal de tu página de inicio. Por ejemplo, los últimos artículos
-        del blog, una galería de mascotas, o un mensaje de bienvenida importante. Esto asegurará que
-        la columna lateral no se vea vacía.
-      </p>
-    </div>
-
-    
+  <div class="floating-decorations">
+    @for (confetti of confettiPieces; track $index) {
+      <div class="confetti"
+           [style.left.%]="getRandomPosition()"
+           [style.animation-delay.s]="getRandomDelay()"
+           [style.background-color]="getConfettiColor($index)"></div>
+    }
   </div>
+
+  <div class="donation-header">
+    <div class="donation-icon-wrapper">
+      <i class="bi bi-cup-fill"></i>
+    </div>
+    <h2 class="donation-title">¡Apoya a Woof y a los desarrolladores!</h2>
+    <p class="donation-text">
+      Tu contribución nos ayuda a mantener Woof activo y a seguir desarrollando nuevas funcionalidades. ¡Cada aporte cuenta!
+    </p>
+  </div>
+
+  <div class="donation-benefits-grid">
+    <div class="benefit-item">
+      <i class="bi bi-lightbulb-fill" style="color: var(--color-orange-dark);"></i>
+      <span>Nuevas Funcionalidades</span>
+    </div>
+    <div class="benefit-item">
+      <i class="bi bi-tools" style="color: var(--color-cyan);"></i>
+      <span>Mejor Mantenimiento</span>
+    </div>
+    <div class="benefit-item">
+      <i class="bi bi-heart-fill" style="color: var(--color-red);"></i>
+      <span>Soporte a los Desarrolladores</span>
+    </div>
+  </div>
+
+  <div class="paypal-container">
+    <form action="https://www.paypal.com/donate" method="post" target="_top">
+      <input type="hidden" name="hosted_button_id" value="RL7LVCYEUM8UJ" />
+      <button class="btn-custom-donate btn-celeste-wave" type="submit">
+        <i class="bi bi-paypal me-2"></i>
+        DONA AQUÍ
+      </button>
+    </form>
+  </div>
+
+  <div class="dog-paw-overlay">
+    <i class="bi bi-hand-index-thumb-fill"></i>
+  </div>
+
 </div>
