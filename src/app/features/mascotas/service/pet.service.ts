@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-// --- IMPORTS ACTUALIZADOS ---
 import { PetResponseDTO, PetCreateDTO, PetUpdateDTO } from '../../../models/pet';
 import { ApiResponse } from '../../../models/api-response';
 
@@ -15,25 +14,21 @@ export class PetService {
 
   constructor(private http: HttpClient) { }
 
-  // --- TIPO DE RETORNO ACTUALIZADO ---
   getAllPetsByUser(): Observable<PetResponseDTO[]> {
     return this.http.get<ApiResponse<PetResponseDTO[]>>(this.apiUrl)
       .pipe(map(response => response.data));
   }
 
-  // --- TIPO DE RETORNO ACTUALIZADO ---
   getPetById(id: string): Observable<PetResponseDTO> {
     return this.http.get<ApiResponse<PetResponseDTO>>(`${this.apiUrl}/${id}`)
       .pipe(map(response => response.data));
   }
 
-  // --- FIRMA ACTUALIZADA ---
   createPet(pet: PetCreateDTO): Observable<PetResponseDTO> {
     return this.http.post<ApiResponse<PetResponseDTO>>(this.apiUrl, pet)
       .pipe(map(response => response.data));
   }
 
-  // --- FIRMA ACTUALIZADA ---
   updatePet(id: string, pet: PetUpdateDTO): Observable<PetResponseDTO> {
     return this.http.put<ApiResponse<PetResponseDTO>>(`${this.apiUrl}/${id}`, pet)
       .pipe(map(response => response.data));

@@ -24,19 +24,19 @@ export class Servicios implements OnInit {
     this.isLoading = true;
     this.hasError = false;
 
-    // 1. Llamada al servicio para obtener anuncios de tipo SERVICE_LIST
+    // Llamada al servicio para obtener anuncios de tipo SERVICE_LIST
     this.advertisementService.getByZone(this.ZONE).subscribe({
       next: (ads) => {
-        // 2. Éxito: Asigna los anuncios y finaliza la carga
+        // Asigna los anuncios y finaliza la carga
         this.serviceAds = ads;
         this.isLoading = false;
       },
       error: (err) => {
-        // 3. Error: Muestra un error en consola y actualiza el estado
+        // Muestra un error en consola y actualiza el estado
         console.error('Error al cargar la lista de servicios:', err);
         this.hasError = true;
         this.isLoading = false;
-        // Opcional: limpiar la lista en caso de error
+        // limpiar la lista en caso de error
         this.serviceAds = [];
       },
     });

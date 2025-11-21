@@ -1,26 +1,17 @@
 <div class="nav-pills-container">
   <ul class="nav nav-pills justify-content-center">
     <li class="nav-item">
-      <button 
-        class="nav-link px-4"
-        [class.active]="activeTab === 'disponibles'"
-        (click)="activeTab = 'disponibles'">
+      <button class="nav-link px-4" [class.active]="activeTab === 'disponibles'" (click)="activeTab = 'disponibles'">
         Mascotas Disponibles
       </button>
     </li>
     <li class="nav-item">
-      <button 
-        class="nav-link px-4"
-        [class.active]="activeTab === 'solicitudes'"
-        (click)="activeTab = 'solicitudes'">
+      <button class="nav-link px-4" [class.active]="activeTab === 'solicitudes'" (click)="activeTab = 'solicitudes'">
         Mis Solicitudes
       </button>
     </li>
     <li class="nav-item">
-      <button 
-        class="nav-link px-4"
-        [class.active]="activeTab === 'publicaciones'"
-        (click)="activeTab = 'publicaciones'">
+      <button class="nav-link px-4" [class.active]="activeTab === 'publicaciones'" (click)="activeTab = 'publicaciones'">
         Mis Publicaciones
       </button>
     </li>
@@ -30,25 +21,77 @@
 <div class="container-fluid min-vh-100 py-4">
 
   <div *ngIf="activeTab === 'disponibles'" class="container">
-    <div class="row mb-5">
-      <div class="col-12 d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-dark-green mb-0">Mascotas</h2>
-        <div class="input-group" style="max-width: 300px;">
-          <input type="text" class="form-control" placeholder="Buscar...">
-          <button class="btn btn-outline-secondary" type="button" style="background-color: var(--color-brown); border-color: var(--color-brown);">
-            <i class="bi bi-search" style="color: white;"></i>
-          </button>
+    
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="text-dark-green mb-3">Mascotas Disponibles</h2>
+        
+        <div class="filter-bar p-3 rounded-4 mb-4">
+          <div class="row g-3 align-items-center">
+            
+            <div class="col-md-3 col-12">
+              <label class="filter-label">Nombre</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0 ps-0" 
+                       [(ngModel)]="searchText" 
+                       (input)="applyFilters()"
+                       placeholder="Ej: Firulais...">
+              </div>
+            </div>
+
+            <div class="col-md-2 col-6">
+              <label class="filter-label">Especie</label>
+              <select class="form-select" [(ngModel)]="selectedSpecies" (change)="applyFilters()">
+                <option value="">Todas</option>
+                <option *ngFor="let s of speciesList" [value]="s">{{ s | titlecase }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-2 col-6">
+              <label class="filter-label">Departamento</label>
+              <select class="form-select" [(ngModel)]="selectedDepartment" (change)="onDepartmentChange()">
+                <option value="">Todos</option>
+                <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-2 col-6">
+              <label class="filter-label">Provincia</label>
+              <select class="form-select" [(ngModel)]="selectedProvince" (change)="onProvinceChange()" [disabled]="!selectedDepartment">
+                <option value="">Todas</option>
+                <option *ngFor="let p of provinces" [value]="p">{{ p }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-2 col-6">
+              <label class="filter-label">Distrito</label>
+              <select class="form-select" [(ngModel)]="selectedDistrict" (change)="applyFilters()" [disabled]="!selectedProvince">
+                <option value="">Todos</option>
+                <option *ngFor="let dist of districts" [value]="dist">{{ dist }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-1 col-12 text-end">
+              <label class="filter-label d-none d-md-block">&nbsp;</label> <button class="btn btn-outline-secondary w-100" (click)="clearFilters()" title="Limpiar Filtros">
+                <i class="bi bi-funnel-fill"></i>
+              </button>
+            </div>
+
+          </div>
         </div>
-      </div>
+        </div>
+
       <div *ngIf="loadingAvailable" class="col-12 text-center py-5">
         <div class="spinner-border text-success" role="status">
           <span class="visually-hidden">Buscando mascotas...</span>
         </div>
         <p class="mt-2 text-muted">Buscando mascotas disponibles...</p>
       </div>
+
       <ng-container *ngIf="!loadingAvailable">
         <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of availablePublications">
-          <div class="card h-100 shadow-sm publication-card"> 
+          <div class="card h-100 shadow-sm publication-card">
             <div class="pet-image-container">
               <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
               
@@ -66,8 +109,8 @@
               <div class="share-count">
                 <i class="bi bi-share-fill"></i> {{ pub.shared }}
               </div>
-
             </div>
+
             <div class="card-body">
               <h5 class="card-title fw-bold">{{ pub.tempName }}</h5>
               <p class="text-muted mb-1">
@@ -85,330 +128,241 @@
             </div>
           </div>
         </div>
+
         <div *ngIf="!loadingAvailable && availablePublications.length === 0" class="col-12 text-center py-5">
-          <p class="text-muted">No hay mascotas disponibles para adopción en este momento (que no sean tuyas).</p>
+          <i class="bi bi-search display-4 text-muted mb-3"></i>
+          <p class="text-muted fs-5">No encontramos mascotas con esos filtros.</p>
+          <button class="btn btn-outline-success mt-2" (click)="clearFilters()">Ver todas las mascotas</button>
         </div>
       </ng-container>
     </div>
   </div>
 
   <div *ngIf="activeTab === 'publicaciones'" class="container">
-    
     <div *ngIf="loading" class="text-center py-5">
       <div class="spinner-border text-success" role="status"><span class="visually-hidden">Cargando...</span></div>
       <p class="mt-2 text-muted">Cargando tus publicaciones...</p>
     </div>
-
     <ng-container *ngIf="!loading">
       <div class="row mb-5">
         <div class="col-12">
           <h2 class="text-dark-green mb-4">Mis Publicaciones</h2>
         </div>
         <ng-container *ngIf="pendingPublications.length > 0">
-          <div class="col-12 mb-3">
-            <h5 class="text-muted">Pendientes de Aprobación</h5>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of pendingPublications">
-            <div class="card h-100 shadow-sm publication-card">
-              <span class="badge bg-warning status-badge">Pendiente</span>
-              <div class="pet-image-container">
-                <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
-              </div>
-              <div class="card-body">
-                <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
-                <p class="text-muted mb-1">
-                  {{getSpeciesLabel(pub.species)}} / {{pub.approxAge}}
-                </p>
-                <p class="text-muted mb-2 location-text">
-                  <i class="bi bi-geo-alt-fill"></i> {{pub.province || 'No especificado'}}
-                </p>
-                <p class="card-text text-truncate-3">{{pub.description}}</p>
-              </div>
-              <div class="card-footer border-0">
-                <div class="button-group-row">
-                  <button class="btn btn-warning btn-sm" (click)="editPublication(pub)">
-                    Editar
-                  </button>
-                  <button class="btn btn-success btn-sm" (click)="activatePublication(pub.id)">
-                    Activar
-                  </button>
-                </div>
-                <div class="button-group-center">
-                  <button class="btn btn-danger btn-sm" (click)="deletePublication(pub)">
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            </div>
-            </div>
-        </ng-container>
-  
-        <ng-container *ngIf="activePublications.length > 0">
-          <div class="col-12 mb-3 mt-4">
-            <h5 class="text-muted">Activas</h5>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of activePublications">
-            <div class="card h-100 shadow-sm publication-card">
-              <span class="badge bg-success status-badge">Activa</span>
-              <div class="pet-image-container">
-                <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
-              </div>
-              <div class="card-body">
-                <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
-                <p class="text-muted mb-1">
-                  {{getSpeciesLabel(pub.species)}} / {{pub.approxAge}}
-                </p>
-                <p class="text-muted mb-2 location-text">
-                  <i class="bi bi-geo-alt-fill"></i> {{pub.province || 'No especificado'}}
-                </p>
-                <p class="card-text text-truncate-3">{{pub.description}}</p>
-              </div>
-              <div class="card-footer border-0">
-                <div class="button-group-row">
-                  <button class="btn btn-warning btn-sm" (click)="editPublication(pub)">
-                    Editar
-                  </button>
-                  <button class="btn btn-secondary btn-sm" (click)="pausePublication(pub.id)">
-                    Pausar
-                  </button>
-                </div>
-                <div class="button-group-center">
-                  <button class="btn btn-danger btn-sm" (click)="deletePublication(pub)">
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            </div>
-            </div>
-        </ng-container>
-  
-        <ng-container *ngIf="pausedPublications.length > 0">
-          <div class="col-12 mb-3 mt-4">
-            <h5 class="text-muted">Pausadas</h5>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of pausedPublications">
-            <div class="card h-100 shadow-sm publication-card">
-              <span class="badge bg-secondary status-badge">Pausada</span>
-              <div class="pet-image-container">
-                <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
-              </div>
-              <div class="card-body">
-                <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
-                <p class="text-muted mb-1">
-                  {{getSpeciesLabel(pub.species)}} / {{pub.approxAge}}
-                </p>
-                <p class="text-muted mb-2 location-text">
-                  <i class="bi bi-geo-alt-fill"></i> {{pub.province || 'No especificado'}}
-                </p>
-                <p class="card-text text-truncate-3">{{pub.description}}</p>
-              </div>
-              <div class="card-footer border-0">
-                <div class="button-group-row">
-                  <button class="btn btn-warning btn-sm" (click)="editPublication(pub)">
-                    Editar
-                  </button>
-                  <button class="btn btn-success btn-sm" (click)="activatePublication(pub.id)">
-                    Activar
-                  </button>
-                </div>
-                <div class="button-group-center">
-                  <button class="btn btn-danger btn-sm" (click)="deletePublication(pub)">
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            </div>
-            </div>
-        </ng-container>
-  
-        <div class="col-lg-4 col-md-6 mb-4">
-          <div class="card h-100 shadow-sm new-publication-card" (click)="createNewPublication()">
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-              <div class="plus-icon mb-3">+</div>
-              <p class="text-center fw-semibold text-muted">
-                Nueva<br>publicación
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="row mt-5" *ngIf="adoptedPublications.length > 0 || deletedPublications.length > 0">
-        <div class="col-12">
-          <h2 class="text-dark-green mb-4">Historial de Publicaciones</h2>
-        </div>
-        
-        <ng-container *ngIf="adoptedPublications.length > 0">
-          <div class="col-12 mb-3">
-            <h5 class="text-muted">Adoptadas</h5>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of adoptedPublications">
-            <div class="card h-100 shadow-sm publication-card history-card">
-              <span class="badge bg-info status-badge">Adoptada</span>
-              <div class="pet-image-container">
-                <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
-              </div>
-              <div class="card-body">
-                <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
-                <p class="card-text text-truncate-3">{{pub.description}}</p>
-              </div>
-            </div>
-          </div>
+           <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of pendingPublications">
+             <div class="card h-100 shadow-sm publication-card">
+                <span class="badge bg-warning status-badge">Pendiente</span>
+                 <div class="pet-image-container">
+                    <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
+                    <p class="text-muted mb-1">{{getSpeciesLabel(pub.species)}} / {{pub.approxAge}}</p>
+                     <p class="text-muted mb-2 location-text"><i class="bi bi-geo-alt-fill"></i> {{pub.province}}</p>
+                     <p class="card-text text-truncate-3">{{pub.description}}</p>
+                  </div>
+                  <div class="card-footer border-0">
+                    <div class="button-group-row">
+                      <button class="btn btn-warning btn-sm" (click)="editPublication(pub)">Editar</button>
+                      <button class="btn btn-success btn-sm" (click)="activatePublication(pub.id)">Activar</button>
+                    </div>
+                     <div class="button-group-center">
+                      <button class="btn btn-danger btn-sm" (click)="deletePublication(pub)">Eliminar</button>
+                    </div>
+                  </div>
+             </div>
+           </div>
         </ng-container>
 
-        <ng-container *ngIf="deletedPublications.length > 0">
-          <div class="col-12 mb-3 mt-4">
-            <h5 class="text-muted">Eliminadas</h5>
-          </div>
-           <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of deletedPublications">
-            <div class="card h-100 shadow-sm publication-card history-card">
-              <span class="badge bg-danger status-badge">Eliminada</span>
-              <div class="pet-image-container">
-                <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
-              </div>
-              <div class="card-body">
-                <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
-                <p class="card-text text-truncate-3">{{pub.description}}</p>
+         <ng-container *ngIf="activePublications.length > 0">
+            <div class="col-12 mb-3 mt-4"><h5 class="text-muted">Activas</h5></div>
+             <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of activePublications">
+               <div class="card h-100 shadow-sm publication-card">
+                  <span class="badge bg-success status-badge">Activa</span>
+                   <div class="pet-image-container">
+                    <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
+                     <p class="text-muted mb-1">{{getSpeciesLabel(pub.species)}} / {{pub.approxAge}}</p>
+                     <p class="text-muted mb-2 location-text"><i class="bi bi-geo-alt-fill"></i> {{pub.province}}</p>
+                     <p class="card-text text-truncate-3">{{pub.description}}</p>
+                  </div>
+                   <div class="card-footer border-0">
+                    <div class="button-group-row">
+                      <button class="btn btn-warning btn-sm" (click)="editPublication(pub)">Editar</button>
+                      <button class="btn btn-secondary btn-sm" (click)="pausePublication(pub.id)">Pausar</button>
+                    </div>
+                     <div class="button-group-center">
+                      <button class="btn btn-danger btn-sm" (click)="deletePublication(pub)">Eliminar</button>
+                    </div>
+                  </div>
+               </div>
+             </div>
+         </ng-container>
+
+         <ng-container *ngIf="pausedPublications.length > 0">
+           <div class="col-12 mb-3 mt-4"><h5 class="text-muted">Pausadas</h5></div>
+            <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of pausedPublications">
+               <div class="card h-100 shadow-sm publication-card">
+                  <span class="badge bg-secondary status-badge">Pausada</span>
+                   <div class="pet-image-container">
+                    <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
+                     <p class="text-muted mb-1">{{getSpeciesLabel(pub.species)}} / {{pub.approxAge}}</p>
+                     <p class="text-muted mb-2 location-text"><i class="bi bi-geo-alt-fill"></i> {{pub.province}}</p>
+                     <p class="card-text text-truncate-3">{{pub.description}}</p>
+                  </div>
+                   <div class="card-footer border-0">
+                    <div class="button-group-row">
+                      <button class="btn btn-warning btn-sm" (click)="editPublication(pub)">Editar</button>
+                      <button class="btn btn-success btn-sm" (click)="activatePublication(pub.id)">Activar</button>
+                    </div>
+                     <div class="button-group-center">
+                      <button class="btn btn-danger btn-sm" (click)="deletePublication(pub)">Eliminar</button>
+                    </div>
+                  </div>
+               </div>
+            </div>
+         </ng-container>
+
+         <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow-sm new-publication-card" (click)="createNewPublication()">
+              <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div class="plus-icon mb-3">+</div>
+                <p class="text-center fw-semibold text-muted">Nueva<br>publicación</p>
               </div>
             </div>
-          </div>
-        </ng-container>
+         </div>
       </div>
-      </ng-container>
+
+      <div class="row mt-5" *ngIf="adoptedPublications.length > 0 || deletedPublications.length > 0">
+         <div class="col-12"><h2 class="text-dark-green mb-4">Historial de Publicaciones</h2></div>
+         
+         <ng-container *ngIf="adoptedPublications.length > 0">
+            <div class="col-12 mb-3"><h5 class="text-muted">Adoptadas</h5></div>
+            <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of adoptedPublications">
+               <div class="card h-100 shadow-sm publication-card history-card">
+                 <span class="badge bg-info status-badge">Adoptada</span>
+                  <div class="pet-image-container">
+                    <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
+                  </div>
+                  <div class="card-body">
+                     <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
+                     <p class="card-text text-truncate-3">{{pub.description}}</p>
+                  </div>
+               </div>
+            </div>
+         </ng-container>
+
+         <ng-container *ngIf="deletedPublications.length > 0">
+           <div class="col-12 mb-3 mt-4"><h5 class="text-muted">Eliminadas</h5></div>
+           <div class="col-lg-4 col-md-6 mb-4" *ngFor="let pub of deletedPublications">
+             <div class="card h-100 shadow-sm publication-card history-card">
+                 <span class="badge bg-danger status-badge">Eliminada</span>
+                  <div class="pet-image-container">
+                    <img [src]="pub.photos[0]" [alt]="pub.tempName" class="pet-image">
+                  </div>
+                  <div class="card-body">
+                     <h5 class="card-title fw-bold">{{pub.tempName}}</h5>
+                     <p class="card-text text-truncate-3">{{pub.description}}</p>
+                  </div>
+             </div>
+           </div>
+         </ng-container>
+      </div>
+
+    </ng-container>
   </div>
 
   <div *ngIf="activeTab === 'solicitudes'" class="container">
-    
-    <div *ngIf="loadingRequests" class="text-center py-5">
+     <div *ngIf="loadingRequests" class="text-center py-5">
       <div class="spinner-border text-success" role="status"><span class="visually-hidden">Cargando...</span></div>
       <p class="mt-2 text-muted">Cargando tus solicitudes...</p>
     </div>
-
     <div *ngIf="!loadingRequests">
-      
-      <div class="row mb-4">
-        <div class="col-12 d-flex align-items-center mb-3">
-          <h2 class="text-dark-green mb-0">Solicitudes recibidas</h2>
-          <span class="badge bg-danger ms-3" *ngIf="pendingReceivedRequests.length > 0">
-            {{ pendingReceivedRequests.length }} pendientes
-          </span>
-        </div>
+       <div class="row mb-4">
+         <div class="col-12 d-flex align-items-center mb-3">
+            <h2 class="text-dark-green mb-0">Solicitudes recibidas</h2>
+            <span class="badge bg-danger ms-3" *ngIf="pendingReceivedRequests.length > 0">{{ pendingReceivedRequests.length }} pendientes</span>
+         </div>
+         <div *ngIf="pendingReceivedRequests.length === 0" class="col-12"><p class="text-muted">No tienes solicitudes pendientes de revisar.</p></div>
+         <div class="col-lg-4 col-md-6 mb-4" *ngFor="let req of pendingReceivedRequests">
+            <div class="card h-100 shadow-sm request-card">
+               <div class="request-card-pet">
+                  <img [src]="req.publication.petPhoto" [alt]="req.publication.petName">
+                  <h5>{{ req.publication.petName }}</h5>
+               </div>
+               <div class="request-card-user">
+                  <img src="assets/user.png" alt="Solicitante">
+                  <div class="info"><strong>{{ req.applicant.name }}</strong><span>Solicitante</span></div>
+               </div>
+               <div class="request-card-body">
+                  <small class="text-muted"><i class="bi bi-calendar-event"></i> Solicitud recibida: {{ req.createdAt | date:'dd/MM/yyyy' }}</small>
+                  <div class="button-group-row mt-3">
+                     <button class="btn btn-success btn-sm" (click)="onAccept(req)">Aceptar</button>
+                     <button class="btn btn-danger btn-sm" (click)="onReject(req)">Rechazar</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+       </div>
 
-        <div *ngIf="pendingReceivedRequests.length === 0" class="col-12">
-          <p class="text-muted">No tienes solicitudes pendientes de revisar.</p>
-        </div>
-
-        <div class="col-lg-4 col-md-6 mb-4" *ngFor="let req of pendingReceivedRequests">
-          <div class="card h-100 shadow-sm request-card">
-            <div class="request-card-pet">
-              <img [src]="req.publication.petPhoto" [alt]="req.publication.petName">
-              <h5>{{ req.publication.petName }}</h5>
-            </div>
-            <div class="request-card-user">
-              <img src="assets/user.png" alt="Solicitante">
-              <div class="info">
-                <strong>{{ req.applicant.name }}</strong>
-                <span>Solicitante</span>
-              </div>
-            </div>
-            <div class="request-card-body">
-              <small class="text-muted">
-                <i class="bi bi-calendar-event"></i>
-                Solicitud recibida: {{ req.createdAt | date:'dd/MM/yyyy' }}
-              </small>
-              <div class="button-group-row mt-3">
-                <button class="btn btn-success btn-sm" (click)="onAccept(req)">Aceptar</button>
-                <button class="btn btn-danger btn-sm" (click)="onReject(req)">Rechazar</button>
-              </div>
-            </div>
+       <div class="row mb-4">
+          <div class="col-12"><h2 class="text-dark-green mb-3">Solicitudes enviadas</h2></div>
+          <div *ngIf="sentRequests.length === 0" class="col-12"><p class="text-muted">No has enviado ninguna solicitud.</p></div>
+          <div class="col-lg-4 col-md-6 mb-4" *ngFor="let req of sentRequests">
+             <div class="card h-100 shadow-sm request-card">
+               <span class="badge status-badge-enviada" [class.bg-warning]="req.status === 'PENDIENTE'" [class.bg-danger]="req.status === 'RECHAZADO'" [class.bg-secondary]="req.status === 'CANCELADO'">
+                 {{ req.status | titlecase }}
+               </span>
+               <div class="request-card-pet">
+                 <img [src]="req.publication.petPhoto" [alt]="req.publication.petName">
+                 <h5>{{ req.publication.petName }}</h5>
+               </div>
+               <div class="request-card-user">
+                 <img src="assets/user.png" alt="Dueño">
+                 <div class="info"><strong>{{ req.publication.ownerName }}</strong><span>Dueño</span></div>
+               </div>
+               <div class="request-card-body">
+                 <small class="text-muted"><i class="bi bi-calendar-event"></i> Solicitud enviada: {{ req.createdAt | date:'dd/MM/yyyy' }}</small>
+                 <div class="button-group-row mt-3" *ngIf="req.status === 'PENDIENTE'">
+                   <button class="btn btn-secondary btn-sm" (click)="onCancel(req)">Cancelar</button>
+                   <a [routerLink]="['/publicaciones', req.publication.publicationId, 'detalle']" class="btn btn-brown btn-sm">Ver</a>
+                 </div>
+               </div>
+             </div>
           </div>
-        </div>
-      </div>
+       </div>
 
-      <div class="row mb-4">
-        <div class="col-12">
-          <h2 class="text-dark-green mb-3">Solicitudes enviadas</h2>
-        </div>
-
-        <div *ngIf="sentRequests.length === 0" class="col-12">
-          <p class="text-muted">No has enviado ninguna solicitud.</p>
-        </div>
-
-        <div class="col-lg-4 col-md-6 mb-4" *ngFor="let req of sentRequests">
-          <div class="card h-100 shadow-sm request-card">
-            <span class="badge status-badge-enviada"
-                  [class.bg-warning]="req.status === 'PENDIENTE'"
-                  [class.bg-danger]="req.status === 'RECHAZADO'"
-                  [class.bg-secondary]="req.status === 'CANCELADO'">
-              {{ req.status | titlecase }}
-            </span>
-            <div class="request-card-pet">
-              <img [src]="req.publication.petPhoto" [alt]="req.publication.petName">
-              <h5>{{ req.publication.petName }}</h5>
-            </div>
-            <div class="request-card-user">
-              <img src="assets/user.png" alt="Dueño">
-              <div class="info">
-                <strong>{{ req.publication.ownerName }}</strong>
-                <span>Dueño</span>
-              </div>
-            </div>
-            <div class="request-card-body">
-              <small class="text-muted">
-                <i class="bi bi-calendar-event"></i>
-                Solicitud enviada: {{ req.createdAt | date:'dd/MM/yyyy' }}
-              </small>
-              <div class="button-group-row mt-3" *ngIf="req.status === 'PENDIENTE'">
-                <button class="btn btn-secondary btn-sm" (click)="onCancel(req)">Cancelar</button>
-                <a [routerLink]="['/publicaciones', req.publication.publicationId, 'detalle']" class="btn btn-brown btn-sm">Ver</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row mb-4">
-        <div class="col-12">
-          <h2 class="text-dark-green mb-3">Solicitudes aceptadas</h2>
-        </div>
-
-        <div *ngIf="acceptedRequests.length === 0" class="col-12">
-          <p class="text-muted">Aún no tienes solicitudes aceptadas.</p>
-        </div>
-
-        <div class="col-lg-4 col-md-6 mb-4" *ngFor="let req of acceptedRequests">
-          <div class="card h-100 shadow-sm request-card request-card-accepted">
-            <span class="badge bg-success status-badge-enviada">Aceptada</span>
-            <div class="request-card-pet">
-              <img [src]="req.publication.petPhoto" [alt]="req.publication.petName">
-              <h5>{{ req.publication.petName }}</h5>
-            </div>
-            
-            <div class="request-card-user" *ngIf="req.applicant.userId === currentUserId; else receivedBlock">
-              <img src="assets/user.png" alt="Dueño">
-              <div class="info">
-                <strong>{{ req.publication.ownerName }}</strong>
-                <span>Dueño (Solicitud enviada)</span>
-              </div>
-            </div>
-            <ng-template #receivedBlock>
-              <div class="request-card-user">
-                <img src="assets/user.png" alt="Solicitante">
-                <div class="info">
-                  <strong>{{ req.applicant.name }}</strong>
-                  <span>Solicitante (Solicitud recibida)</span>
+       <div class="row mb-4">
+          <div class="col-12"><h2 class="text-dark-green mb-3">Solicitudes aceptadas</h2></div>
+          <div *ngIf="acceptedRequests.length === 0" class="col-12"><p class="text-muted">Aún no tienes solicitudes aceptadas.</p></div>
+          <div class="col-lg-4 col-md-6 mb-4" *ngFor="let req of acceptedRequests">
+             <div class="card h-100 shadow-sm request-card request-card-accepted">
+                <span class="badge bg-success status-badge-enviada">Aceptada</span>
+                <div class="request-card-pet">
+                   <img [src]="req.publication.petPhoto" [alt]="req.publication.petName">
+                   <h5>{{ req.publication.petName }}</h5>
                 </div>
-              </div>
-            </ng-template>
-
-            <div class="request-card-body">
-              <small class="text-muted">
-                <i class="bi bi-calendar-check"></i>
-                Aceptada el: {{ req.createdAt | date:'dd/MM/yyyy' }} </small>
-            </div>
+                <div class="request-card-user" *ngIf="req.applicant.userId === currentUserId; else receivedBlock">
+                   <img src="assets/user.png" alt="Dueño">
+                   <div class="info"><strong>{{ req.publication.ownerName }}</strong><span>Dueño (Solicitud enviada)</span></div>
+                </div>
+                <ng-template #receivedBlock>
+                   <div class="request-card-user">
+                      <img src="assets/user.png" alt="Solicitante">
+                      <div class="info"><strong>{{ req.applicant.name }}</strong><span>Solicitante (Solicitud recibida)</span></div>
+                   </div>
+                </ng-template>
+                <div class="request-card-body">
+                   <small class="text-muted"><i class="bi bi-calendar-check"></i> Aceptada el: {{ req.createdAt | date:'dd/MM/yyyy' }}</small>
+                </div>
+             </div>
           </div>
-        </div>
-      </div>
+       </div>
     </div>
   </div>
 </div>
@@ -416,43 +370,34 @@
 @if (showAcceptModal && requestToAccept) {
   <div class="modal-overlay-cancel" (click)="closeModals()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
-      <div class="modal-header-accept"> <h5 class="mb-0">Aceptar Solicitud</h5>
-        <i class="bi bi-check-circle-fill"></i>
-      </div>
+      <div class="modal-header-accept"> <h5 class="mb-0">Aceptar Solicitud</h5><i class="bi bi-check-circle-fill"></i></div>
       <div class="modal-body-content">
         <div class="modal-pet-info">
           <img [src]="requestToAccept.publication.petPhoto" [alt]="requestToAccept.publication.petName" />
-          <div class="details">
-            <h6 class="mb-0">{{ requestToAccept.publication.petName }}</h6>
-            <span>Mascota</span>
-          </div>
+          <div class="details"><h6 class="mb-0">{{ requestToAccept.publication.petName }}</h6><span>Mascota</span></div>
         </div>
         <div class="modal-pet-info mt-2">
           <img src="assets/user.png" [alt]="requestToAccept.applicant.name" />
-          <div class="details">
-            <h6 class="mb-0">{{ requestToAccept.applicant.name }}</h6>
-            <span>Solicitante</span>
-          </div>
+          <div class="details"><h6 class="mb-0">{{ requestToAccept.applicant.name }}</h6><span>Solicitante</span></div>
         </div>
-        <p class="modal-confirm-text-dark mt-3">
-          ¿Deseas aceptar la solicitud de <strong>{{ requestToAccept.applicant.name }}</strong> para adoptar a <strong>{{ requestToAccept.publication.petName }}</strong>?
-        </p>
-        <p class="text-muted small mt-2">Esta acción marcará la mascota como "Adoptada" y rechazará automáticamente otras solicitudes pendientes para ella.</p>
-        @if (modalError) {
-          <div class="alert alert-danger modal-error-text">{{ modalError }}</div>
-        }
+        <p class="modal-confirm-text-dark mt-3">¿Deseas aceptar la solicitud de <strong>{{ requestToAccept.applicant.name }}</strong> para adoptar a <strong>{{ requestToAccept.publication.petName }}</strong>?</p>
+        
+        <div class="modal-alert-warning mt-3 text-start">
+          <strong class="d-block mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Al confirmar esta adopción:</strong>
+          <ul>
+            <li>Confirmas que has verificado la idoneidad del solicitante.</li>
+            <li>La responsabilidad del cuidado de la mascota se transfiere a <strong>{{ requestToAccept.applicant.name }}</strong>.</li>
+            <li>La publicación se cerrará y pasará al estado "Adoptado".</li>
+            <li>Todas las demás solicitudes pendientes se rechazarán automáticamente.</li>
+          </ul>
+        </div>
+
+        @if (modalError) { <div class="alert alert-danger modal-error-text">{{ modalError }}</div> }
       </div>
       <div class="modal-actions-cancel">
-        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading">
-          <i class="bi bi-x-lg"></i> No, cancelar
-        </button>
+        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading"><i class="bi bi-x-lg"></i> No, cancelar</button>
         <button (click)="confirmAccept()" class="btn btn-green" [disabled]="isModalLoading">
-          @if (isModalLoading) {
-            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
-            Aceptando...
-          } @else {
-            <i class="bi bi-check-lg"></i> Sí, aceptar
-          }
+          @if (isModalLoading) { <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Aceptando... } @else { <i class="bi bi-check-lg"></i> Sí, aceptar }
         </button>
       </div>
     </div>
@@ -462,42 +407,23 @@
 @if (showRejectModal && requestToReject) {
   <div class="modal-overlay-cancel" (click)="closeModals()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
-      <div class="modal-header-reject"> <h5 class="mb-0">Rechazar Solicitud</h5>
-        <i class="bi bi-x-circle-fill"></i>
-      </div>
+      <div class="modal-header-reject"> <h5 class="mb-0">Rechazar Solicitud</h5><i class="bi bi-x-circle-fill"></i></div>
       <div class="modal-body-content">
-        <div class="modal-pet-info">
+         <div class="modal-pet-info">
           <img [src]="requestToReject.publication.petPhoto" [alt]="requestToReject.publication.petName" />
-          <div class="details">
-            <h6 class="mb-0">{{ requestToReject.publication.petName }}</h6>
-            <span>Mascota</span>
-          </div>
+          <div class="details"><h6 class="mb-0">{{ requestToReject.publication.petName }}</h6><span>Mascota</span></div>
         </div>
         <div class="modal-pet-info mt-2">
           <img src="assets/user.png" [alt]="requestToReject.applicant.name" />
-          <div class="details">
-            <h6 class="mb-0">{{ requestToReject.applicant.name }}</h6>
-            <span>Solicitante</span>
-          </div>
+          <div class="details"><h6 class="mb-0">{{ requestToReject.applicant.name }}</h6><span>Solicitante</span></div>
         </div>
-        <p class="modal-confirm-text-dark mt-3">
-          ¿Estás seguro de rechazar la solicitud de <strong>{{ requestToReject.applicant.name }}</strong> para adoptar a <strong>{{ requestToReject.publication.petName }}</strong>?
-        </p>
-        @if (modalError) {
-          <div class="alert alert-danger modal-error-text">{{ modalError }}</div>
-        }
+        <p class="modal-confirm-text-dark mt-3">¿Estás seguro de rechazar la solicitud de <strong>{{ requestToReject.applicant.name }}</strong> para adoptar a <strong>{{ requestToReject.publication.petName }}</strong>?</p>
+        @if (modalError) { <div class="alert alert-danger modal-error-text">{{ modalError }}</div> }
       </div>
       <div class="modal-actions-cancel">
-        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading">
-          <i class="bi bi-x-lg"></i> No, volver
-        </button>
+        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading"><i class="bi bi-x-lg"></i> No, volver</button>
         <button (click)="confirmReject()" class="btn btn-orange" [disabled]="isModalLoading">
-           @if (isModalLoading) {
-            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
-            Rechazando...
-          } @else {
-            <i class="bi bi-check-lg"></i> Sí, rechazar
-          }
+           @if (isModalLoading) { <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Rechazando... } @else { <i class="bi bi-check-lg"></i> Sí, rechazar }
         </button>
       </div>
     </div>
@@ -507,36 +433,20 @@
 @if (showCancelModal && requestToCancel) {
   <div class="modal-overlay-cancel" (click)="closeModals()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
-      <div class="modal-header-cancel"> <h5 class="mb-0">Cancelar Solicitud</h5>
-        <i class="bi bi-exclamation-triangle-fill"></i>
-      </div>
+      <div class="modal-header-cancel"> <h5 class="mb-0">Cancelar Solicitud</h5><i class="bi bi-exclamation-triangle-fill"></i></div>
       <div class="modal-body-content">
         <div class="modal-pet-info">
           <img [src]="requestToCancel.publication.petPhoto" [alt]="requestToCancel.publication.petName" />
-          <div class="details">
-            <h6 class="mb-0">{{ requestToCancel.publication.petName }}</h6>
-            <span>Mascota</span>
-          </div>
+          <div class="details"><h6 class="mb-0">{{ requestToCancel.publication.petName }}</h6><span>Mascota</span></div>
         </div>
-        <p class="modal-confirm-text-dark mt-3">
-          ¿Estás seguro de cancelar tu solicitud de adopción para <strong>{{ requestToCancel.publication.petName }}</strong>?
-        </p>
+        <p class="modal-confirm-text-dark mt-3">¿Estás seguro de cancelar tu solicitud de adopción para <strong>{{ requestToCancel.publication.petName }}</strong>?</p>
         <p class="text-muted small mt-2">Ya no serás considerado para esta adopción.</p>
-        @if (modalError) {
-          <div class="alert alert-danger modal-error-text">{{ modalError }}</div>
-        }
+        @if (modalError) { <div class="alert alert-danger modal-error-text">{{ modalError }}</div> }
       </div>
       <div class="modal-actions-cancel">
-        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading">
-          <i class="bi bi-x-lg"></i> No, volver
-        </button>
+        <button (click)="closeModals()" class="btn btn-secondary" [disabled]="isModalLoading"><i class="bi bi-x-lg"></i> No, volver</button>
         <button (click)="confirmCancel()" class="btn btn-danger" [disabled]="isModalLoading">
-           @if (isModalLoading) {
-            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
-            Cancelando...
-          } @else {
-            <i class="bi bi-check-lg"></i> Sí, cancelar
-          }
+           @if (isModalLoading) { <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Cancelando... } @else { <i class="bi bi-check-lg"></i> Sí, cancelar }
         </button>
       </div>
     </div>
@@ -544,16 +454,13 @@
 }
 
 <div *ngIf="loading && !loadingRequests" class="loading-overlay">
-  <div class="spinner-border text-success" role="status">
-    <span class="visually-hidden">Cargando...</span>
-  </div>
+  <div class="spinner-border text-success" role="status"><span class="visually-hidden">Cargando...</span></div>
 </div>
+
 @if (showDeleteConfirmModal && publicationToDelete) {
   <div class="modal-overlay-cancel" (click)="closeDeleteConfirmModal()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
-      <div class="modal-header bg-danger">
-        <h5 class="mb-0">Eliminar Publicación</h5>
-      </div>
+      <div class="modal-header bg-danger"><h5 class="mb-0">Eliminar Publicación</h5></div>
       <div class="modal-body-content">
         <div class="modal-pet-info">
           <img [src]="publicationToDelete.photos[0]" [alt]="publicationToDelete.tempName" />
@@ -572,14 +479,8 @@
         </div>
       </div>
       <div class="modal-actions-cancel">
-        <button (click)="closeDeleteConfirmModal()" class="btn btn-secondary">
-          <i class="bi bi-x-lg"></i>
-          No, cancelar
-        </button>
-        <button (click)="confirmDelete()" class="btn btn-danger">
-          <i class="bi bi-check-lg"></i>
-          Si, aceptar
-        </button>
+        <button (click)="closeDeleteConfirmModal()" class="btn btn-secondary"><i class="bi bi-x-lg"></i> No, cancelar</button>
+        <button (click)="confirmDelete()" class="btn btn-danger"><i class="bi bi-check-lg"></i> Si, aceptar</button>
       </div>
     </div>
   </div>
@@ -588,9 +489,7 @@
 @if (showPauseConfirmModal) {
   <div class="modal-overlay-cancel" (click)="closePauseConfirmModal()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
-      <div class="modal-body-content"> <h5>Confirmar Pausa</h5>
-        <p>¿Estás seguro de pausar esta publicación?</p>
-      </div>
+      <div class="modal-body-content"> <h5>Confirmar Pausa</h5><p>¿Estás seguro de pausar esta publicación?</p></div>
       <div class="modal-actions-cancel">
         <button (click)="closePauseConfirmModal()" class="btn btn-secondary">Cancelar</button>
         <button (click)="confirmPause()" class="btn btn-grey">Sí, Pausar</button>
@@ -602,9 +501,7 @@
 @if (showActivateConfirmModal) {
   <div class="modal-overlay-cancel" (click)="closeActivateConfirmModal()">
     <div class="modal-dialog-cancel" (click)="$event.stopPropagation()">
-      <div class="modal-body-content"> <h5>Confirmar Activación</h5>
-        <p>¿Estás seguro de activar esta publicación?</p>
-      </div>
+      <div class="modal-body-content"> <h5>Confirmar Activación</h5><p>¿Estás seguro de activar esta publicación?</p></div>
       <div class="modal-actions-cancel">
         <button (click)="closeActivateConfirmModal()" class="btn btn-secondary">Cancelar</button>
         <button (click)="confirmActivate()" class="btn btn-green">Sí, Activar</button>
