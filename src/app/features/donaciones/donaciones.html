@@ -1,24 +1,26 @@
 <div class="donation-section">
 
+  <!-- Confeti flotante -->
   <div class="floating-decorations">
     @for (confetti of confettiPieces; track $index) {
-      <div class="confetti"
-           [style.left.%]="getRandomPosition()"
-           [style.animation-delay.s]="getRandomDelay()"
-           [style.background-color]="getConfettiColor($index)"></div>
+    <div class="confetti" [style.left.%]="confetti.left" [style.animation-delay.s]="confetti.delay"
+      [style.background-color]="confetti.color">
+    </div>
     }
   </div>
 
+  <!-- Encabezado -->
   <div class="donation-header">
     <div class="donation-icon-wrapper">
       <i class="bi bi-cup-fill"></i>
     </div>
     <h2 class="donation-title">¡Apoya a Woof y a los desarrolladores!</h2>
     <p class="donation-text">
-      Tu contribución nos ayuda a mantener Woof activo y a seguir desarrollando nuevas funcionalidades. ¡Cada aporte cuenta!
+      Tu contribución mantiene Woof activo y nos ayuda a seguir creando nuevas funcionalidades.
     </p>
   </div>
 
+  <!-- Beneficios de la donación -->
   <div class="donation-benefits-grid">
     <div class="benefit-item">
       <i class="bi bi-lightbulb-fill" style="color: var(--color-orange-dark);"></i>
@@ -30,22 +32,16 @@
     </div>
     <div class="benefit-item">
       <i class="bi bi-heart-fill" style="color: var(--color-red);"></i>
-      <span>Soporte a los Desarrolladores</span>
+      <span>Soporte a los desarrolladores</span>
     </div>
   </div>
 
-  <div class="paypal-container">
-    <form action="https://www.paypal.com/donate" method="post" target="_top">
-      <input type="hidden" name="hosted_button_id" value="RL7LVCYEUM8UJ" />
-      <button class="btn-custom-donate btn-celeste-wave" type="submit">
-        <i class="bi bi-paypal me-2"></i>
-        DONA AQUÍ
-      </button>
-    </form>
+  <!-- QR de Yape -->
+  <div class="yape-container" style="margin-top:2rem;">
+    <img src="assets/QR.jpeg" alt="Escanea para donar con Yape"
+      style="width:150px; height:150px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.2);">
+    <p style="margin-top:0.5rem; font-weight:600; color: var(--color-brown-dark);">
+      Escanea el QR y apoya el desarrollo de Woof
+    </p>
   </div>
-
-  <div class="dog-paw-overlay">
-    <i class="bi bi-hand-index-thumb-fill"></i>
-  </div>
-
 </div>
