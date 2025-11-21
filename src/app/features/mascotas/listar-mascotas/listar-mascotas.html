@@ -11,13 +11,18 @@
     </div>
     <p class="mt-2">Cargando tus mascotas...</p>
   </div>
-  } @if (!isLoading && error) {
+  } 
+  
+  @if (!isLoading && error) {
   <div class="alert alert-danger" role="alert">
     <i class="bi bi-exclamation-triangle-fill me-2"></i>
     {{ error }}
   </div>
-  } @if (!isLoading && !error) {
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+  } 
+  
+  @if (!isLoading && !error) {
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    
     @for (pet of pets; track pet.id) {
     <div class="col">
       <div class="card h-100 pet-card">
@@ -74,6 +79,8 @@
       </div>
     </div>
     }
+    
+    @if (pets.length < 2) {
     <div class="col">
       <a [routerLink]="['/mascotas/nueva']" class="card h-100 add-pet-card">
         <div class="card-body">
@@ -86,6 +93,8 @@
         </div>
       </a>
     </div>
-    </div>
+    }
+
+  </div>
   }
 </div>
