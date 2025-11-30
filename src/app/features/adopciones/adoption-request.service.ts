@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ApiResponse, AdoptionRequest, AdoptionRequestCreateDTO } from '../../models/publication';
+import { api_url } from '../../core/apiUrl'; 
+
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ import { ApiResponse, AdoptionRequest, AdoptionRequestCreateDTO } from '../../mo
 export class AdoptionRequestService {
 
   // El endpoint que creamos en el backend (Paso 4)
-  private apiUrl = 'http://localhost:8080/api/v1/adoption-requests';
+  private apiUrl = api_url + '/api/v1/adoption-requests';
 
   constructor(private http: HttpClient) { }
 

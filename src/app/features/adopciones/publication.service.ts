@@ -8,12 +8,13 @@ import {
   ApiResponse 
 } from '../../models/publication';
 import { Status } from '../../models/enums/status.enum';
+import { api_url } from '../../core/apiUrl'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PublicationService {
-  private apiUrl = 'http://localhost:8080/publications';
+  private apiUrl =  api_url + '/publications';
 
   constructor(private http: HttpClient) { }
 

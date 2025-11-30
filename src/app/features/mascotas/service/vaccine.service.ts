@@ -8,12 +8,14 @@ import {
   VaccineDoseDTO,
   VaccineUpdateDTO, 
 } from '../../../models/vaccine';
+import { api_url } from '../../../core/apiUrl'; 
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class VaccineService {
-  private apiUrl = 'http://localhost:8080/api/v1';
+  private apiUrl =  api_url + '/api/v1';
 
   constructor(private http: HttpClient) {}
 

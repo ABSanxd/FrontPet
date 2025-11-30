@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { UserAchievementDTO } from '../../models/user-achievement';
 import { ApiResponse } from '../../models/api-response';
+import { api_url } from '../../core/apiUrl'; 
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserAchievementService {
-  private readonly apiUrl = 'http://localhost:8080/api/v1/users';
+  private readonly apiUrl = api_url + '/api/v1/users';
   constructor(private http: HttpClient) {}
 
   // Obtener logros de usuario por ID

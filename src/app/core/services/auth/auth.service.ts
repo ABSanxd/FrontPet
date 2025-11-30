@@ -5,10 +5,11 @@ import { LoginResponse } from "../../../models/auth";
 import { isPlatformBrowser } from "@angular/common";
 import { UserCreateDTO, UserResponseDTO } from "../../../models/user";
 import { Observable } from "rxjs";
+import { api_url } from "../../apiUrl"; 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/v1/auth';
+  private apiUrl = api_url + '/api/v1/auth';
   private tokenKey = 'token';
   private userKey = 'user';
 

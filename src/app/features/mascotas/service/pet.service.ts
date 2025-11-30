@@ -3,14 +3,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { PetResponseDTO, PetCreateDTO, PetUpdateDTO } from '../../../models/pet';
 import { ApiResponse } from '../../../models/api-response';
+import { api_url } from '../../../core/apiUrl'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PetService {
 
-  private apiUrl = 'http://localhost:8080/api/v1/pets';
-  private storageApiUrl = 'http://localhost:8080/api/v1/storage';
+  private apiUrl = api_url + '/api/v1/pets';
+  private storageApiUrl = api_url + '/api/v1/storage';
 
   constructor(private http: HttpClient) { }
 

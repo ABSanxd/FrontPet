@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs';
 import { PetChallengeResponseDTO, PetChallengeCreateDTO  } from '../../models/pet-challenge';
 import { ApiResponse } from '../../models/api-response';
+import { api_url } from '../../core/apiUrl'; 
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PetChallengeService {
-    private apiUrl = 'http://localhost:8080/api/v1'; 
+    private apiUrl = api_url + '/api/v1'; 
 
     constructor(private http: HttpClient) {}
 

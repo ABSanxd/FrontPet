@@ -4,12 +4,13 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { AdvertisementResponseDTO } from '../../models/advertisement';
 import { ZoneAd } from '../../models/enums/zoneAd.enum';
+import { api_url } from '../../core/apiUrl';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdvertisementService {
-  private apiUrl = 'http://localhost:8080/api/v1/advertisements';
+  private apiUrl = api_url + '/api/v1/advertisements';
 
   constructor(private http: HttpClient) {}
 

@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AchievementProgressDTO, PetAchievementResponseDTO } from '../../models/achievement';
 import { ApiResponse } from '../../models/api-response';
+import { api_url } from '../../core/apiUrl';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AchievementService {
-  private readonly apiUrl = 'http://localhost:8080/api/v1/pets';
+  private readonly apiUrl = api_url + '/api/v1/pets';
 
   constructor(private http: HttpClient) {}
 

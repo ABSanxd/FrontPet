@@ -3,13 +3,14 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Observable, Subject, map, tap } from 'rxjs';
 import { NotificationPage, NotificationResponse } from '../../models/notification';
+import { api_url } from '../../core/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificacionesService {
 
-  private baseUrl = 'http://localhost:8080/api/v1/notifications';
+  private baseUrl = api_url + '/api/v1/notifications';
   public refresh$ = new Subject<void>();
   public newNotification$ = new Subject<NotificationResponse>();
 

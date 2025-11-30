@@ -8,11 +8,13 @@ import { Frequency } from '../../models/enums/frequency.enum';
 import { Status } from '../../models/enums/status.enum';
 import { ApiResponse } from '../../models/api-response';
 import { ChallengeResponseDTO } from '../../models/challenge';
+import { api_url } from '../../core/apiUrl';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChallengeService {
-    private apiUrl = 'http://localhost:8080/api/v1/challenges'; 
+    private apiUrl = api_url + '/api/v1/challenges'; 
 
     constructor(private http: HttpClient) {}
 
