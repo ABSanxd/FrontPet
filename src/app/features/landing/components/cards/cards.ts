@@ -14,7 +14,7 @@ export class Cards {
       text: 'Cada cuidado diario de tu mascota te da XP. Completa retos y desbloquea logros exclusivos.'
     },
     {
-      img: 'assets/animalitos.svg',
+      img: 'assets/animalitos.png',
       title: 'Tus mascotas bajo control',
       text: 'Registra todos tus peludos, lleva su historial de vacunas, edad y progreso en un solo lugar.'
     },
