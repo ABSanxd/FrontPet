@@ -1,1 +1,1 @@
-export const api_url = 'http://localhost:8080';
+export const api_url = 'https://contenedorpets.wonderfulocean-49e55270.brazilsouth.azurecontainerapps.io';

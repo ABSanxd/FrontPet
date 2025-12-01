@@ -4,7 +4,6 @@ import { Inicio } from './features/inicio/inicio';
 import { authGuard } from './core/guards/auth.guard';
 import { Adopciones } from './features/adopciones/adopciones';
 import { CrearPublicacion } from './features/adopciones/crear/crear-publicacion';
-
 import { Donaciones } from './features/donaciones/donaciones';
 import { Perfil } from './features/perfil/perfil';
 import { guestGuard } from './core/guards/guest.guard';
@@ -17,34 +16,40 @@ import { DetallePublicacion } from './features/adopciones/detalle/detalle-public
 import { Notificaciones } from './features/notificaciones/notificaciones';
 import { Terminos } from './shared/pages/terminos/terminos';
 
-
 export const routes: Routes = [
+
   { path: '', component: Landing, canActivate: [guestGuard] },
+
   {
     path: 'inicio',
     component: Inicio,
     canActivate: [authGuard]
   },
+
   {
     path: 'adopciones',
     component: Adopciones,
     canActivate: [authGuard]
   },
+
   {
     path: 'publicaciones/crear',
     component: CrearPublicacion,
     canActivate: [authGuard]
   },
+
   {
     path: 'publicaciones/editar/:id',
     component: CrearPublicacion,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { renderMode: 'client' } 
   },
 
   {
     path: 'publicaciones/:id/detalle',
     component: DetallePublicacion,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { renderMode: 'client' }  
   },
 
   {
@@ -52,16 +57,19 @@ export const routes: Routes = [
     component: Servicios,
     canActivate: [authGuard]
   },
+
   {
     path: 'donaciones',
     component: Donaciones,
     canActivate: [authGuard]
   },
+
   {
     path: 'perfil',
     component: Perfil,
     canActivate: [authGuard]
   },
+
   {
     path: 'notificaciones',
     component: Notificaciones,
@@ -73,38 +81,41 @@ export const routes: Routes = [
     component: RegistrarMascota,
     canActivate: [authGuard]
   },
+
   {
     path: 'mascotas/:id',
     component: DetallesMascota,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'mascotas/:id/editar',
-    component: RegistrarMascota,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { renderMode: 'client' }  
   },
 
   {
     path: 'mascotas/:id/editar',
     component: RegistrarMascota,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { renderMode: 'client' }  
+  },
+
+  {
+    path: 'mascotas/:petId/vacunas/nueva',
+    component: RegistrarVacuna,
+    canActivate: [authGuard],
+    data: { renderMode: 'client' }  
+  },
+
+  {
+    path: 'mascotas/:petId/vacunas/:vaccineId/editar',
+    component: RegistrarVacuna,
+    canActivate: [authGuard],
+    data: { renderMode: 'client' }  
   },
 
   {
     path: 'reset-password',
     component: ResetPassword,
-    canActivate: [guestGuard] 
+    canActivate: [guestGuard]
   },
-  {
-    path: 'mascotas/:petId/vacunas/nueva',
-    component: RegistrarVacuna,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'mascotas/:petId/vacunas/:vaccineId/editar',
-    component: RegistrarVacuna,
-    canActivate: [authGuard]
-  },
+
   {
     path: 'terminos',
     component: Terminos
